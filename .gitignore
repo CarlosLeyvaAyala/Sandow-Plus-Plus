@@ -6,3 +6,4 @@ tasks.json
 *.zip
 *.7z
 *.bsa
+meta.ini
