@@ -1,0 +1,5 @@
+_ignore/*
+*.code-workspace
+*.ppj
+tasks.json
+*.pex
