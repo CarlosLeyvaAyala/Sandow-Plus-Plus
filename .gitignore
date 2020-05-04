@@ -3,3 +3,5 @@ _ignore/*
 *.ppj
 tasks.json
 *.pex
+*.zip
+*.7z
