@@ -17,7 +17,7 @@ You can find this mod at the [Nexus](https://www.nexusmods.com/skyrimspecialedit
 - ESP flagged as ESL, so it only uses 1 slot out of 4096 instead of 1 out of 255. Save that precious space for bigger mods :)
 - From version 2.0 and on, you can play with all the rules of [Pumping Iron](https://www.nexusmods.com/skyrimspecialedition/mods/13434) but with all the QOL mechanics introduced by Sandow Plus Plus.
 
-##How to play
+## How to play
 Go around doing your own business to earn `WGP` and just go to sleep when you are fatigued. That `WGP` gets converted to weight if conditions are right.
 
 This mod is all about **fatigue managing**.
