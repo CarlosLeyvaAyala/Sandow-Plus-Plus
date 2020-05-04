@@ -1,4 +1,4 @@
-# Sandow-Plus-Plus
+# Sandow Plus Plus
 A mod for Skyrim SE. 
 Gain weight (muscles) as you play.
 

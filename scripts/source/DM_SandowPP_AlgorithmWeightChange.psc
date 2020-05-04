@@ -25,6 +25,7 @@ Function ChangeWeight(float aIncrement, DM_SandowPP_AlgorithmData aData)
     Trace("AlgorithmWeightChange.ChangeWeight(" + aIncrement + ")")
     aData.CurrentState.TraceAll()
     
+    aIncrement *= aData.Config.weightGainRate
     aIncrement *= aData.CurrentState.WeightGainMultiplier
     float w = GetPlayerWeight()
     float newW = ConstrainF(w + aIncrement, minW, maxW)

@@ -97,6 +97,7 @@ EndFunction
 
 Function SaveOtherConfig(string f, DM_SandowPP_Config config)
     SetIntValue(f, "PresetManager", config.PresetManager)
+    SetFloatValue(f, "weightGainRate", config.weightGainRate)
     SetIntValue(f, "CanGainHeight", config.CanGainHeight as int)
     SetFloatValue(f, "HeightMax", config.HeightMax)
     SetIntValue(f, "HeightDaysToGrow", config.HeightDaysToGrow)
@@ -107,6 +108,7 @@ EndFunction
 
 Function LoadOtherConfig(string f)
     ConfigResults.PresetManager = GetIntValue(f, "PresetManager")
+    ConfigResults.weightGainRate = GetFloatValue(f, "weightGainRate", 1.0)
     ConfigResults.CanGainHeight = GetIntValue(f, "CanGainHeight")
     ConfigResults.HeightMax = GetFloatValue(f, "HeightMax", 0.06)
     ConfigResults.HeightDaysToGrow = GetIntValue(f, "HeightDaysToGrow", 120)
