@@ -2,7 +2,7 @@
 A mod for Skyrim SE. 
 Gain weight (muscles) as you play.
 
-You can find this mod at the [Nexus](https://www.nexusmods.com/skyrimspecialedition/mods/32579) (***WARNING: NFSW pics***)
+You can find this mod at the [Nexus](https://www.nexusmods.com/skyrimspecialedition/mods/32579) (***WARNING: NFSWish pics***)
 
 ## Features
 - Train and sleep to gain weight.
