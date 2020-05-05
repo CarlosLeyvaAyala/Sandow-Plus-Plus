@@ -107,6 +107,7 @@ EndFunction
 
 Function SaveOtherConfig(FISSInterface fiss, DM_SandowPP_Config config)
     fiss.saveInt("PresetManager", config.PresetManager)
+    fiss.saveFloat("weightGainRate", config.weightGainRate)
     fiss.saveBool("CanGainHeight", config.CanGainHeight)
     fiss.saveFloat("HeightMax", config.HeightMax)
     fiss.saveInt("HeightDaysToGrow", config.HeightDaysToGrow)
@@ -118,6 +119,7 @@ EndFunction
 
 Function LoadOtherConfig(FISSInterface fiss)
     ConfigResults.PresetManager = fiss.loadInt("PresetManager")
+    ConfigResults.weightGainRate = fiss.loadFloat("weightGainRate")
     ConfigResults.CanGainHeight = fiss.loadBool("CanGainHeight")
     ConfigResults.HeightMax = fiss.loadFloat("HeightMax")
     ConfigResults.HeightDaysToGrow = fiss.loadInt("HeightDaysToGrow")

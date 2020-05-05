@@ -73,6 +73,8 @@ float property skillDefaultCo = 0.0 AutoReadOnly
 float property skillDefaultDe = 0.0 AutoReadOnly
 float property skillDefaultIl = 0.0 AutoReadOnly
 float property skillDefaultRe = 0.15 AutoReadOnly
+float property weightGainRate = 1.0 Auto Hidden
+{Multiplier to weight gains. Configurable by player. Expected range: [0.1, 2.0], ie. [10, 200]%}
 
 float property physFatigueRate auto
 float property magFatigueRate
@@ -351,6 +353,7 @@ Function AssignOtherConfig(DM_SandowPP_Config other)
     CanGainHeight = other.CanGainHeight
     HeightMax = other.HeightMax
     HeightDaysToGrow = other.HeightDaysToGrow
+    weightGainRate = other.weightGainRate
     CanResizeHead = other.CanResizeHead
     HeadSizeMin = other.HeadSizeMin
     HeadSizeMax = other.HeadSizeMax

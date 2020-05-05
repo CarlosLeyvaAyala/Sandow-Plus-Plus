@@ -326,6 +326,8 @@ int Function PageMainOtherOptions(int pos)
     AddHeaderOption("<font color='#daa520'>$Other options</font>")
     AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Config.PresetManager])
     
+    AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Config.weightGainRate), slFmt0)
+
     AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Config.CanGainHeight)
     AddSliderOptionST("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Config.HeightMax), slFmt0)
     AddSliderOptionST("SL_HEIGHTDAYS", "$Days to max Height", Config.HeightDaysToGrow, slFmt0r)
@@ -375,6 +377,27 @@ Function EnsurePresetManager(string mgr)
     Config.PresetManager = SandowPP.DefaultPresetManager()
 EndFunction
 
+State SL_WEIGHTMULT
+    Event OnSliderOpenST()
+        float val = FloatToPercent(SandowPP.Config.weightGainRate)
+        CreateSlider(val, 10, 200, 10)
+    EndEvent
+
+    Event OnSliderAcceptST(float val)
+        SandowPP.Config.weightGainRate =  PercentToFloat(val)
+        SetSliderOptionValueST(val, slFmt0)
+    EndEvent
+
+    Event OnDefaultST()
+        SandowPP.Config.weightGainRate = 1.0
+        SetSliderOptionValueST(FloatToPercent(SandowPP.Config.weightGainRate), slFmt0)
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_WeightMultInfo")
+    EndEvent
+EndState
+
 State TG_HEIGHT
     Event OnSelectST()
         Config.CanGainHeight = !Config.CanGainHeight
@@ -398,22 +421,22 @@ State SL_HEIGHTMAX
         SetSliderDialogDefaultValue(val)
         SetSliderDialogRange(FloatToPercent(0.01), FloatToPercent(0.2))
         SetSliderDialogInterval(FloatToPercent(0.01))
-    EndEvent
+    EndEvent    
 
     Event OnSliderAcceptST(float val)
         SandowPP.Config.HeightMax =  PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
-    EndEvent
+    EndEvent    
 
     Event OnDefaultST()
         SandowPP.Config.HeightMax = 0.06
         SetSliderOptionValueST(FloatToPercent(SandowPP.Config.HeightMax), slFmt0)
-    EndEvent
+    EndEvent    
 
     Event OnHighlightST()
         SetInfoText("$MCM_MaxHeightInfo")
-    EndEvent
-EndState
+    EndEvent    
+EndState    
 
 State SL_HEIGHTDAYS
     Event OnSliderOpenST()
