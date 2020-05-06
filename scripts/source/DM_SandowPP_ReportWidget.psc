@@ -227,6 +227,9 @@ EndFunction
 
 Function HideNow(int id, bool aHide)
     Trace("ReportWidget.HideNow(" + id + ", " + aHide + ")")
+    If _meters[id].IsHidden()
+        Return
+    EndIf
     If aHide
         _meters[id].Hide()
     Else

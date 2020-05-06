@@ -192,3 +192,7 @@ EndFunction
 Function Show()
     Alpha = _restoreAlpha
 EndFunction
+
+bool Function IsHidden()
+    return Alpha == 0.0
+EndFunction

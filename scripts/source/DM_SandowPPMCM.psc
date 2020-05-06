@@ -63,7 +63,9 @@ string[] _hAlign
 
 int function GetVersion()
     {Mod 2.1+ needs to update version}
-    return 2
+    ; 3 = added Paused behavior
+    ; 4 = added Bruce Lee behavior
+    return 3
 endFunction
 
 Event OnConfigInit()
@@ -90,7 +92,8 @@ Event OnConfigInit()
     _reports[Config.rtSkyUiLib] = "$Color notifications"
     _reports[Config.rtWidget] = "$Widget"
 
-    _behaviors = new string[2]
+    _behaviors = new string[3]
+    _behaviors[Config.bhPause] = "$MCM_PausedBehavior"
     _behaviors[Config.bhSandowPP] = "Sandow Plus Plus"
     _behaviors[Config.bhPumpingIron] = "Pumping Iron"
 
@@ -226,7 +229,7 @@ int Function PageMainConfiguration(int pos)
     AddHeaderOption("<font color='#daa520'>$Configuration</font>")
     AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Config.Behavior])
     AddToggleOptionST("TG_LOSEW", "$Can lose Weight", Config.CanLoseWeight)
-    If Config.IsSandow()
+    If !Config.IsPumpingIron()
         AddToggleOptionST("TG_DR", "$Diminishing returns", Config.DiminishingReturns)
         AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Config.CanReboundWeight)
         count += 2

@@ -1,5 +1,6 @@
 Scriptname DM_SandowPP_Config extends Quest
 { This object stores config info }
+Import DM_SandowPP_Globals
 
 DM_SandowPPMain Property Owner auto
 
@@ -100,8 +101,20 @@ int property Behavior
         Configure()
     EndFunction
 EndProperty
-int Property bhSandowPP = 0 AutoReadOnly
-int Property bhPumpingIron = 1 AutoReadOnly
+
+int Property bhPause = 0 AutoReadOnly
+int Property bhSandowPP
+    ; As usual... baked saves TODO: V4.0
+    int Function get()
+        return 1
+    EndFunction
+endProperty
+int Property bhPumpingIron
+    int Function get()
+        return 2
+    EndFunction
+endProperty
+int Property bhBruce = 3 AutoReadOnly
 
 ; ==============================
 string Property operationResult Auto        ; Used to get file manipulation information
@@ -135,7 +148,7 @@ int Property rtDebug = 0 AutoReadOnly
 int Property rtSkyUiLib = 1 AutoReadOnly
 int Property rtWidget
     int Function get()
-        ; TODO: change to constant for v3.0
+        ; TODO: change to constant for v4.0
         {Had to be done like this because I first published this with a wrong value}
         Return 2
     EndFunction
@@ -284,12 +297,20 @@ Function Assign(DM_SandowPP_Config other)
     Configure()
 EndFunction
 
+bool Function IsPaused()
+    Return Behavior == bhPause
+EndFunction
+
 bool Function IsSandow()
     Return Behavior == bhSandowPP
 EndFunction
 
 bool Function IsPumpingIron()
     Return Behavior == bhPumpingIron
+EndFunction
+
+bool Function IsBruce()
+    Return Behavior == bhBruce
 EndFunction
 
 bool Function IsSkyUiLib()

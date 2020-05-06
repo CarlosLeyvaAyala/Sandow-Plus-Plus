@@ -12,7 +12,7 @@ int Property mtCritical = 600 AutoReadOnly
 ; Message categories
 int Property mcNone = 0 AutoReadOnly
 
-; TODO: Change to constants for v3.0
+; TODO: Change to constants for v4.0
 int Property mcWeight
     int Function get()
         Return 1

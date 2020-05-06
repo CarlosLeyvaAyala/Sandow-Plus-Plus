@@ -37,10 +37,11 @@ DM_SandowPP_Report Property Report
     EndFunction
 EndProperty
 
+DM_SandowPP_AlgorithmPause Property AlgoPause Auto
 DM_SandowPP_AlgoWCSandow Property AlgoWCSandow Auto
 DM_SandowPP_AlgoWCPumping Property AlgoWCPumping Auto
 
-DM_SandowPP_Algorithm Property Algorithm 
+DM_SandowPP_Algorithm Property Algorithm
     DM_SandowPP_Algorithm Function get()
         Return _algorithm
     EndFunction
@@ -174,13 +175,23 @@ EndFunction
 Function ChangeAlgorithm()
     { Change mod Behavior }    
     Trace("Main.ChangeAlgorithm(" + Config.Behavior + ")")
-    
+    DM_SandowPP_Algorithm newAlgo
     If Config.IsPumpingIron()
-        _algorithm = AlgoWCPumping
+        newAlgo = AlgoWCPumping
+    ElseIf Config.IsPaused()
+        newAlgo = AlgoPause
     Else
-        _algorithm = AlgoWCSandow
+        newAlgo = AlgoWCSandow
     EndIf
-    Algorithm.OnEnterAlgorithm(AlgorithmData)
+    
+    ; Change only if switched algorithms
+    If _algorithm.Signature() != newAlgo.Signature()
+        Trace("Switching algorithms")
+        _algorithm.OnExitAlgorithm(AlgorithmData)
+        _algorithm = newAlgo
+        _algorithm.OnEnterAlgorithm(AlgorithmData)
+    EndIf
+    Trace("Ending Main.ChangeAlgorithm()")
 EndFunction
 
 Function ConfigureWidget()
@@ -290,6 +301,11 @@ Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
     Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
     Trace("Old WGP = " + CurrentState.WGP)
     
+    If !Algorithm.CanGainWGP()
+        Trace("Can't gain WGP. Returning.")
+        return
+    EndIf
+
     CurrentState.SkillFatigue += (aSkillFatigueRate * aSkillTraining)
     CurrentState.WGP += aSkillTraining
     CurrentState.WGPGainType = Report.mtUp

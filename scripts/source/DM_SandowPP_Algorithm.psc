@@ -7,13 +7,26 @@ Actor property Player auto
 DM_SandowPP_ReportArgs property RArg auto
 DM_SandowPP_State property Result Auto
 
-; Initial setup when switching to this algorithm
+string Function Signature()
+    {REQUIRED. Used to differentiate between algorithms}
+    return ""
+EndFunction
+
 Function OnEnterAlgorithm(DM_SandowPP_AlgorithmData aData)
+    {Initial setup when switching to this algorithm}
     SetupWidget(aData)
+EndFunction    
+
+Function OnExitAlgorithm(DM_SandowPP_AlgorithmData aData)
+    {Do things when getting out from this}
 EndFunction    
 
 float Function SleepFullRestHours()
     Return 10.0
+EndFunction
+
+bool Function CanGainWGP()
+    return true
 EndFunction
 
 Function SetupCommonWidget(DM_SandowPP_AlgorithmData aData, int a3rdMeterEvt)

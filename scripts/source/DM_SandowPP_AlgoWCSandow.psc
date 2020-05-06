@@ -50,6 +50,11 @@ float SuperCompensationRatio = 1.5
 
 float _maxWeight            ; Used for rebound
 
+string Function Signature()
+    {REQUIRED. Used to differentiate between algorithms}
+    return "Sandow"
+EndFunction
+
 DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)
     {Core calculation}
     Result.Assign(aData.CurrentState)       ; Always assign this property
