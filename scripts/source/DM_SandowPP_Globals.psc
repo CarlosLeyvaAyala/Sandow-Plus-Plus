@@ -25,7 +25,7 @@ int Function ModMajorVersion() Global
 EndFunction
 
 int Function ModMinorVersion() Global
-    Return 0
+    Return 1
 EndFunction
 
 int Function ModPatchVersion() Global

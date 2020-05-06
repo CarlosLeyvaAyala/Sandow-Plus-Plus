@@ -10,6 +10,11 @@ float _WGPToMuscleBySleptHour = 0.1
 float _WeightLossRatio = -0.01
 float _lastTimeWGPQuery
 
+string Function Signature()
+    {REQUIRED. Used to differentiate between algorithms}
+    return "Pumping"
+EndFunction
+
 DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)
     {Core calculation}
     Result.Assign(aData.CurrentState)
