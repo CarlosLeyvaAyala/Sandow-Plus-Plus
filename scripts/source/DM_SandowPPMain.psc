@@ -71,8 +71,76 @@ Function ChangeHeadSize()
     EndIf
 EndFunction
 
+function t(int index, string area)
+    int i = NiOverride.GetNumBodyOverlays()
+    While i > 0
+    i -= 1
+    Trace("Overlay" + i + " " + NiOverride.GetNodeOverrideString(Player, true, Area + " [ovl" + i + "]", 9, index))
+    EndWhile
+EndFunction
+
+Function Test()
+    Trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    string tx = "textures\\actors\\character\\female\\600 extreme.dds"
+    txset()
+    ; int idx = 0
+    ; ts(idx)
+    ; NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, idx, tx, true)
+    ; NiOverride.ApplySkinOverrides(Player)
+    ; ts(idx)
+    
+    Trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+EndFunction
+
+function txset()
+    TextureSet tx = Game.GetFormFromFile(0x01000800, "SandowPP - Ripped Bodies.esp") as TextureSet
+    RaceMenu r = Game.GetFormFromFile(0x01000800, "RaceMenu.esp") as RaceMenu
+    ; TextureSet tx = Game.GetFormFromFile(0x01000802, "SandowPP - Ripped Bodies.esp") as TextureSet
+    ; TextureSet tx = Game.GetFormFromFile(0x01000807, "SandowPP - Ripped Bodies.esp") as TextureSet
+    Trace(r)
+    Trace(tx)
+    ; rgb = NiOverride.GetNodePropertyInt(_targetActor, false, nodeName, 7, -1)
+    int idx = -1
+    string node = "Body [Ovl5]"
+    int skinColor = NiOverride.GetSkinPropertyInt(player, false, 4, 7, -1)
+    Trace("Skin base? " + NiOverride.GetSkinPropertyInt(player, false, 4, 7, -1))
+    Trace("Skin base? 1st " + NiOverride.GetSkinPropertyInt(player, true, 4, 7, -1))
+    Trace("Skin override " + NiOverride.GetNodePropertyInt(player, false, node, 7, -1))
+    Trace(node)
+    NiOverride.AddNodeOverrideFloat(Player, true,  node, 8, idx, 0, true)
+    NiOverride.AddNodeOverrideTextureSet(Player, true, node, 6, idx, tx, true)
+    NiOverride.AddNodeOverrideFloat(Player, true,  node, 8, idx, 0.5, true)
+    NiOverride.AddNodeOverrideInt(Player, true,  node, 7, idx, skinColor, true)
+	r.Reinitialize()
+
+    ; NiOverride.ApplyNodeOverrides(player)
+    Player.QueueNiNodeUpdate()
+EndFunction
+
+function ts(int idx)
+    Trace("GetSkinPropertyString " + NiOverride.GetSkinPropertyString(Player, false, 0x04, 9, idx))
+    Trace("GetSkinOverrideString " + NiOverride.GetSkinOverrideString(Player, true, false, 0x04, 9, idx))
+EndFunction
+
+function ovDiffuse(string tx)
+    String Area = "Body"
+    String Node = Area + " [ovl" + 5 + "]"
+    int index = 1
+    
+    Trace(NiOverride.GetNumBodyOverlays())
+    Trace("Before")
+    t(index, area)
+    NiOverride.AddNodeOverrideString(Player, true, Node, 9, index, tx, true)
+    NiOverride.AddNodeOverrideFloat(Player, true,  node, 9, index, 1.0, true)
+    Player.QueueNiNodeUpdate()
+    NiOverride.ApplyNodeOverrides(player)
+    Trace("After")
+    t(index, area)
+EndFunction
+
 Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
+        Test()
         ChangeHeadSize()
         Algorithm.ReportOnHotkey(AlgorithmData)
     EndIf
