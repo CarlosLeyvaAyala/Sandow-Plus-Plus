@@ -1,0 +1,25 @@
+{
+	"int": {
+		"datasize": 16
+	},
+	"stringList": {
+		"validraces": [
+			"BretonRace",
+			"BretonRaceVampire",
+			"DarkElfRace",
+			"DarkElfRaceVampire",
+			"HighElfRace",
+			"HighElfRaceVampire",
+			"ImperialRace",
+			"ImperialRaceVampire",
+			"NordRace",
+			"NordRaceVampire",
+			"OrcRace",
+			"OrcRaceVampire",
+			"RedguardRace",
+			"RedguardRaceVampire",
+			"WoodElfRace",
+			"WoodElfRaceVampire"
+		]
+	}
+}

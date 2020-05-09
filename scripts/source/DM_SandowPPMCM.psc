@@ -1057,20 +1057,10 @@ EndFunction
 
 int Function SaveFlag()
     Return FlagByBool(SandowPP.PresetManager.Exists())
-    ;If SandowPP.PresetManager.Exists()
-    ;    Return OPTION_FLAG_NONE
-    ;Else
-    ;    Return OPTION_FLAG_DISABLED
-    ;EndIf
 EndFunction
 
 int Function LoadFlag(int aPresetNum)
     Return FlagByBool(SandowPP.PresetManager.Exists() && SandowPP.PresetManager.ProfileExists(aPresetNum))
-    ;If SandowPP.PresetManager.Exists() && SandowPP.PresetManager.ProfileExists(aPresetNum)
-    ;    Return OPTION_FLAG_NONE
-    ;Else
-    ;    Return OPTION_FLAG_DISABLED
-    ;EndIf
 EndFunction
 
 Function SavePreset(int aPresetNum)

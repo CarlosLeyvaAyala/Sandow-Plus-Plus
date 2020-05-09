@@ -154,7 +154,10 @@ int Property rtWidget
     EndFunction
 EndProperty
 
-; ==============================
+; #########################################################
+; ###                       WIDGET                      ###
+; #########################################################
+
 float Property rwUpdateTime
     Function set(float val)
         If val == 0.0

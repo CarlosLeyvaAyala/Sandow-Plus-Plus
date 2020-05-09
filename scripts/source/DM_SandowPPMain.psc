@@ -14,6 +14,11 @@ Import DM_SandowPP_SkeletonNodes
 DM_SandowPP_WeightTraining Property WeightTraining Auto
 DM_SandowPP_Items Property Items Auto
 
+Spell Property rippedSpell Auto
+{Spell to make the player ripped}
+DM_SandowPP_TextureMngr Property texMngr Auto
+{Texture manager that applies ripped textures to actors}
+
 DM_SandowPP_Config Property Config auto
 DM_SandowPP_State Property CurrentState Auto
 DM_SandowPP_HeightChanger Property HeightChanger Auto
@@ -38,16 +43,22 @@ DM_SandowPP_Report Property Report
 EndProperty
 
 DM_SandowPP_AlgorithmPause Property AlgoPause Auto
+{Paused Behavior}
 DM_SandowPP_AlgoWCSandow Property AlgoWCSandow Auto
+{Sandow++ Behavior}
 DM_SandowPP_AlgoWCPumping Property AlgoWCPumping Auto
+{Pumping Iron Behavior}
 
 DM_SandowPP_Algorithm Property Algorithm
+    {Current Behavior}
     DM_SandowPP_Algorithm Function get()
         Return _algorithm
     EndFunction
 EndProperty
 
 DM_SandowPP_AlgorithmData Property AlgorithmData Auto
+{Composite object that carries all data needed for this mod to work}
+
 
 ; ########################################################################
 ; Internal variables used to keep track of this mod state
@@ -71,77 +82,34 @@ Function ChangeHeadSize()
     EndIf
 EndFunction
 
-function t(int index, string area)
-    int i = NiOverride.GetNumBodyOverlays()
-    While i > 0
-    i -= 1
-    Trace("Overlay" + i + " " + NiOverride.GetNodeOverrideString(Player, true, Area + " [ovl" + i + "]", 9, index))
-    EndWhile
-EndFunction
-
-Function Test()
-    Trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    string tx = "textures\\actors\\character\\female\\600 extreme.dds"
-    txset()
-    ; int idx = 0
-    ; ts(idx)
-    ; NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, idx, tx, true)
-    ; NiOverride.ApplySkinOverrides(Player)
-    ; ts(idx)
-    
-    Trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-EndFunction
-
 function txset()
+    ; You should use a property to get this texture set. This is just for testing.
     TextureSet tx = Game.GetFormFromFile(0x01000800, "SandowPP - Ripped Bodies.esp") as TextureSet
-    RaceMenu r = Game.GetFormFromFile(0x01000800, "RaceMenu.esp") as RaceMenu
-    ; TextureSet tx = Game.GetFormFromFile(0x01000802, "SandowPP - Ripped Bodies.esp") as TextureSet
-    ; TextureSet tx = Game.GetFormFromFile(0x01000807, "SandowPP - Ripped Bodies.esp") as TextureSet
-    Trace(r)
-    Trace(tx)
-    ; rgb = NiOverride.GetNodePropertyInt(_targetActor, false, nodeName, 7, -1)
-    int idx = -1
+    ; Index is irrelevant for all these specific operations. It's **somewhat** documented in the NiOverride source code.
+    int irrelevant = -1
+    ; It NEEDS to be this override layer (is that called like that? No info anywhere). Don't ask me why it doesn't work with other nodes, like "Body [Ovl0]" et al.
     string node = "Body [Ovl5]"
+    ; Get the skin tint color of the Actor to reapply it soon
     int skinColor = NiOverride.GetSkinPropertyInt(player, false, 4, 7, -1)
-    Trace("Skin base? " + NiOverride.GetSkinPropertyInt(player, false, 4, 7, -1))
-    Trace("Skin base? 1st " + NiOverride.GetSkinPropertyInt(player, true, 4, 7, -1))
-    Trace("Skin override " + NiOverride.GetNodePropertyInt(player, false, node, 7, -1))
-    Trace(node)
-    NiOverride.AddNodeOverrideFloat(Player, true,  node, 8, idx, 0, true)
-    NiOverride.AddNodeOverrideTextureSet(Player, true, node, 6, idx, tx, true)
-    NiOverride.AddNodeOverrideFloat(Player, true,  node, 8, idx, 0.5, true)
-    NiOverride.AddNodeOverrideInt(Player, true,  node, 7, idx, skinColor, true)
-	r.Reinitialize()
-
-    ; NiOverride.ApplyNodeOverrides(player)
-    Player.QueueNiNodeUpdate()
+    ; Add the texture set we want to show
+    NiOverride.AddNodeOverrideTextureSet(Player, true, node, 6, irrelevant, tx, true)
+    NiOverride.AddNodeOverrideFloat(Player, true,  node, 8, irrelevant, _ta, true)
+    ; Last operation resets the skin tint color to white, making the character's body pale. Restore the color we got earlier.
+    NiOverride.AddNodeOverrideInt(Player, true,  node, 7, irrelevant, skinColor, true)
+    ; Profit! Have a nice day.
 EndFunction
 
-function ts(int idx)
-    Trace("GetSkinPropertyString " + NiOverride.GetSkinPropertyString(Player, false, 0x04, 9, idx))
-    Trace("GetSkinOverrideString " + NiOverride.GetSkinOverrideString(Player, true, false, 0x04, 9, idx))
-EndFunction
-
-function ovDiffuse(string tx)
-    String Area = "Body"
-    String Node = Area + " [ovl" + 5 + "]"
-    int index = 1
-    
-    Trace(NiOverride.GetNumBodyOverlays())
-    Trace("Before")
-    t(index, area)
-    NiOverride.AddNodeOverrideString(Player, true, Node, 9, index, tx, true)
-    NiOverride.AddNodeOverrideFloat(Player, true,  node, 9, index, 1.0, true)
-    Player.QueueNiNodeUpdate()
-    NiOverride.ApplyNodeOverrides(player)
-    Trace("After")
-    t(index, area)
+float _ta = 0.0
+function la()
+    int t = Math.floor(_ta * 100)
+    t = (t + 5) % 100
+    _ta = t / 100.0
+    Trace("@@@@@@@@@@@@@@@@ a = " + _ta)
+    NiOverride.AddNodeOverrideFloat(Player, true,  "Body [Ovl5]", 8, -1, _ta, true)
 EndFunction
 
 Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
-        Test()
-        ChangeHeadSize()
         Algorithm.ReportOnHotkey(AlgorithmData)
     EndIf
 EndEvent
@@ -208,11 +176,27 @@ Function OnGameReload()
     RegisterEvents()
     PrepareAlgorithmData()    
     HeightChanger.ReapplyHeight()
+    txset()
+    Player.AddSpell(rippedSpell)
 EndFunction
+
+Event SexLabEnter(string eventName, string argString, float argNum, form sender)
+    {Sexlab integration}
+	; sslThreadController c = sender as sslThreadController
+	; If !c || !c.HasPlayer 
+	; 	return
+	; EndIf
+
+    CurrentState.LastSkillGainTime = Now()
+EndEvent
 
 Function RegisterEvents()
     { Register all events needed for this to work }
     HeightChanger.RegisterEvents()
+    If Game.GetModByName("SexLab.esm") != 255
+        ; SexLab = Game.GetFormFromFile(0x00D62, "SexLab.esm") as Quest
+        ; RegisterForModEvent("AnimationStart", "SexLabEnter")
+    EndIf   
 EndFunction
 
 Function Configure()

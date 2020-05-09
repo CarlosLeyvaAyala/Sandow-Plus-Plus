@@ -200,7 +200,6 @@ Function TweenAllToNewPos()
     EndWhile
 EndFunction
 
-
 Function NotifyWithText(DM_SandowPP_ReportArgs args)
     {Player may want to know how much his stats have changed}
     If args.aType == mtDown || args.aType == mtUp

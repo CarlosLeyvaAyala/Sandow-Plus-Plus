@@ -147,3 +147,7 @@ int Function IndexOfS(string[] aArray, string s) Global
     EndWhile
     Return -1
 EndFunction
+
+string Function GetActorName(Actor aActor) Global
+    return (aActor.GetActorBase() as Form).GetName()
+EndFunction

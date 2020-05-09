@@ -66,21 +66,21 @@ Function SaveSkills(string f, DM_SandowPP_Config config)
 EndFunction
 
 Function LoadSkills(string f)
-    ConfigResults.skillRatioAr = GetFloatValue(f, "skillRatioAr")
-    ConfigResults.skillRatioBl = GetFloatValue(f, "skillRatioBl")
-    ConfigResults.skillRatioHa = GetFloatValue(f, "skillRatioHa")
-    ConfigResults.skillRatioLa = GetFloatValue(f, "skillRatioLa")
-    ConfigResults.skillRatio1H = GetFloatValue(f, "skillRatio1H")
-    ConfigResults.skillRatioSm = GetFloatValue(f, "skillRatioSm")
-    ConfigResults.skillRatioSn = GetFloatValue(f, "skillRatioSn")
-    ConfigResults.skillRatio2H = GetFloatValue(f, "skillRatio2H")
+    ConfigResults.skillRatioAr      = GetFloatValue(f, "skillRatioAr")
+    ConfigResults.skillRatioBl      = GetFloatValue(f, "skillRatioBl")
+    ConfigResults.skillRatioHa      = GetFloatValue(f, "skillRatioHa")
+    ConfigResults.skillRatioLa      = GetFloatValue(f, "skillRatioLa")
+    ConfigResults.skillRatio1H      = GetFloatValue(f, "skillRatio1H")
+    ConfigResults.skillRatioSm      = GetFloatValue(f, "skillRatioSm")
+    ConfigResults.skillRatioSn      = GetFloatValue(f, "skillRatioSn")
+    ConfigResults.skillRatio2H      = GetFloatValue(f, "skillRatio2H")
     
-    ConfigResults.skillRatioAl = GetFloatValue(f, "skillRatioAl")
-    ConfigResults.skillRatioCo = GetFloatValue(f, "skillRatioCo")
-    ConfigResults.skillRatioDe = GetFloatValue(f, "skillRatioDe")
-    ConfigResults.skillRatioIl = GetFloatValue(f, "skillRatioIl")
-    ConfigResults.skillRatioRe = GetFloatValue(f, "skillRatioRe")
-    ConfigResults.physFatigueRate = GetFloatValue(f, "physFatigueRate")
+    ConfigResults.skillRatioAl      = GetFloatValue(f, "skillRatioAl")
+    ConfigResults.skillRatioCo      = GetFloatValue(f, "skillRatioCo")
+    ConfigResults.skillRatioDe      = GetFloatValue(f, "skillRatioDe")
+    ConfigResults.skillRatioIl      = GetFloatValue(f, "skillRatioIl")
+    ConfigResults.skillRatioRe      = GetFloatValue(f, "skillRatioRe")
+    ConfigResults.physFatigueRate   = GetFloatValue(f, "physFatigueRate")
 EndFunction
 
 Function SaveReports(string f, DM_SandowPP_Config config)
@@ -90,9 +90,9 @@ Function SaveReports(string f, DM_SandowPP_Config config)
 EndFunction
 
 Function LoadReports(string f)
-    ConfigResults.HkShowStatus = GetIntValue(f, "HkShowStatus", -1)
-    ConfigResults.VerboseMod = GetIntValue(f, "VerboseMod")
-    ConfigResults.ReportType = GetIntValue(f, "ReportType")
+    ConfigResults.HkShowStatus  = GetIntValue(f, "HkShowStatus", -1)
+    ConfigResults.VerboseMod    = GetIntValue(f, "VerboseMod")
+    ConfigResults.ReportType    = GetIntValue(f, "ReportType")
 EndFunction
 
 Function SaveOtherConfig(string f, DM_SandowPP_Config config)
@@ -107,14 +107,14 @@ Function SaveOtherConfig(string f, DM_SandowPP_Config config)
 EndFunction
 
 Function LoadOtherConfig(string f)
-    ConfigResults.PresetManager = GetIntValue(f, "PresetManager")
-    ConfigResults.weightGainRate = GetFloatValue(f, "weightGainRate", 1.0)
-    ConfigResults.CanGainHeight = GetIntValue(f, "CanGainHeight")
-    ConfigResults.HeightMax = GetFloatValue(f, "HeightMax", 0.06)
-    ConfigResults.HeightDaysToGrow = GetIntValue(f, "HeightDaysToGrow", 120)
-    ConfigResults.CanResizeHead = GetIntValue(f, "CanResizeHead")
-    ConfigResults.HeadSizeMin = GetFloatValue(f, "HeadSizeMin", 1.0)
-    ConfigResults.HeadSizeMax = GetFloatValue(f, "HeadSizeMax", 1.0)
+    ConfigResults.PresetManager     = GetIntValue(f, "PresetManager")
+    ConfigResults.weightGainRate    = GetFloatValue(f, "weightGainRate", 1.0)
+    ConfigResults.CanGainHeight     = GetIntValue(f, "CanGainHeight")
+    ConfigResults.HeightMax         = GetFloatValue(f, "HeightMax", 0.06)
+    ConfigResults.HeightDaysToGrow  = GetIntValue(f, "HeightDaysToGrow", 120)
+    ConfigResults.CanResizeHead     = GetIntValue(f, "CanResizeHead")
+    ConfigResults.HeadSizeMin       = GetFloatValue(f, "HeadSizeMin", 1.0)
+    ConfigResults.HeadSizeMax       = GetFloatValue(f, "HeadSizeMax", 1.0)
 EndFunction
 
 Function SaveMainConfig(string f, DM_SandowPP_Config config)
@@ -126,11 +126,11 @@ Function SaveMainConfig(string f, DM_SandowPP_Config config)
 EndFunction
 
 Function LoadMainConfig(string f)
-    ConfigResults.Behavior = GetIntValue(f, "Behavior")
-    ConfigResults.CanLoseWeight = GetIntValue(f, "CanLoseWeight")
-    ConfigResults.DiminishingReturns = GetIntValue(f, "DiminishingReturns")
-    ConfigResults.CanReboundWeight = GetIntValue(f, "CanReboundWeight")
-    ConfigResults.HungerAffectsGains = GetIntValue(f, "HungerAffectsGains")
+    ConfigResults.Behavior              = GetIntValue(f, "Behavior")
+    ConfigResults.CanLoseWeight         = GetIntValue(f, "CanLoseWeight")
+    ConfigResults.DiminishingReturns    = GetIntValue(f, "DiminishingReturns")
+    ConfigResults.CanReboundWeight      = GetIntValue(f, "CanReboundWeight")
+    ConfigResults.HungerAffectsGains    = GetIntValue(f, "HungerAffectsGains")
 EndFunction
 
 Function SaveWidget(string f, DM_SandowPP_Config config)
