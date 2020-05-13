@@ -15,6 +15,7 @@ Function Debug(Actor akTarget)
     LoadValidRaces()
     debug.messagebox("Exito "+ DM_Utils.GetActorName(akTarget) + " " + actorRace + " " + _validRaces)
     trace(_validRaces)
+    trace(DM_Utils.now())
 EndFunction
 
 Function LoadValidRaces()

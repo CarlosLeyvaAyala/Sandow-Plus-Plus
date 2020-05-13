@@ -1,0 +1,55 @@
+<?xml version='1.0'?><!-- Game is either sse, tesv, or fo4 -->
+<PapyrusProject xmlns="PapyrusProject.xsd" 
+    Flags="TESV_Papyrus_Flags.flg" 
+    Game="sse" 
+    Output="Scripts" 
+    Optimize="true" 
+    Anonymize="true" 
+    Package="true"
+    Release="true" 
+    Zip="true" 
+    Final="false">
+
+    <Variables>
+        <Variable Name="mod" Value="Sandow Plus Plus"/>
+        <Variable Name="esp" Value="SandowPP"/>
+        <Variable Name="version" Value="3.2"/>
+        <Variable Name="releaseDir" Value="D:\Skyrim SE\MO2\mods\Sandow-Plus-Plus-Src"/>
+        <Variable Name="backupDir" Value=".\_ignore\_backups\"/>
+        <Variable Name="lib" Value="D:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"/>
+    </Variables>
+
+    <Imports>
+        <Import>.\Scripts\Source</Import>
+        <Import>D:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition\Data\Scripts\Source</Import>
+        <Import>D:\Skyrim SE\MO2\mods\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
+        <Import>D:\Skyrim SE\MO2\mods\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
+        <Import>D:\Skyrim SE\MO2\mods\RaceMenu\scripts\source</Import>
+        <Import>D:\Skyrim SE\MO2\mods\SexLabFrameworkSE v163 BETA8\scripts\</Import>
+        <Import>@lib\Source</Import>
+    </Imports>
+    <Folders>
+        <Folder>.\Scripts\Source</Folder>
+    </Folders>
+
+    <Packages Output="./@backupDir">
+        <Package Name="@esp @version" RootDir="./">
+            <Include NoRecurse="false">scripts</Include>
+            <Include NoRecurse="false">interface</Include>
+            <Include NoRecurse="false">*.esp</Include>
+        </Package>
+    </Packages>
+
+    <!-- Release -->
+    <ZipFile
+    Name="@mod"
+    RootDir="./"
+    Output="@releaseDir"
+    Compression="deflate">
+        <Include NoRecurse="true">@esp.esp</Include>
+        <Include NoRecurse="false">interface</Include>
+        <Include NoRecurse="true">scripts</Include>
+        <Include NoRecurse="false">SKSE</Include>
+    </ZipFile>
+</PapyrusProject>
+

@@ -4,6 +4,17 @@ Gain weight (muscles) as you play.
 
 You can find this mod at the [Nexus](https://www.nexusmods.com/skyrimspecialedition/mods/32579) (***WARNING: NFSW-ish pics***)
 
+## Dependencies
+If you are building this mod you also need to use:
+- My [library]
+(https://github.com/CarlosLeyvaAyala/DM-SkyrimSE-Library.git).
+
+Also, these files come from [SkyUI](https://github.com/schlangster/skyui.git) and they are here only to build the project. ***Don't distribute this mod with them***:
+- SKI_WidgetBase
+- SKI_WidgetManager
+
+These were directly added because using the whole repo as a submodule for only two scripts that were last updated in 2015 is overkill. 
+
 ## Features
 - Train and sleep to gain weight.
 - Every time a certain skill goes up, you get `Weight Gain Potential (WGP)`, which transforms to weight when you sleep.

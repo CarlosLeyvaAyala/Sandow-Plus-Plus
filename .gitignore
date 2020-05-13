@@ -1,6 +1,10 @@
+# Pulling this project to an existing folder:
+# git init
+# git remote add origin "https://github.com/CarlosLeyvaAyala/Sandow-Plus-Plus.git"
+# git pull origin master
+
 _ignore/*
 *.code-workspace
-*.ppj
 tasks.json
 *.pex
 *.zip
