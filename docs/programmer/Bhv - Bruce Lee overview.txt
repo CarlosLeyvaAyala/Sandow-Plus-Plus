@@ -1,0 +1,79 @@
+========================
+Overview for players
+========================
+* You become ripped by doing excercise and sleeping (TODO: when
+eating properly; ie. not too much, not too few).
+* How fast you get ripped depends on how heavy you are; thinner players
+get ripped faster.
+* You lose muscle definition by inactivity and lack of sleep (TODO:
+by over/under eating). Inactivity is worse than lack of sleep.
+	The more you weight, the less harsh the penalty (because muscles give
+	you some room to caloric expenditure IRL)
+* You must workout every day.
+
+For this behavior NiOverride (included in Racemenu) is required.
+
+========================
+Overview for programmers
+========================
+* This behavior has a private variable that keeps track of the player's
+total training points.
+* Player's definition percent (alpha for the ripped texture set) is:
+		alpha = training / ripped formula
+* Ripped formulas
+		Original (first approach. "Realistic")
+			(12.5 * e^(0.037 * Weight) + 30) / 1.25
+
+		Simplified original (not exactly the same as original,
+		but close enough)
+			10 * e^(0.037 * Weight) + 25
+
+		Fun 1 (first approach. Game feasible)
+			3.2 * e^(0.037 * Weight) + 22
+
+		Fun 2 (probably best game feasible formula)
+			32 * e^(0.015 * Weight) - 5
+
+* Player can only win a max of 1.0 training points when sleeping. Sleep
+gains cap at 10 hours.
+* Max Inactivity time = 24
+* Penalties for lack of sleep
+		When been awaken < 18 hrs				No penalty
+		When been awaken => 18 but < 26			X-Small penalty
+			awaken / 120
+		When been awaken => 26					Small penalty
+			awaken / 100		(caps at 1.2)
+* Penalties for inactivity
+		When inactive >= 24 hrs					Exponential penalty
+			0.108 * e^(0.052 * inactivity) + 0.15		cap at 16
+* Weight penalty modifier
+		-0.2 * e^(0.0153 * weight) + 0.122
+
+========================
+Algoritms
+========================
+When entering this behavior
+	Apply behavior texture set
+	Clear CurrentState.WGP
+
+When exiting this behavior
+	Set texture set alpha to 0
+	Restore former WGP
+
+Apply behavior texture set
+	Tell the texture set manager to apply the ripped texture set
+	if the manager could apply it
+		Tell the manager to apply the alpha calculated by this behavior
+
+When sleeping
+	Calculate gains or loses
+	Tell the manager to apply the alpha calculated by this behavior
+
+Calculate gains
+	CurrentState.WGP = Min(1.0, CurrentState.WGP)
+	training for today = CurrentState.WGP * Capped sleeping time * 0.1
+	CurrentState.WGP -= training for today
+	training += training for today
+
+Calculate alpha
+	Long as hell formula (realistic one) ->  12.5 * e^(0.037 * Weight) + 30

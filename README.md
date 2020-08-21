@@ -6,8 +6,9 @@ You can find this mod at the [Nexus](https://www.nexusmods.com/skyrimspecialedit
 
 ## Dependencies
 If you are building this mod you also need to use:
-- My [library]
-(https://github.com/CarlosLeyvaAyala/DM-SkyrimSE-Library.git).
+- My [library](https://github.com/CarlosLeyvaAyala/DM-SkyrimSE-Library.git).
+
+***THAT LIBRARY IS NOT OPTIONAL***. This mod will simply fail without it.
 
 Also, these files come from [SkyUI](https://github.com/schlangster/skyui.git) and they are here only to build the project. ***Don't distribute this mod with them***:
 - SKI_WidgetBase

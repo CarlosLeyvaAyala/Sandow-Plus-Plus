@@ -232,7 +232,8 @@ float Function AdjustIfCatabolic(float fatigue, float aHoursAwaken)
 
     if fatigue > CatabolicThreshold
         float t = EnsurePositiveF(aHoursAwaken - FatigueCatabolicHours)
-        Return CatabolicThreshold * Pow(FatigueCatabolicRate, t)
+        ; BETA: Ensure this never goes over 1000%
+        Return MinF(10, CatabolicThreshold * Pow(FatigueCatabolicRate, t))
     endif
     Return fatigue
 EndFunction

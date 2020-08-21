@@ -39,17 +39,5 @@
             <Include NoRecurse="false">*.esp</Include>
         </Package>
     </Packages>
-
-    <!-- Release -->
-    <ZipFile
-    Name="@mod"
-    RootDir="./"
-    Output="@releaseDir"
-    Compression="deflate">
-        <Include NoRecurse="true">@esp.esp</Include>
-        <Include NoRecurse="false">interface</Include>
-        <Include NoRecurse="true">scripts</Include>
-        <Include NoRecurse="false">SKSE</Include>
-    </ZipFile>
 </PapyrusProject>
 

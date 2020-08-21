@@ -96,6 +96,7 @@ Event OnConfigInit()
     _behaviors[Config.bhPause] = "$MCM_PausedBehavior"
     _behaviors[Config.bhSandowPP] = "Sandow Plus Plus"
     _behaviors[Config.bhPumpingIron] = "Pumping Iron"
+    _behaviors[Config.bhBruce] = "Bruce Lee"
 
     _presetManagers = new string[3]
     _presetManagers[Config.pmNone] = "$None"
@@ -140,7 +141,7 @@ Function PageMain()
     int pos = PageMainReports(0)
     int pos2 = PageMainConfiguration(pos)
     PageMainItems(pos2)
-    
+
     PageMainStats(1)
     PageMainOtherOptions(pos + 1)
 EndFunction
@@ -328,7 +329,7 @@ int Function PageMainOtherOptions(int pos)
     ;AddEmptyOption()
     AddHeaderOption("<font color='#daa520'>$Other options</font>")
     AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Config.PresetManager])
-    
+
     AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Config.weightGainRate), slFmt0)
 
     AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Config.CanGainHeight)
@@ -339,7 +340,7 @@ int Function PageMainOtherOptions(int pos)
     AddToggleOptionST("TG_HEADSZ", "$MCM_HeadSz_Bool", Config.CanResizeHead, flags)
     AddSliderOptionST("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Config.HeadSizeMin, slFmt2r, flags)
     AddSliderOptionST("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Config.HeadSizeMax, slFmt2r, flags)
-    
+
     Return pos + ToNewPos(8)
 EndFunction
 
@@ -424,22 +425,22 @@ State SL_HEIGHTMAX
         SetSliderDialogDefaultValue(val)
         SetSliderDialogRange(FloatToPercent(0.01), FloatToPercent(0.2))
         SetSliderDialogInterval(FloatToPercent(0.01))
-    EndEvent    
+    EndEvent
 
     Event OnSliderAcceptST(float val)
         SandowPP.Config.HeightMax =  PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
-    EndEvent    
+    EndEvent
 
     Event OnDefaultST()
         SandowPP.Config.HeightMax = 0.06
         SetSliderOptionValueST(FloatToPercent(SandowPP.Config.HeightMax), slFmt0)
-    EndEvent    
+    EndEvent
 
     Event OnHighlightST()
         SetInfoText("$MCM_MaxHeightInfo")
-    EndEvent    
-EndState    
+    EndEvent
+EndState
 
 State SL_HEIGHTDAYS
     Event OnSliderOpenST()
