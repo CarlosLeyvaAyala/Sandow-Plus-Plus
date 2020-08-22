@@ -1,23 +1,23 @@
-Scriptname DM_SandowPP_Globals Hidden 
+Scriptname DM_SandowPP_Globals Hidden
 
 ; Message colors
 int Function clDefault() Global
-    Return 0xFFFFFF 
+    Return 0xFFFFFF
 EndFunction
 int Function clDown() Global
-    Return 0xcc0000 
+    Return 0xcc0000
 EndFunction
 int Function clUp() Global
-    Return 0x4f8a35 
+    Return 0x4f8a35
 EndFunction
 int Function clWarning() Global
-    Return 0xffd966 
+    Return 0xffd966
 EndFunction
 int Function clDanger() Global
-    Return 0xff6d01 
+    Return 0xff6d01
 EndFunction
 int Function clCritical() Global
-    Return 0xff0000 
+    Return 0xff0000
 EndFunction
 
 int Function ModMajorVersion() Global
@@ -25,7 +25,7 @@ int Function ModMajorVersion() Global
 EndFunction
 
 int Function ModMinorVersion() Global
-    Return 1
+    Return 2
 EndFunction
 
 int Function ModPatchVersion() Global

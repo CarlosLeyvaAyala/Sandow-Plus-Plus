@@ -3,12 +3,12 @@ Scriptname DM_SandowPP_TextureMngr Extends Quest
 
 Import DM_SandowPP_Globals
 
-; DM_SandowPPMain Property Owner Auto 
+; DM_SandowPPMain Property Owner Auto
 Actor property Player auto
 TextureSet Property femaleTexSet Auto
 TextureSet Property maleTexSet Auto
 
-string[] _validRaces 
+string[] _validRaces
 
 Function Debug(Actor akTarget)
     string actorRace = MiscUtil.GetActorRaceEditorID(akTarget)
@@ -19,12 +19,15 @@ Function Debug(Actor akTarget)
 EndFunction
 
 Function LoadValidRaces()
+    {Loads an array of races that can be ripped.}
     string f = "../Sandow Plus Plus/Ripped Races.json"
+    ; Read this from an external *.json to easily patch.
     _validRaces = Utility.CreateStringArray(JsonUtil.GetIntValue(f, "dataSize"))
     _validRaces = JsonUtil.StringListToArray(f, "validRaces")
 EndFunction
 
 Function  SaveRacesTest()
+    ; ************************ DELETE THIS *****************************
     ; Saving an array with uninitialized indexes cause CTDs
     string[] races = new string[2]
     races[0] = "BretonRace"
@@ -36,13 +39,14 @@ Function  SaveRacesTest()
 EndFunction
 
 Function InitData()
-    {Initializes this script}
+    {Initializes this script. Call this on game reload.}
+    LoadValidRaces()
 EndFunction
 
-bool Function IsValidRace()
+bool Function IsValidRace(Actor akTarget)
     {Applies the texture set only to adult humanoids.}
-    ; Read this from a *.json to easily patch.
-    ; BretonRace
+    string actorRace = MiscUtil.GetActorRaceEditorID(akTarget)
+    ; Search in races array
 EndFunction
 
 Function SelectTextureSet()

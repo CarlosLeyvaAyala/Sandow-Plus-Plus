@@ -47,14 +47,18 @@ string Property slFmt2r = "{2}" AutoReadOnly
 
 string _ppMain = "$Main"
 string _ppSkills = "$Skills"
-string _ppProfiles = "$Presets"
+string _ppRipped = "$Ripped"
 string _ppWidget = "$Widget"
+string _ppProfiles = "$Presets"
+string _ppCompat = "$Compat"
 
 string[] _reports
 string[] _behaviors
 string[] _presetManagers
 string[] _vAlign
 string[] _hAlign
+string[] _rippedPlayer
+
 
 
 ; #########################################################
@@ -64,18 +68,21 @@ string[] _hAlign
 int function GetVersion()
     {Mod 2.1+ needs to update version}
     ; 3 = added Paused behavior
-    ; 4 = added Bruce Lee behavior
-    return 3
+    ; 4 = added Bruce Lee behavior. FISS deprecated.
+    ; 5 = added Compatibility tab. FISS dropped.
+    return 4
 endFunction
 
 Event OnConfigInit()
     Config = SandowPP.Config
 
-    Pages = new string[4]
+    Pages = new string[5]
     Pages[0] = _ppMain
     Pages[1] = _ppSkills
-    Pages[2] = _ppWidget
-    Pages[3] = _ppProfiles
+    Pages[2] = _ppRipped
+    Pages[3] = _ppWidget
+    Pages[4] = _ppProfiles
+    ; Pages[5] = _ppCompat
 
     _hAlign = new string[3]
     _hAlign[0] = "left"
@@ -101,7 +108,14 @@ Event OnConfigInit()
     _presetManagers = new string[3]
     _presetManagers[Config.pmNone] = "$None"
     _presetManagers[Config.pmPapyrusUtil] = "Papyrus Util"
-    _presetManagers[Config.pmFISS] = "FISS"
+    _presetManagers[Config.pmFISS] = "FISS -deprecated-"
+
+    _rippedPlayer = new string[5]
+    _rippedPlayer[0] = "$None"
+    _rippedPlayer[1] = "$Constant"
+    _rippedPlayer[2] = "$By weight"
+    _rippedPlayer[3] = "$By weight inv"
+    _rippedPlayer[4] = "$By behavior"
 EndEvent
 
 event OnVersionUpdate(int aVersion)
@@ -116,6 +130,8 @@ event OnPageReset(string aPage)
         PageProfiles()
     ElseIf aPage == _ppWidget
         PageWidget()
+    ElseIf aPage == _ppRipped
+        PageRipped()
     ElseIf aPage == _ppSkills
         PageSkills()
     Else
@@ -384,7 +400,7 @@ EndFunction
 State SL_WEIGHTMULT
     Event OnSliderOpenST()
         float val = FloatToPercent(SandowPP.Config.weightGainRate)
-        CreateSlider(val, 10, 200, 10)
+        CreateSlider(val, 10, 300, 10)
     EndEvent
 
     Event OnSliderAcceptST(float val)
@@ -762,9 +778,7 @@ EndState
 
 Function PageSkills()
     SetCursorFillMode(TOP_TO_BOTTOM)
-
     int flag = DisableSkills()
-
     ;================================
     SetCursorPosition(0)
     AddHeaderOption("<font color='#daa520'>$MCM_WGPHeader</font>")
@@ -1038,6 +1052,51 @@ State SL_FP
     EndEvent
 EndState
 
+
+; #########################################################
+; ###                       RIPPED                      ###
+; #########################################################
+Function PageRipped()
+    SetCursorFillMode(TOP_TO_BOTTOM)
+
+    AddHeaderOption("<font color='#daa520'>$Player</font>")
+    AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayer[Config.PresetManager])
+    AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", Config.CanGainHeight)
+    AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", FloatToPercent(Config.weightGainRate), slFmt0)
+    AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayer[Config.PresetManager])
+EndFunction
+
+State MN_RippedPlayerOpt
+    Event OnMenuOpenST()
+        ; Start, default, options
+        OpenMenu(0, 0, _rippedPlayer)
+    EndEvent
+
+    Event OnMenuAcceptST(int index)
+        ; If Config.Behavior == index
+        ;     Return
+        ; EndIf
+        ; Config.Behavior = index
+        ; SetMenuOptionValueST(_behaviors[Config.Behavior])
+        ; If Config.IsPumpingIron()
+        ;     ShowMessage("$MCM_PIResetSkills")
+        ; EndIf
+        ForcePageReset()
+    EndEvent
+
+    Event OnDefaultST()
+        ; If Config.Behavior == Config.bhSandowPP
+        ;     Return
+        ; EndIf
+        ; Config.Behavior = Config.bhSandowPP
+        ; SetMenuOptionValueST(_behaviors[Config.Behavior])
+        ForcePageReset()
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_RippedApplyInfo{" + SandowPP.Algorithm.MCMInfo() + "}")
+    EndEvent
+EndState
 
 ; #########################################################
 ; ###                       PRESETS                     ###

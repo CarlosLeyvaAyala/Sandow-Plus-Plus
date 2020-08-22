@@ -1,13 +1,13 @@
 <?xml version='1.0'?><!-- Game is either sse, tesv, or fo4 -->
-<PapyrusProject xmlns="PapyrusProject.xsd" 
-    Flags="TESV_Papyrus_Flags.flg" 
-    Game="sse" 
-    Output="Scripts" 
-    Optimize="true" 
-    Anonymize="true" 
-    Package="true"
-    Release="true" 
-    Zip="true" 
+<PapyrusProject xmlns="PapyrusProject.xsd"
+    Flags="TESV_Papyrus_Flags.flg"
+    Game="sse"
+    Output="Scripts"
+    Optimize="true"
+    Anonymize="true"
+    Package="false"
+    Release="true"
+    Zip="false"
     Final="false">
 
     <Variables>
@@ -17,15 +17,16 @@
         <Variable Name="releaseDir" Value="D:\Skyrim SE\MO2\mods\Sandow-Plus-Plus-Src"/>
         <Variable Name="backupDir" Value=".\_ignore\_backups\"/>
         <Variable Name="lib" Value="D:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"/>
+        <Variable Name="MO" Value="D:\Skyrim SE\MO2\mods"/>
     </Variables>
 
     <Imports>
         <Import>.\Scripts\Source</Import>
         <Import>D:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition\Data\Scripts\Source</Import>
-        <Import>D:\Skyrim SE\MO2\mods\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
-        <Import>D:\Skyrim SE\MO2\mods\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
-        <Import>D:\Skyrim SE\MO2\mods\RaceMenu\scripts\source</Import>
-        <Import>D:\Skyrim SE\MO2\mods\SexLabFrameworkSE v163 BETA8\scripts\</Import>
+        <Import>@MO\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
+        <Import>@MO\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
+        <Import>@MO\RaceMenu\scripts\source</Import>
+        <Import>@MO\SexLabFrameworkSE v163 BETA8\scripts\</Import>
         <Import>@lib\Source</Import>
     </Imports>
     <Folders>
@@ -40,4 +41,3 @@
         </Package>
     </Packages>
 </PapyrusProject>
-
