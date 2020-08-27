@@ -43,7 +43,8 @@ Function OpenLog() Global
     If Skse.GetVersionRelease() == 0
         Trace("$TraceNotFound{" + "SKSE64" + "}", 3)
     EndIf
-    If game.GetModByName("SkyUI_SE.esp") == 255
+    ; If game.GetModByName("SkyUI_SE.esp") == 255
+    If !game.IsPluginInstalled("SkyUI_SE.esp")
         Trace("$TraceNotFound{" + "SkyUI" + "}", 3)
     EndIf
 EndFunction

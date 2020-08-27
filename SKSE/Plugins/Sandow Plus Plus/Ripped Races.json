@@ -1,9 +1,11 @@
 {
 	"int": {
-		"datasize": 16
+		"humanlistsize": 16,
+		"catlistsize": 2,
+		"lizardlistsize": 2
 	},
 	"stringList": {
-		"validraces": [
+		"humanoids": [
 			"BretonRace",
 			"BretonRaceVampire",
 			"DarkElfRace",
@@ -20,6 +22,14 @@
 			"RedguardRaceVampire",
 			"WoodElfRace",
 			"WoodElfRaceVampire"
-		]
+		],		
+		"cats": [
+			"KhajiitRace",
+			"KhajiitRaceVampire"
+		],
+		"lizards": [
+			"ArgonianRace",
+			"ArgonianRaceVampire"
+		]		
 	}
 }

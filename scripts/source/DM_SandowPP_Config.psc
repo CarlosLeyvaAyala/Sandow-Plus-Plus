@@ -155,6 +155,50 @@ int Property rtWidget
 EndProperty
 
 ; #########################################################
+; ###                       RIPPED                      ###
+; #########################################################
+
+; ==============================
+; Player options
+int Property rpmNone = 0 AutoReadOnly
+int Property rpmConst = 1 AutoReadOnly
+int Property rpmWeight = 2 AutoReadOnly
+int Property rpmWInv = 3 AutoReadOnly
+int Property rpmBhv = 4 AutoReadOnly
+
+int Property bulkSPP = 0 AutoReadOnly
+int Property bulkPI = 1 AutoReadOnly
+
+int Property RippedPlayerMethod = 0 Auto
+bool Property RippedPlayerBulkCut = false Auto
+int Property RippedPlayerBulkCutDays = 4 Auto
+int Property RippedPlayerBulkCutBhv = 0 Auto
+float Property RippedPlayerConstLvl = 1.0 Auto
+
+string Function RippedPlayerMethodInfo()
+    If RippedPlayerMethod == 0
+        return "$MCM_RippedApplyInfoNone"
+    ElseIf (RippedPlayerMethod == 1)
+        return "$MCM_RippedApplyInfoConstant"
+    ElseIf (RippedPlayerMethod == 2)
+        return "$MCM_RippedApplyInfoWeight"
+    ElseIf (RippedPlayerMethod == 3)
+        return "$MCM_RippedApplyInfoWeightInv"
+    Else
+        return "$MCM_RippedApplyInfoBhv"
+    EndIf
+EndFunction
+
+bool Function RippedPlayerMethodIsConst()
+    return RippedPlayerMethod == rpmConst
+EndFunction
+
+bool Function RippedPlayerMethodIsBehavior()
+    return RippedPlayerMethod == rpmBhv
+EndFunction
+
+
+; #########################################################
 ; ###                       WIDGET                      ###
 ; #########################################################
 

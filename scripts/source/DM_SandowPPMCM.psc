@@ -7,6 +7,7 @@ Import DM_SandowPP_Globals
 Import DM_SandowPP_SkeletonNodes
 
 DM_SandowPPMain property SandowPP auto
+DM_SandowPPMain SPP
 DM_SandowPP_Config Config
 
 
@@ -57,8 +58,8 @@ string[] _behaviors
 string[] _presetManagers
 string[] _vAlign
 string[] _hAlign
-string[] _rippedPlayer
-
+string[] _rippedPlayerMethods
+string[] _rippedPlayerBulkBhv
 
 
 ; #########################################################
@@ -68,21 +69,21 @@ string[] _rippedPlayer
 int function GetVersion()
     {Mod 2.1+ needs to update version}
     ; 3 = added Paused behavior
-    ; 4 = added Bruce Lee behavior. FISS deprecated.
-    ; 5 = added Compatibility tab. FISS dropped.
+    ; 4 = added Bruce Lee behavior. FISS deprecated. added Compatibility tab
+    ; 5 = FISS dropped.
     return 4
 endFunction
 
 Event OnConfigInit()
     Config = SandowPP.Config
 
-    Pages = new string[5]
+    Pages = new string[6]
     Pages[0] = _ppMain
     Pages[1] = _ppSkills
     Pages[2] = _ppRipped
     Pages[3] = _ppWidget
     Pages[4] = _ppProfiles
-    ; Pages[5] = _ppCompat
+    Pages[5] = _ppCompat
 
     _hAlign = new string[3]
     _hAlign[0] = "left"
@@ -99,7 +100,7 @@ Event OnConfigInit()
     _reports[Config.rtSkyUiLib] = "$Color notifications"
     _reports[Config.rtWidget] = "$Widget"
 
-    _behaviors = new string[3]
+    _behaviors = new string[4]
     _behaviors[Config.bhPause] = "$MCM_PausedBehavior"
     _behaviors[Config.bhSandowPP] = "Sandow Plus Plus"
     _behaviors[Config.bhPumpingIron] = "Pumping Iron"
@@ -110,12 +111,16 @@ Event OnConfigInit()
     _presetManagers[Config.pmPapyrusUtil] = "Papyrus Util"
     _presetManagers[Config.pmFISS] = "FISS -deprecated-"
 
-    _rippedPlayer = new string[5]
-    _rippedPlayer[0] = "$None"
-    _rippedPlayer[1] = "$Constant"
-    _rippedPlayer[2] = "$By weight"
-    _rippedPlayer[3] = "$By weight inv"
-    _rippedPlayer[4] = "$By behavior"
+    _rippedPlayerMethods = new string[5]
+    _rippedPlayerMethods[Config.rpmNone] = "$None"
+    _rippedPlayerMethods[Config.rpmConst] = "$Constant"
+    _rippedPlayerMethods[Config.rpmWeight] = "$By weight"
+    _rippedPlayerMethods[Config.rpmWInv] = "$By weight inv"
+    _rippedPlayerMethods[Config.rpmBhv] = "$By behavior"
+
+    _rippedPlayerBulkBhv = new string[2]
+    _rippedPlayerBulkBhv[Config.bulkSPP] = "Sandow Plus Plus"
+    _rippedPlayerBulkBhv[Config.bulkPI] = "Pumping Iron"
 EndEvent
 
 event OnVersionUpdate(int aVersion)
@@ -144,6 +149,7 @@ Event OnGameReload()
     parent.OnGameReload()
     SandowPP.OnGameReload()
     Config = SandowPP.Config
+    SPP = SandowPP
 EndEvent
 
 
@@ -244,17 +250,30 @@ int Function PageMainConfiguration(int pos)
     SetCursorPosition(pos)
     ;AddEmptyOption()
     AddHeaderOption("<font color='#daa520'>$Configuration</font>")
-    AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Config.Behavior])
-    AddToggleOptionST("TG_LOSEW", "$Can lose Weight", Config.CanLoseWeight)
+    If !Config.RippedPlayerBulkCut
+        AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Config.Behavior])
+    Else
+        AddTextOptionST("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
+    EndIf
+    AddToggleOptionST("TG_LOSEW", "$Can lose gains", Config.CanLoseWeight)
     If !Config.IsPumpingIron()
         AddToggleOptionST("TG_DR", "$Diminishing returns", Config.DiminishingReturns)
-        AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Config.CanReboundWeight)
-        count += 2
+        count += 1
+        If Config.IsSandow()
+            AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Config.CanReboundWeight)
+            count += 1
+        EndIf
     EndIf
     ;AddToggleOptionST("TG_DISEASE", "$Disease affects Weight", false)
     ;AddToggleOptionST("TG_FOOD", "$Needs food to grow", false)
     Return pos + ToNewPos(count)
 EndFunction
+
+State TX_BulkCutCantShowBhv
+    Event OnHighlightST()
+        SetInfoText("$MCM_BulkCutCantShowBhvInfo")
+    EndEvent
+EndState
 
 State MN_BEHAVIOR
     Event OnMenuOpenST()
@@ -349,8 +368,10 @@ int Function PageMainOtherOptions(int pos)
     AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Config.weightGainRate), slFmt0)
 
     AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Config.CanGainHeight)
-    AddSliderOptionST("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Config.HeightMax), slFmt0)
-    AddSliderOptionST("SL_HEIGHTDAYS", "$Days to max Height", Config.HeightDaysToGrow, slFmt0r)
+    If Config.CanGainHeight
+        AddSliderOptionST("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Config.HeightMax), slFmt0)
+        AddSliderOptionST("SL_HEIGHTDAYS", "$Days to max Height", Config.HeightDaysToGrow, slFmt0r)
+    EndIf
 
     int flags = GetSkelFlags(NINODE_HEAD())
     AddToggleOptionST("TG_HEADSZ", "$MCM_HeadSz_Bool", Config.CanResizeHead, flags)
@@ -404,12 +425,12 @@ State SL_WEIGHTMULT
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        SandowPP.Config.weightGainRate =  PercentToFloat(val)
+        Config.weightGainRate =  PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        SandowPP.Config.weightGainRate = 1.0
+        Config.weightGainRate = 1.0
         SetSliderOptionValueST(FloatToPercent(SandowPP.Config.weightGainRate), slFmt0)
     EndEvent
 
@@ -422,11 +443,13 @@ State TG_HEIGHT
     Event OnSelectST()
         Config.CanGainHeight = !Config.CanGainHeight
         SetToggleOptionValueST(Config.CanGainHeight)
+        ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
         Config.CanGainHeight = False
         SetToggleOptionValueST(False)
+        ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
@@ -436,7 +459,7 @@ EndState
 
 State SL_HEIGHTMAX
     Event OnSliderOpenST()
-        float val = FloatToPercent(SandowPP.Config.HeightMax)
+        float val = FloatToPercent(Config.HeightMax)
         SetSliderDialogStartValue(val)
         SetSliderDialogDefaultValue(val)
         SetSliderDialogRange(FloatToPercent(0.01), FloatToPercent(0.2))
@@ -444,12 +467,12 @@ State SL_HEIGHTMAX
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        SandowPP.Config.HeightMax =  PercentToFloat(val)
+        Config.HeightMax =  PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        SandowPP.Config.HeightMax = 0.06
+        Config.HeightMax = 0.06
         SetSliderOptionValueST(FloatToPercent(SandowPP.Config.HeightMax), slFmt0)
     EndEvent
 
@@ -490,11 +513,13 @@ State TG_HEADSZ
     Event OnSelectST()
         Config.CanResizeHead = !Config.CanResizeHead
         SetToggleOptionValueST(Config.CanResizeHead)
+        ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
         Config.CanResizeHead = False
         SetToggleOptionValueST(False)
+        ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
@@ -671,7 +696,7 @@ EndState
 
 State SL_RWSCALE
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Config.rwScale), 10, 200, 10)
+        CreateSlider(FloatToPercent(Config.rwScale), 10, 200, 1)
     EndEvent
 
     Event OnSliderAcceptST(float val)
@@ -1058,45 +1083,155 @@ EndState
 ; #########################################################
 Function PageRipped()
     SetCursorFillMode(TOP_TO_BOTTOM)
-
-    AddHeaderOption("<font color='#daa520'>$Player</font>")
-    AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayer[Config.PresetManager])
-    AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", Config.CanGainHeight)
-    AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", FloatToPercent(Config.weightGainRate), slFmt0)
-    AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayer[Config.PresetManager])
+    int playr = PageRippedPlayer(0)
 EndFunction
+
+string _sl_DaysFmt = "$sl_DaysFmt"
+int Function PageRippedPlayer(int pos)
+    SetCursorPosition(pos)
+    int result = 1
+    AddHeaderOption("<font color='#daa520'>$Player</font>")
+    If (SPP.texMngr.IsValidRace(SPP.Player))
+        ; Hide menu when the player wants to bulk & cut or get ripped by behavior, because it doesn't make sense in those cases
+        If !(Config.RippedPlayerBulkCut || Config.IsBruce())
+            AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[Config.RippedPlayerMethod])
+            result += 1
+        EndIf
+        ; Hide bulk & cut when it doesn't make sense
+        If Config.RippedPlayerMethodIsBehavior() || Config.IsBruce()
+            AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", Config.RippedPlayerBulkCut)
+            result += 1
+            If Config.RippedPlayerBulkCut
+                AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", Config.RippedPlayerBulkCutDays, _sl_DaysFmt)
+                AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhv[Config.RippedPlayerBulkCutBhv])
+                result += 2
+            EndIf
+        EndIf
+        ; Show constant config only when it's required.
+        If Config.RippedPlayerMethodIsConst()
+            AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(Config.RippedPlayerConstLvl), slFmt0)
+        EndIf
+    Else
+        AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
+        result += 1
+    EndIf
+    return result
+EndFunction
+
+State SL_RippedPlayerConstAlpha
+    Event OnSliderOpenST()
+        CreatePercentSlider(Config.RippedPlayerConstLvl)
+    EndEvent
+
+    Event OnSliderAcceptST(float val)
+        Config.RippedPlayerConstLvl =  PercentToFloat(val)
+        SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Config.RippedPlayerConstLvl)
+        SetSliderOptionValueST(val, slFmt0)
+    EndEvent
+
+    Event OnDefaultST()
+        Config.RippedPlayerConstLvl = 1.0
+        SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Config.RippedPlayerConstLvl)
+        SetSliderOptionValueST(FloatToPercent(Config.RippedPlayerConstLvl), slFmt0)
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_RippedConstInfo")
+    EndEvent
+EndState
+
+State SL_RippedBulkDaysSwap
+    Event OnSliderOpenST()
+        CreateSlider(Config.RippedPlayerBulkCutDays, 1.0, 20.0, 1.0)
+    EndEvent
+
+    Event OnSliderAcceptST(float val)
+        Config.RippedPlayerBulkCutDays = val as int
+        SetSliderOptionValueST(Config.RippedPlayerBulkCutDays, _sl_DaysFmt)
+    EndEvent
+
+    Event OnDefaultST()
+        Config.RippedPlayerBulkCutDays = 4
+        SetSliderOptionValueST(Config.RippedPlayerBulkCutDays, _sl_DaysFmt)
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_SwitchBulkCutDaysInfo")
+    EndEvent
+EndState
+
+State TX_RippedInvalidRace
+    Event OnHighlightST()
+        SetInfoText("$MCM_RippedInvalidRaceInfo")
+    EndEvent
+EndState
 
 State MN_RippedPlayerOpt
     Event OnMenuOpenST()
         ; Start, default, options
-        OpenMenu(0, 0, _rippedPlayer)
+        OpenMenu(Config.RippedPlayerMethod, 0, _rippedPlayerMethods)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        ; If Config.Behavior == index
-        ;     Return
-        ; EndIf
-        ; Config.Behavior = index
-        ; SetMenuOptionValueST(_behaviors[Config.Behavior])
-        ; If Config.IsPumpingIron()
-        ;     ShowMessage("$MCM_PIResetSkills")
-        ; EndIf
+        Config.RippedPlayerMethod = index
+        SetMenuOptionValueST(_rippedPlayerMethods[Config.RippedPlayerMethod])
+        ; Bruce Lee behavior was actually selected from here
+        If Config.RippedPlayerMethodIsBehavior()
+            Config.Behavior = Config.bhBruce
+        EndIf
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        ; If Config.Behavior == Config.bhSandowPP
-        ;     Return
-        ; EndIf
-        ; Config.Behavior = Config.bhSandowPP
-        ; SetMenuOptionValueST(_behaviors[Config.Behavior])
+        Config.RippedPlayerMethod = 0
+        SetMenuOptionValueST(_rippedPlayerMethods[Config.RippedPlayerMethod])
         ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
-        SetInfoText("$MCM_RippedApplyInfo{" + SandowPP.Algorithm.MCMInfo() + "}")
+        SetInfoText("$MCM_RippedApplyInfo{" + Config.RippedPlayerMethodInfo() + "}")
     EndEvent
 EndState
+
+State MN_RippedBulkBhv
+    Event OnMenuOpenST()
+        OpenMenu(Config.RippedPlayerBulkCutBhv, 0, _rippedPlayerBulkBhv)
+    EndEvent
+
+    Event OnMenuAcceptST(int index)
+        Config.RippedPlayerBulkCutBhv = index
+        SetMenuOptionValueST(_rippedPlayerBulkBhv[Config.RippedPlayerBulkCutBhv])
+    EndEvent
+
+    Event OnDefaultST()
+        Config.RippedPlayerBulkCutBhv = 0
+        SetMenuOptionValueST(_rippedPlayerBulkBhv[Config.RippedPlayerBulkCutBhv])
+        ForcePageReset()
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_SwitchBulkCutDaysInfo")
+    EndEvent
+EndState
+
+State TG_RippedPlayerBulkCut
+    Event OnSelectST()
+        Config.RippedPlayerBulkCut = !Config.RippedPlayerBulkCut
+        SetToggleOptionValueST(Config.RippedPlayerBulkCut)
+        ForcePageReset()
+    EndEvent
+
+    Event OnDefaultST()
+        Config.RippedPlayerBulkCut = False
+        SetToggleOptionValueST(False)
+        ForcePageReset()
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_BulkCutInfo")
+    EndEvent
+EndState
+
 
 ; #########################################################
 ; ###                       PRESETS                     ###
@@ -1213,6 +1348,11 @@ EndFunction
 Function CreateFatigueSlider(float startValue)
     float x = ToPercent(startValue)
     CreateSlider(x, 5, 50, 1)
+EndFunction
+
+Function CreatePercentSlider(float startValue)
+    {Creates a slider from 0% to 100%. startValue goes from [0.0, 1.0].}
+    CreateSlider(FloatToPercent(startValue), 0.0, 100.0, 1.0)
 EndFunction
 
 bool Function ConfirmHotkeyChange(string conflictControl, string conflictName)

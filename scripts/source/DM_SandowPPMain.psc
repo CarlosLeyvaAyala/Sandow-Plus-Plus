@@ -1,5 +1,5 @@
 ; Some comments are in english because I'm sure as hell you'll see this script.
-; If you want to change something, try to change only the things that are marked as 
+; If you want to change something, try to change only the things that are marked as
 ; safe to change. Otherwise, you are bound to break this mod balance.
 Scriptname DM_SandowPPMain extends DM_SandowPPMain_Interface
 {Sandow Plus Plus main script}
@@ -77,7 +77,7 @@ Function ChangeHeadSize()
     If c.CanResizeHead && SkelNodeExists(Player, NINODE_HEAD())
         float size = Lerp(c.HeadSizeMin, c.HeadSizeMax, PercentToFloat(Player.GetActorBase().GetWeight()))
         NetImmerse.SetNodeScale(Player, NINODE_HEAD(), size, False)
-        Player.QueueNiNodeUpdate() 
+        Player.QueueNiNodeUpdate()
         Trace("Changed head size = " + size)
     EndIf
 EndFunction
@@ -106,11 +106,17 @@ function la()
     _ta = t / 100.0
     Trace("@@@@@@@@@@@@@@@@ a = " + _ta)
     NiOverride.AddNodeOverrideFloat(Player, true,  "Body [Ovl5]", 8, -1, _ta, true)
+    trace("isFemale " + GetActorSex(Player) + " " + isFemale(Player))
+    trace("isMale " + GetActorSex(Player) + " " + isMale(Player) + (GetActorSex(Player) == 0))
+    Debug.Notification(_ta)
 EndFunction
 
 Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
         Algorithm.ReportOnHotkey(AlgorithmData)
+    EndIf
+    If KeyCode == 200
+        la()
     EndIf
 EndEvent
 
@@ -120,14 +126,14 @@ Event OnInit()
     ResetVariables()
     RegisterForSleep()
     RegisterEvents()
-    
+
     Config.PresetManager = DefaultPresetManager()
     ; Load preset #1 if it exists. This was done to save the player time.
-    If PresetManager.ProfileExists(1) 
+    If PresetManager.ProfileExists(1)
         Config.Assign( PresetManager.LoadFile(1) )
         RegisterAgainHotkeys()
     EndIf
-EndEvent 
+EndEvent
 
 Function PreparePlayerToSleep()
     {Being in animation (from Posers or something) while sleeping seems to freeze the game. Avoid it.}
@@ -146,7 +152,7 @@ endEvent
 Event OnSleepStop(bool aInterrupted)
     { Main calculation. This is the core of this mod. }
     CurrentState.HoursSlept = ToRealHours(Now() - _goneToSleepAt)       ; Hours actually slept. Player can cancel.
-    If CurrentState.HoursSlept < 1 
+    If CurrentState.HoursSlept < 1
         Return      ; Do nothing if didn't really slept
     EndIf
     CurrentState.Assign( Algorithm.OnSleep(AlgorithmData) )             ; Main calculation. Yep; that's all.
@@ -172,20 +178,25 @@ Function OnGameReload()
     OpenLog()
     Trace("Reloading a saved game")
     Config.Owner = Self         ; For some reason, Config.Owner refuses to stay as configured in the CK
-    RegisterAgainHotkeys()      
+    RegisterAgainHotkeys()
     RegisterEvents()
-    PrepareAlgorithmData()    
+    PrepareAlgorithmData()
     HeightChanger.ReapplyHeight()
-    txset()
-    Player.AddSpell(rippedSpell)
+    ; txset()         ; TODO: DELETE
+    texMngr = (AlgoWCPumping as Quest) as DM_SandowPP_TextureMngr
+    RegisterForKey(200)
+    Debug.Notification("Init SPP " + texMngr)
+    texMngr.InitData()
+    texMngr.Debug(Player)
+    ; Player.AddSpell(rippedSpell)
 EndFunction
 
 Event SexLabEnter(string eventName, string argString, float argNum, form sender)
     {Sexlab integration}
-	; sslThreadController c = sender as sslThreadController
-	; If !c || !c.HasPlayer 
-	; 	return
-	; EndIf
+    ; sslThreadController c = sender as sslThreadController
+    ; If !c || !c.HasPlayer
+    ; 	return
+    ; EndIf
 
     CurrentState.LastSkillGainTime = Now()
 EndEvent
@@ -196,7 +207,7 @@ Function RegisterEvents()
     If Game.GetModByName("SexLab.esm") != 255
         ; SexLab = Game.GetFormFromFile(0x00D62, "SexLab.esm") as Quest
         ; RegisterForModEvent("AnimationStart", "SexLabEnter")
-    EndIf   
+    EndIf
 EndFunction
 
 Function Configure()
@@ -212,7 +223,7 @@ EndFunction
 Function SelectReport()
     {Selects report system}
     Trace("Main.SelectReport(" + Config.ReportType + ")")
-    
+
     _report.OnExit()
     If Config.IsSkyUiLib()
         _report = ReportSkyUILib
@@ -225,17 +236,19 @@ Function SelectReport()
 EndFunction
 
 Function ChangeAlgorithm()
-    { Change mod Behavior }    
+    { Change mod Behavior }
     Trace("Main.ChangeAlgorithm(" + Config.Behavior + ")")
     DM_SandowPP_Algorithm newAlgo
     If Config.IsPumpingIron()
         newAlgo = AlgoWCPumping
     ElseIf Config.IsPaused()
         newAlgo = AlgoPause
+    ElseIf Config.IsBruce()
+        ; code
     Else
         newAlgo = AlgoWCSandow
     EndIf
-    
+
     ; Change only if switched algorithms
     If _algorithm.Signature() != newAlgo.Signature()
         Trace("Switching algorithms")
@@ -262,7 +275,7 @@ Function ConfigureWidget()
         Algorithm.ReportEssentials(AlgorithmData)
     EndIf
 EndFunction
-    
+
 Function RegisterAgainHotkeys()
     { Registers again events for hotkeys that have already been set up }
     Trace("Main.RegisterAgainHotkeys(HkShowStatus = " + Config.HkShowStatus + ")")
@@ -275,7 +288,7 @@ Function RegisterHotkey(int aOldKey, int aNewKey)
     UnRegisterForKey(aOldKey)
     RegisterForKey(aNewKey)
 EndFunction
-    
+
 Function RegisterAgainHotkey(int oldKey)
     { Registers again events for ONE hotkey that have already been set up }
     Trace("Main.RegisterAgainHotkey(oldKey = " + oldKey + ")")
@@ -305,7 +318,7 @@ EndFunction
 Function SelectPresetManager()
     {Selection of the Strategy Pattern}
     Trace("Main.SelectPresetManager(" + Config.PresetManager + ")")
-    
+
     If Config.PresetManager == Config.pmPapyrusUtil
         _presetManager = PresetMngrPapUtl
     ElseIf Config.PresetManager == Config.pmFISS
@@ -327,23 +340,23 @@ Function Train(string aSkill)
         TrainAndFatigue(Config.skillRatioBl, Config.physFatigueRate)
     elseif aSkill == "Marksman"
         TrainAndFatigue(Config.skillRatioAr, Config.physFatigueRate)
-    elseif aSkill == "HeavyArmor" 
+    elseif aSkill == "HeavyArmor"
         TrainAndFatigue(Config.skillRatioHa, Config.physFatigueRate)
-    elseif aSkill == "LightArmor" 
+    elseif aSkill == "LightArmor"
         TrainAndFatigue(Config.skillRatioLa, Config.physFatigueRate)
-    elseif aSkill == "Sneak" 
+    elseif aSkill == "Sneak"
         TrainAndFatigue(Config.skillRatioSn, Config.physFatigueRate)
-    elseif aSkill == "Smithing" 
+    elseif aSkill == "Smithing"
         TrainAndFatigue(Config.skillRatioSm, Config.physFatigueRate)
-    elseif aSkill == "Alteration" 
+    elseif aSkill == "Alteration"
         TrainAndFatigue(Config.skillRatioAl, Config.magFatigueRate)
-    elseif aSkill == "Conjuration" 
+    elseif aSkill == "Conjuration"
         TrainAndFatigue(Config.skillRatioCo, Config.magFatigueRate)
-    elseif aSkill == "Destruction" 
+    elseif aSkill == "Destruction"
         TrainAndFatigue(Config.skillRatioDe, Config.magFatigueRate)
-    elseif aSkill == "Illusion" 
+    elseif aSkill == "Illusion"
         TrainAndFatigue(Config.skillRatioIl, Config.magFatigueRate)
-    elseif aSkill == "Restoration" 
+    elseif aSkill == "Restoration"
         TrainAndFatigue(Config.skillRatioRe, Config.magFatigueRate)
     EndIf
 EndFunction
@@ -352,7 +365,7 @@ Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
     {Apply fatigue, WGP and inactivity related things}
     Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
     Trace("Old WGP = " + CurrentState.WGP)
-    
+
     If !Algorithm.CanGainWGP()
         Trace("Can't gain WGP. Returning.")
         return
@@ -367,7 +380,7 @@ Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
             Algorithm.ReportSkillLvlUp(AlgorithmData)
         EndIf
     EndIf
-    
+
     Trace("New SkillFatigue = " + CurrentState.SkillFatigue)
     Trace("New WGP = " + CurrentState.WGP)
 EndFunction
@@ -386,7 +399,7 @@ Function ResetVariables()
     CurrentState.LastSlept = -1
 EndFunction
 
-string Function GetMCMStatus()  
+string Function GetMCMStatus()
     {Used by the MCM only}
     Return Algorithm.GetMCMStatus(AlgorithmData)
 EndFunction
