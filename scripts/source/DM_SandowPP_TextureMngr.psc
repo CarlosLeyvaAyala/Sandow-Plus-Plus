@@ -8,6 +8,7 @@ Import DM_Utils
 Actor property Player auto
 TextureSet Property femaleTexSet Auto
 TextureSet Property maleTexSet Auto
+DM_SandowPP_Config Property Cfg Auto
 
 string[] _validHumanoids
 string[] _validCats
@@ -15,11 +16,12 @@ string[] _validLizards
 
 Function Debug(Actor akTarget)
     string actorRace = MiscUtil.GetActorRaceEditorID(akTarget)
-    Debug.Notification("Debug " + IsHumanoid(akTarget))
+    Debug.Notification("Target Sex " + IsFemale(akTarget))
     ; debug.messagebox("Is valid " + IsValidRace(akTarget))
     ; debug.messagebox("Exito "+ DM_Utils.GetActorName(akTarget) + " " + actorRace + " " + _validCats + _validLizards + _validHumanoids)
     trace(_validHumanoids)
     trace(DM_Utils.now())
+    SetTextureSetAndAlpha(akTarget, 1)
 EndFunction
 
 Function LoadValidRaces()
@@ -78,9 +80,8 @@ EndFunction
 bool Function SetTextureSet(Actor akTarget)
     {This function is so heavily commented because there's no documentation on NiOverride}
     bool isFemale = IsFemale(akTarget)
-    trace("isFemale " + GetActorSex(akTarget) + " " + isFemale)
-    trace("isMale " + GetActorSex(akTarget) + " " + isMale(akTarget) + GetActorSex(akTarget) == 0)
-    isFemale = true
+    ; bool isFemale = akTarget.GetLeveledActorBase().GetSex() == 1
+    trace("isFemale " + isFemale(akTarget))
 
     ; Get a suitable texture set or exit if we couldn't find it
     TextureSet tx = SelectTextureSet(akTarget)
@@ -104,7 +105,7 @@ EndFunction
 
 Function SetAlpha(Actor akTarget, float alpha)
     bool isFemale = IsFemale(akTarget)
-    isFemale = true
+    ; bool isFemale = akTarget.GetLeveledActorBase().GetSex()
     ; This call needs some explanation.
     ; AddNodeOverrideFloat(ObjectReference ref, bool isFemale, string node, int key, int index, float value, bool persist)
 
@@ -124,21 +125,67 @@ EndFunction
 
 bool Function SetTextureSetAndAlpha(Actor akTarget, float alpha)
     {Sets a suitable texture set and a direct (ie. not LERPed) alpha.}
-    trace(akTarget + " " + alpha)
     If SetTextureSet(akTarget)
-        trace("texture can be set")
         SetAlpha(akTarget, alpha)
+        return true
     EndIf
+    return false
 EndFunction
 
 TextureSet Function SelectTextureSet(Actor akTarget)
     {Selects a texture set suitable for known races}
+    bool isFemale = IsFemale(akTarget)
+    ; bool isFemale = akTarget.GetLeveledActorBase().GetSex() == 1
     If IsHumanoid(akTarget)
-        If IsFemale(akTarget)
+        If isFemale
             return femaleTexSet
         Else
             return maleTexSet
         EndIf
     EndIf
     return None
+EndFunction
+
+bool Function IsFemale(Actor akTarget)
+    {It seems GetSex won't work if used inside a Global function; it can't be added to a library.}
+    return akTarget.GetLeveledActorBase().GetSex() == 1
+EndFunction
+
+Function Clear(Actor akTarget)
+    SetAlpha(akTarget, 0.0)
+EndFunction
+
+float Function GetActorWeight(Actor akTarget)
+    {Returns actor weight as percent.}
+    return akTarget.GetActorBase().GetWeight() / 100.0
+EndFunction
+
+bool Function SetTextureAndLerpA(Actor akTarget, float alpha)
+    {Sets a suitable texture set and a LERPed alpha.}
+    If SetTextureSet(akTarget)
+        SetAlpha(akTarget, LerpAlpha(akTarget, alpha))
+    EndIf
+EndFunction
+
+float Function LerpAlpha(Actor akTarget, float alpha)
+    {Linearly interpolates an alpha between player configured bounds.}
+    bool isFemale = IsFemale(akTarget)
+    If (akTarget == Player)
+        debug.messagebox("Lerp player")
+        return LerpPlayerAlpha(alpha)
+    EndIf
+    return alpha
+EndFunction
+
+float Function LerpPlayerAlpha(float alpha)
+    {Lerps alpha from player MCM settings.}
+    return Lerp(Cfg.RippedPlayerLB, Cfg.RippedPlayerUB, alpha)
+EndFunction
+
+Function AlphaFromWeight(Actor akTarget)
+    SetTextureAndLerpA(akTarget, GetActorWeight(akTarget))
+EndFunction
+
+Function AlphaFromWeightInv(Actor akTarget)
+    SetTextureAndLerpA(akTarget, 1.0 - GetActorWeight(akTarget))
 EndFunction

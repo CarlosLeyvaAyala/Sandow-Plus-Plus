@@ -106,8 +106,12 @@ function la()
     _ta = t / 100.0
     Trace("@@@@@@@@@@@@@@@@ a = " + _ta)
     NiOverride.AddNodeOverrideFloat(Player, true,  "Body [Ovl5]", 8, -1, _ta, true)
-    trace("isFemale " + GetActorSex(Player) + " " + isFemale(Player))
-    trace("isMale " + GetActorSex(Player) + " " + isMale(Player) + (GetActorSex(Player) == 0))
+    int sx = Player.GetLeveledActorBase().GetSex()
+    int sx2 = Player.GetActorBase().GetSex()
+    trace("sex " + sx)
+    trace("AlgoWCSandow " + AlgoWCSandow.GetPlayerWeight())
+    ; trace("isFemale " + DM_Utils.GetActorSex(Player) + " " + DM_Utils.isFemale(Player))
+    ; trace("isMale " + DM_Utils.GetActorSex(Player) + " " + DM_Utils.isMale(Player) + (GetActorSex(Player) == 0))
     Debug.Notification(_ta)
 EndFunction
 
@@ -183,11 +187,11 @@ Function OnGameReload()
     PrepareAlgorithmData()
     HeightChanger.ReapplyHeight()
     ; txset()         ; TODO: DELETE
-    texMngr = (AlgoWCPumping as Quest) as DM_SandowPP_TextureMngr
+    ; texMngr = (AlgoWCPumping as Quest) as DM_SandowPP_TextureMngr
     RegisterForKey(200)
-    Debug.Notification("Init SPP " + texMngr)
+    ; Debug.Notification("Init SPP " + texMngr)
     texMngr.InitData()
-    texMngr.Debug(Player)
+    ; texMngr.Debug(Player)
     ; Player.AddSpell(rippedSpell)
 EndFunction
 

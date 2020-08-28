@@ -50,12 +50,12 @@ string _ppMain = "$Main"
 string _ppSkills = "$Skills"
 string _ppRipped = "$Ripped"
 string _ppWidget = "$Widget"
-string _ppProfiles = "$Presets"
+; string _ppProfiles = "$Presets"
 string _ppCompat = "$Compat"
 
 string[] _reports
 string[] _behaviors
-string[] _presetManagers
+; string[] _presetManagers
 string[] _vAlign
 string[] _hAlign
 string[] _rippedPlayerMethods
@@ -69,21 +69,20 @@ string[] _rippedPlayerBulkBhv
 int function GetVersion()
     {Mod 2.1+ needs to update version}
     ; 3 = added Paused behavior
-    ; 4 = added Bruce Lee behavior. FISS deprecated. added Compatibility tab
-    ; 5 = FISS dropped.
+    ; 4 = added Bruce Lee behavior. FISS dropped. Added Compatibility tab. Deleted presets tab. Dropped reports.
     return 4
 endFunction
 
 Event OnConfigInit()
     Config = SandowPP.Config
 
-    Pages = new string[6]
+    Pages = new string[5]
     Pages[0] = _ppMain
     Pages[1] = _ppSkills
     Pages[2] = _ppRipped
     Pages[3] = _ppWidget
-    Pages[4] = _ppProfiles
-    Pages[5] = _ppCompat
+    ; Pages[4] = _ppProfiles
+    Pages[4] = _ppCompat
 
     _hAlign = new string[3]
     _hAlign[0] = "left"
@@ -106,16 +105,17 @@ Event OnConfigInit()
     _behaviors[Config.bhPumpingIron] = "Pumping Iron"
     _behaviors[Config.bhBruce] = "Bruce Lee"
 
-    _presetManagers = new string[3]
-    _presetManagers[Config.pmNone] = "$None"
-    _presetManagers[Config.pmPapyrusUtil] = "Papyrus Util"
-    _presetManagers[Config.pmFISS] = "FISS -deprecated-"
+    ; _presetManagers = new string[3]
+    ; _presetManagers[Config.pmNone] = "$None"
+    ; _presetManagers[Config.pmPapyrusUtil] = "Papyrus Util"
+    ; _presetManagers[Config.pmFISS] = "FISS -deprecated-"
 
-    _rippedPlayerMethods = new string[5]
+    _rippedPlayerMethods = new string[6]
     _rippedPlayerMethods[Config.rpmNone] = "$None"
     _rippedPlayerMethods[Config.rpmConst] = "$Constant"
     _rippedPlayerMethods[Config.rpmWeight] = "$By weight"
     _rippedPlayerMethods[Config.rpmWInv] = "$By weight inv"
+    _rippedPlayerMethods[Config.rpmSkill] = "$By skills"
     _rippedPlayerMethods[Config.rpmBhv] = "$By behavior"
 
     _rippedPlayerBulkBhv = new string[2]
@@ -131,9 +131,9 @@ event OnVersionUpdate(int aVersion)
 endEvent
 
 event OnPageReset(string aPage)
-    if aPage == _ppProfiles
-        PageProfiles()
-    ElseIf aPage == _ppWidget
+    ; if aPage == _ppProfiles
+    ;     PageProfiles()
+    If aPage == _ppWidget
         PageWidget()
     ElseIf aPage == _ppRipped
         PageRipped()
@@ -363,7 +363,7 @@ int Function PageMainOtherOptions(int pos)
     SetCursorPosition(pos)
     ;AddEmptyOption()
     AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Config.PresetManager])
+    ; AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Config.PresetManager])
 
     AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Config.weightGainRate), slFmt0)
 
@@ -375,8 +375,10 @@ int Function PageMainOtherOptions(int pos)
 
     int flags = GetSkelFlags(NINODE_HEAD())
     AddToggleOptionST("TG_HEADSZ", "$MCM_HeadSz_Bool", Config.CanResizeHead, flags)
-    AddSliderOptionST("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Config.HeadSizeMin, slFmt2r, flags)
-    AddSliderOptionST("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Config.HeadSizeMax, slFmt2r, flags)
+    If Config.CanResizeHead
+        AddSliderOptionST("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Config.HeadSizeMin, slFmt2r, flags)
+        AddSliderOptionST("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Config.HeadSizeMax, slFmt2r, flags)
+    EndIf
 
     Return pos + ToNewPos(8)
 EndFunction
@@ -389,26 +391,26 @@ int Function GetSkelFlags(string aNodeName)
     EndIf
 EndFunction
 
-State MN_PRESET
-    Event OnMenuOpenST()
-        OpenMenu(Config.PresetManager, SandowPP.DefaultPresetManager(), _presetManagers)
-    EndEvent
+; State MN_PRESET
+;     Event OnMenuOpenST()
+;         OpenMenu(Config.PresetManager, SandowPP.DefaultPresetManager(), _presetManagers)
+;     EndEvent
 
-    Event OnMenuAcceptST(int index)
-        Config.PresetManager = index
-        EnsurePresetManager(_presetManagers[index])
-        SetMenuOptionValueST(_presetManagers[Config.PresetManager])
-    EndEvent
+;     Event OnMenuAcceptST(int index)
+;         Config.PresetManager = index
+;         EnsurePresetManager(_presetManagers[index])
+;         SetMenuOptionValueST(_presetManagers[Config.PresetManager])
+;     EndEvent
 
-    Event OnDefaultST()
-        Config.PresetManager = SandowPP.DefaultPresetManager()
-        SetMenuOptionValueST(_presetManagers[Config.PresetManager])
-    EndEvent
+;     Event OnDefaultST()
+;         Config.PresetManager = SandowPP.DefaultPresetManager()
+;         SetMenuOptionValueST(_presetManagers[Config.PresetManager])
+;     EndEvent
 
-    Event OnHighlightST()
-        SetInfoText("$MCM_PresetManagerInfo")
-    EndEvent
-EndState
+;     Event OnHighlightST()
+;         SetInfoText("$MCM_PresetManagerInfo")
+;     EndEvent
+; EndState
 
 Function EnsurePresetManager(string mgr)
     If SandowPP.PresetManager.Exists() || Config.PresetManager == Config.pmNone
@@ -1107,15 +1109,72 @@ int Function PageRippedPlayer(int pos)
                 result += 2
             EndIf
         EndIf
+
         ; Show constant config only when it's required.
         If Config.RippedPlayerMethodIsConst()
             AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(Config.RippedPlayerConstLvl), slFmt0)
+        EndIf
+
+        ; Texture bounds for player
+        If !Config.RippedPlayerMethodIsNone() && !Config.RippedPlayerMethodIsConst()
+            AddSliderOptionST("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(Config.RippedPlayerLB), slFmt0)
+            AddSliderOptionST("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(Config.RippedPlayerUB), slFmt0)
         EndIf
     Else
         AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
         result += 1
     EndIf
     return result
+EndFunction
+
+
+State SL_RippedPlayerLB
+    Event OnSliderOpenST()
+        CreateSlider(FloatToPercent(Config.RippedPlayerLB), 0.0, FloatToPercent(Config.RippedPlayerUB) - 1.0, 1.0)
+    EndEvent
+
+    Event OnSliderAcceptST(float val)
+        Config.RippedPlayerLB = PercentToFloat(val)
+        SetSliderOptionValueST(val, slFmt0)
+    EndEvent
+
+    Event OnDefaultST()
+        Config.RippedPlayerLB = 0.0
+        SetSliderOptionValueST(0.0, slFmt0)
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_RippedLowerBoundInfo{" + "$you" + "}")
+    EndEvent
+EndState
+
+State SL_RippedPlayerUB
+    Event OnSliderOpenST()
+        CreateSlider(FloatToPercent(Config.RippedPlayerUB), FloatToPercent(Config.RippedPlayerLB) + 1.0, 100.0, 1.0)
+    EndEvent
+
+    Event OnSliderAcceptST(float val)
+        Config.RippedPlayerUB = PercentToFloat(val)
+        SetSliderOptionValueST(val, slFmt0)
+    EndEvent
+
+    Event OnDefaultST()
+        Config.RippedPlayerUB = 1.0
+        SetSliderOptionValueST(100, slFmt0)
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_RippedUpperBoundInfo{" + "$you" + "}")
+    EndEvent
+EndState
+
+Function RippedPlayerSetAlpha(float alpha)
+    SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, alpha)
+EndFunction
+
+Function RippedPlayerSetCnstAlpha()
+    RippedPlayerSetAlpha(Config.RippedPlayerConstLvl)
+    ; SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Config.RippedPlayerConstLvl)
 EndFunction
 
 State SL_RippedPlayerConstAlpha
@@ -1125,13 +1184,13 @@ State SL_RippedPlayerConstAlpha
 
     Event OnSliderAcceptST(float val)
         Config.RippedPlayerConstLvl =  PercentToFloat(val)
-        SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Config.RippedPlayerConstLvl)
+        RippedPlayerSetCnstAlpha()
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
         Config.RippedPlayerConstLvl = 1.0
-        SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Config.RippedPlayerConstLvl)
+        RippedPlayerSetCnstAlpha()
         SetSliderOptionValueST(FloatToPercent(Config.RippedPlayerConstLvl), slFmt0)
     EndEvent
 
@@ -1178,12 +1237,21 @@ State MN_RippedPlayerOpt
         ; Bruce Lee behavior was actually selected from here
         If Config.RippedPlayerMethodIsBehavior()
             Config.Behavior = Config.bhBruce
+        ElseIf Config.RippedPlayerMethodIsConst()
+            RippedPlayerSetCnstAlpha()
+        ElseIf Config.RippedPlayerMethodIsWeight()
+            SPP.texMngr.AlphaFromWeight(SPP.Player)
+            ; RippedPlayerSetAlpha(SPP.AlgoWCSandow.GetPlayerWeight() / 100)
+        ElseIf Config.RippedPlayerMethodIsWeInv()
+            SPP.texMngr.AlphaFromWeightInv(SPP.Player)
+            ; RippedPlayerSetAlpha(1.0 - (SPP.AlgoWCSandow.GetPlayerWeight() / 100))
         EndIf
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
         Config.RippedPlayerMethod = 0
+        SPP.texMngr.Clear(SPP.Player)
         SetMenuOptionValueST(_rippedPlayerMethods[Config.RippedPlayerMethod])
         ForcePageReset()
     EndEvent

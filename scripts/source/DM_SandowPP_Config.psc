@@ -164,7 +164,8 @@ int Property rpmNone = 0 AutoReadOnly
 int Property rpmConst = 1 AutoReadOnly
 int Property rpmWeight = 2 AutoReadOnly
 int Property rpmWInv = 3 AutoReadOnly
-int Property rpmBhv = 4 AutoReadOnly
+int Property rpmSkill = 4 AutoReadOnly
+int Property rpmBhv = 5 AutoReadOnly
 
 int Property bulkSPP = 0 AutoReadOnly
 int Property bulkPI = 1 AutoReadOnly
@@ -175,22 +176,37 @@ int Property RippedPlayerBulkCutDays = 4 Auto
 int Property RippedPlayerBulkCutBhv = 0 Auto
 float Property RippedPlayerConstLvl = 1.0 Auto
 
+float Property RippedPlayerLB = 0.0 Auto
+float Property RippedPlayerUB = 1.0 Auto
+
 string Function RippedPlayerMethodInfo()
-    If RippedPlayerMethod == 0
+    If RippedPlayerMethodIsNone()
         return "$MCM_RippedApplyInfoNone"
-    ElseIf (RippedPlayerMethod == 1)
+    ElseIf RippedPlayerMethodIsConst()
         return "$MCM_RippedApplyInfoConstant"
-    ElseIf (RippedPlayerMethod == 2)
+    ElseIf RippedPlayerMethodIsWeight()
         return "$MCM_RippedApplyInfoWeight"
-    ElseIf (RippedPlayerMethod == 3)
+    ElseIf RippedPlayerMethodIsWeInv()
         return "$MCM_RippedApplyInfoWeightInv"
     Else
         return "$MCM_RippedApplyInfoBhv"
     EndIf
 EndFunction
 
+bool Function RippedPlayerMethodIsNone()
+    return RippedPlayerMethod == rpmNone
+EndFunction
+
 bool Function RippedPlayerMethodIsConst()
     return RippedPlayerMethod == rpmConst
+EndFunction
+
+bool Function RippedPlayerMethodIsWeight()
+    return RippedPlayerMethod == rpmWeight
+EndFunction
+
+bool Function RippedPlayerMethodIsWeInv()
+    return RippedPlayerMethod == rpmWInv
 EndFunction
 
 bool Function RippedPlayerMethodIsBehavior()
