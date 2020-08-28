@@ -8,7 +8,7 @@ Import DM_SandowPP_SkeletonNodes
 
 DM_SandowPPMain property SandowPP auto
 DM_SandowPPMain SPP
-DM_SandowPP_Config Config
+DM_SandowPP_Config Cfg
 
 
 ; #########################################################
@@ -74,7 +74,7 @@ int function GetVersion()
 endFunction
 
 Event OnConfigInit()
-    Config = SandowPP.Config
+    Cfg = SandowPP.Config
 
     Pages = new string[5]
     Pages[0] = _ppMain
@@ -95,32 +95,32 @@ Event OnConfigInit()
     _vAlign[2] = "bottom"
 
     _reports = new string[3]
-    _reports[Config.rtDebug] = "$Simple message"
-    _reports[Config.rtSkyUiLib] = "$Color notifications"
-    _reports[Config.rtWidget] = "$Widget"
+    _reports[Cfg.rtDebug] = "$Simple message"
+    _reports[Cfg.rtSkyUiLib] = "$Color notifications"
+    _reports[Cfg.rtWidget] = "$Widget"
 
     _behaviors = new string[4]
-    _behaviors[Config.bhPause] = "$MCM_PausedBehavior"
-    _behaviors[Config.bhSandowPP] = "Sandow Plus Plus"
-    _behaviors[Config.bhPumpingIron] = "Pumping Iron"
-    _behaviors[Config.bhBruce] = "Bruce Lee"
+    _behaviors[Cfg.bhPause] = "$MCM_PausedBehavior"
+    _behaviors[Cfg.bhSandowPP] = "Sandow Plus Plus"
+    _behaviors[Cfg.bhPumpingIron] = "Pumping Iron"
+    _behaviors[Cfg.bhBruce] = "Bruce Lee"
 
     ; _presetManagers = new string[3]
-    ; _presetManagers[Config.pmNone] = "$None"
-    ; _presetManagers[Config.pmPapyrusUtil] = "Papyrus Util"
-    ; _presetManagers[Config.pmFISS] = "FISS -deprecated-"
+    ; _presetManagers[Cfg.pmNone] = "$None"
+    ; _presetManagers[Cfg.pmPapyrusUtil] = "Papyrus Util"
+    ; _presetManagers[Cfg.pmFISS] = "FISS -deprecated-"
 
     _rippedPlayerMethods = new string[6]
-    _rippedPlayerMethods[Config.rpmNone] = "$None"
-    _rippedPlayerMethods[Config.rpmConst] = "$Constant"
-    _rippedPlayerMethods[Config.rpmWeight] = "$By weight"
-    _rippedPlayerMethods[Config.rpmWInv] = "$By weight inv"
-    _rippedPlayerMethods[Config.rpmSkill] = "$By skills"
-    _rippedPlayerMethods[Config.rpmBhv] = "$By behavior"
+    _rippedPlayerMethods[Cfg.rpmNone] = "$None"
+    _rippedPlayerMethods[Cfg.rpmConst] = "$Constant"
+    _rippedPlayerMethods[Cfg.rpmWeight] = "$By weight"
+    _rippedPlayerMethods[Cfg.rpmWInv] = "$By weight inv"
+    _rippedPlayerMethods[Cfg.rpmSkill] = "$By skills"
+    _rippedPlayerMethods[Cfg.rpmBhv] = "$By behavior"
 
     _rippedPlayerBulkBhv = new string[2]
-    _rippedPlayerBulkBhv[Config.bulkSPP] = "Sandow Plus Plus"
-    _rippedPlayerBulkBhv[Config.bulkPI] = "Pumping Iron"
+    _rippedPlayerBulkBhv[Cfg.bulkSPP] = "Sandow Plus Plus"
+    _rippedPlayerBulkBhv[Cfg.bulkPI] = "Pumping Iron"
 EndEvent
 
 event OnVersionUpdate(int aVersion)
@@ -148,7 +148,7 @@ Event OnGameReload()
     DM_SandowPP_Globals.Trace("MCM.OnGameReload()")
     parent.OnGameReload()
     SandowPP.OnGameReload()
-    Config = SandowPP.Config
+    Cfg = SandowPP.Config
     SPP = SandowPP
 EndEvent
 
@@ -159,13 +159,40 @@ EndEvent
 
 Function PageMain()
     SetCursorFillMode(TOP_TO_BOTTOM)
-
-    int pos = PageMainReports(0)
-    int pos2 = PageMainConfiguration(pos)
+    ; Row 1
+    int presets = PageMainPresets(0)
+    int stats = PageMainStats(1)
+    trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ presets " + presets)
+    trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ stats " + stats)
+    ; Row 2
+    int row2 = MaxI(stats - 1, presets)
+    int pos2 = PageMainConfiguration(row2)
+    PageMainOtherOptions(row2 + 1)
+    ;Row 3
     PageMainItems(pos2)
+EndFunction
 
-    PageMainStats(1)
-    PageMainOtherOptions(pos + 1)
+
+; #########################################################
+; ###                   MAIN - PRESETS                  ###
+; #########################################################
+
+int Function PageMainPresets(int pos)
+    SetCursorPosition(pos)
+    AddHeaderOption(Header("$Presets"))
+    ; AddHeaderOption("$MCM_Header{" + " $Presets" + "}")
+    int count = 1
+    If PapyrusUtilExists()
+        AddMenuOptionST("MN_PresetLoad", "$Load", "")
+        AddInputOptionST("IN_PresetSave", "$Save as...", "")
+        count += 2
+    Else
+        TagPapyrusUtil()
+        count += 1
+    EndIf
+    ; AddKeyMapOptionST("KM_STATUS", "$Hotkey", Cfg.HkShowStatus)
+    ; AddToggleOptionST("TG_VERBOSE", "$More status info", Cfg.VerboseMod)
+    Return pos + ToNewPos(count)
 EndFunction
 
 
@@ -176,23 +203,23 @@ EndFunction
 int Function PageMainReports(int pos)
     SetCursorPosition(pos)
     AddHeaderOption("<font color='#daa520'>$Status report</font>")
-    AddKeyMapOptionST("KM_STATUS", "$Hotkey", Config.HkShowStatus)
-    AddToggleOptionST("TG_VERBOSE", "$More status info", Config.VerboseMod)
-    AddMenuOptionST("MN_REPORT", "$Report type", _reports[Config.ReportType])
+    AddKeyMapOptionST("KM_STATUS", "$Hotkey", Cfg.HkShowStatus)
+    AddToggleOptionST("TG_VERBOSE", "$More status info", Cfg.VerboseMod)
+    AddMenuOptionST("MN_REPORT", "$Report type", _reports[Cfg.ReportType])
     Return pos + ToNewPos(5)
 EndFunction
 
 State KM_STATUS
     Event OnKeyMapChangeST(int newKeyCode, string conflictControl, string conflictName)
         If ( ConfirmHotkeyChange(conflictControl, conflictName) )
-            Config.HkShowStatus = newKeyCode
+            Cfg.HkShowStatus = newKeyCode
             SetKeyMapOptionValueST(newKeyCode)
         EndIf
     EndEvent
 
     Event OnDefaultST()
-        SetKeyMapOptionValueST(Config.hotkeyInvalid)
-        Config.HkShowStatus = Config.hotkeyInvalid
+        SetKeyMapOptionValueST(Cfg.hotkeyInvalid)
+        Cfg.HkShowStatus = Cfg.hotkeyInvalid
     EndEvent
 
     Event OnHighlightST()
@@ -202,12 +229,12 @@ EndState
 
 State TG_VERBOSE
     Event OnSelectST()
-        Config.VerboseMod = !Config.VerboseMod
-        SetToggleOptionValueST(Config.VerboseMod)
+        Cfg.VerboseMod = !Cfg.VerboseMod
+        SetToggleOptionValueST(Cfg.VerboseMod)
     EndEvent
 
     Event OnDefaultST()
-        Config.VerboseMod = True
+        Cfg.VerboseMod = True
         SetToggleOptionValueST(True)
     EndEvent
 
@@ -218,21 +245,21 @@ EndState
 
 State MN_REPORT
     Event OnMenuOpenST()
-        OpenMenu(Config.ReportType, Config.ReportType, _reports)
+        OpenMenu(Cfg.ReportType, Cfg.ReportType, _reports)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        If Config.ReportType == index
+        If Cfg.ReportType == index
             Return
         EndIf
-        Config.ReportType = index
-        SetMenuOptionValueST(_reports[Config.ReportType])
+        Cfg.ReportType = index
+        SetMenuOptionValueST(_reports[Cfg.ReportType])
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        Config.ReportType = 0
-        SetMenuOptionValueST(_reports[Config.ReportType])
+        Cfg.ReportType = 0
+        SetMenuOptionValueST(_reports[Cfg.ReportType])
     EndEvent
 
     Event OnHighlightST()
@@ -249,18 +276,18 @@ int Function PageMainConfiguration(int pos)
     int count = 3
     SetCursorPosition(pos)
     ;AddEmptyOption()
-    AddHeaderOption("<font color='#daa520'>$Configuration</font>")
-    If !Config.RippedPlayerBulkCut
-        AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Config.Behavior])
+    AddHeaderOption(Header("$Configuration"))
+    If !Cfg.RippedPlayerBulkCut
+        AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Cfg.Behavior])
     Else
         AddTextOptionST("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
     EndIf
-    AddToggleOptionST("TG_LOSEW", "$Can lose gains", Config.CanLoseWeight)
-    If !Config.IsPumpingIron()
-        AddToggleOptionST("TG_DR", "$Diminishing returns", Config.DiminishingReturns)
+    AddToggleOptionST("TG_LOSEW", "$Can lose gains", Cfg.CanLoseWeight)
+    If !Cfg.IsPumpingIron()
+        AddToggleOptionST("TG_DR", "$Diminishing returns", Cfg.DiminishingReturns)
         count += 1
-        If Config.IsSandow()
-            AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Config.CanReboundWeight)
+        If Cfg.IsSandow()
+            AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Cfg.CanReboundWeight)
             count += 1
         EndIf
     EndIf
@@ -277,27 +304,27 @@ EndState
 
 State MN_BEHAVIOR
     Event OnMenuOpenST()
-        OpenMenu(Config.Behavior, Config.bhSandowPP, _behaviors)
+        OpenMenu(Cfg.Behavior, Cfg.bhSandowPP, _behaviors)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        If Config.Behavior == index
+        If Cfg.Behavior == index
             Return
         EndIf
-        Config.Behavior = index
-        SetMenuOptionValueST(_behaviors[Config.Behavior])
-        If Config.IsPumpingIron()
+        Cfg.Behavior = index
+        SetMenuOptionValueST(_behaviors[Cfg.Behavior])
+        If Cfg.IsPumpingIron()
             ShowMessage("$MCM_PIResetSkills")
         EndIf
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        If Config.Behavior == Config.bhSandowPP
+        If Cfg.Behavior == Cfg.bhSandowPP
             Return
         EndIf
-        Config.Behavior = Config.bhSandowPP
-        SetMenuOptionValueST(_behaviors[Config.Behavior])
+        Cfg.Behavior = Cfg.bhSandowPP
+        SetMenuOptionValueST(_behaviors[Cfg.Behavior])
         ForcePageReset()
     EndEvent
 
@@ -308,13 +335,13 @@ EndState
 
 State TG_LOSEW
     Event OnSelectST()
-        Config.CanLoseWeight = !Config.CanLoseWeight
-        SetToggleOptionValueST(Config.CanLoseWeight)
-        Trace("Toggled CanLoseWeight. Now " + Config.CanLoseWeight)
+        Cfg.CanLoseWeight = !Cfg.CanLoseWeight
+        SetToggleOptionValueST(Cfg.CanLoseWeight)
+        Trace("Toggled CanLoseWeight. Now " + Cfg.CanLoseWeight)
     EndEvent
 
     Event OnDefaultST()
-        Config.CanLoseWeight = True
+        Cfg.CanLoseWeight = True
         SetToggleOptionValueST(True)
     EndEvent
 
@@ -325,12 +352,12 @@ EndState
 
 State TG_DR
     Event OnSelectST()
-        SandowPP.Config.DiminishingReturns = !SandowPP.Config.DiminishingReturns
-        SetToggleOptionValueST(SandowPP.Config.DiminishingReturns)
+        Cfg.DiminishingReturns = !Cfg.DiminishingReturns
+        SetToggleOptionValueST(Cfg.DiminishingReturns)
     EndEvent
 
     Event OnDefaultST()
-        SandowPP.Config.DiminishingReturns = True
+        Cfg.DiminishingReturns = True
         SetToggleOptionValueST(True)
     EndEvent
 
@@ -341,12 +368,12 @@ EndState
 
 State TG_REBOUNDW
     Event OnSelectST()
-        SandowPP.Config.CanReboundWeight = !SandowPP.Config.CanReboundWeight
-        SetToggleOptionValueST(SandowPP.Config.CanReboundWeight)
+        Cfg.CanReboundWeight = !Cfg.CanReboundWeight
+        SetToggleOptionValueST(Cfg.CanReboundWeight)
     EndEvent
 
     Event OnDefaultST()
-        SandowPP.Config.CanReboundWeight = True
+        Cfg.CanReboundWeight = True
         SetToggleOptionValueST(True)
     EndEvent
 
@@ -362,22 +389,22 @@ EndState
 int Function PageMainOtherOptions(int pos)
     SetCursorPosition(pos)
     ;AddEmptyOption()
-    AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    ; AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Config.PresetManager])
+    AddHeaderOption(Header("$Other options"))
+    ; AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Cfg.PresetManager])
 
-    AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Config.weightGainRate), slFmt0)
+    AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Cfg.weightGainRate), slFmt0)
 
-    AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Config.CanGainHeight)
-    If Config.CanGainHeight
-        AddSliderOptionST("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Config.HeightMax), slFmt0)
-        AddSliderOptionST("SL_HEIGHTDAYS", "$Days to max Height", Config.HeightDaysToGrow, slFmt0r)
+    AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Cfg.CanGainHeight)
+    If Cfg.CanGainHeight
+        AddSliderOptionST("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Cfg.HeightMax), slFmt0)
+        AddSliderOptionST("SL_HEIGHTDAYS", "$Days to max Height", Cfg.HeightDaysToGrow, slFmt0r)
     EndIf
 
     int flags = GetSkelFlags(NINODE_HEAD())
-    AddToggleOptionST("TG_HEADSZ", "$MCM_HeadSz_Bool", Config.CanResizeHead, flags)
-    If Config.CanResizeHead
-        AddSliderOptionST("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Config.HeadSizeMin, slFmt2r, flags)
-        AddSliderOptionST("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Config.HeadSizeMax, slFmt2r, flags)
+    AddToggleOptionST("TG_HEADSZ", "$MCM_HeadSz_Bool", Cfg.CanResizeHead, flags)
+    If Cfg.CanResizeHead
+        AddSliderOptionST("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Cfg.HeadSizeMin, slFmt2r, flags)
+        AddSliderOptionST("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Cfg.HeadSizeMax, slFmt2r, flags)
     EndIf
 
     Return pos + ToNewPos(8)
@@ -393,18 +420,18 @@ EndFunction
 
 ; State MN_PRESET
 ;     Event OnMenuOpenST()
-;         OpenMenu(Config.PresetManager, SandowPP.DefaultPresetManager(), _presetManagers)
+;         OpenMenu(Cfg.PresetManager, SandowPP.DefaultPresetManager(), _presetManagers)
 ;     EndEvent
 
 ;     Event OnMenuAcceptST(int index)
-;         Config.PresetManager = index
+;         Cfg.PresetManager = index
 ;         EnsurePresetManager(_presetManagers[index])
-;         SetMenuOptionValueST(_presetManagers[Config.PresetManager])
+;         SetMenuOptionValueST(_presetManagers[Cfg.PresetManager])
 ;     EndEvent
 
 ;     Event OnDefaultST()
-;         Config.PresetManager = SandowPP.DefaultPresetManager()
-;         SetMenuOptionValueST(_presetManagers[Config.PresetManager])
+;         Cfg.PresetManager = SandowPP.DefaultPresetManager()
+;         SetMenuOptionValueST(_presetManagers[Cfg.PresetManager])
 ;     EndEvent
 
 ;     Event OnHighlightST()
@@ -413,27 +440,27 @@ EndFunction
 ; EndState
 
 Function EnsurePresetManager(string mgr)
-    If SandowPP.PresetManager.Exists() || Config.PresetManager == Config.pmNone
+    If SandowPP.PresetManager.Exists() || Cfg.PresetManager == Cfg.pmNone
         Return
     EndIf
     ShowMessage("$MCM_PresetMgrInexistent{" + mgr + "}")
-    Config.PresetManager = SandowPP.DefaultPresetManager()
+    Cfg.PresetManager = SandowPP.DefaultPresetManager()
 EndFunction
 
 State SL_WEIGHTMULT
     Event OnSliderOpenST()
-        float val = FloatToPercent(SandowPP.Config.weightGainRate)
+        float val = FloatToPercent(Cfg.weightGainRate)
         CreateSlider(val, 10, 300, 10)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.weightGainRate =  PercentToFloat(val)
+        Cfg.weightGainRate =  PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.weightGainRate = 1.0
-        SetSliderOptionValueST(FloatToPercent(SandowPP.Config.weightGainRate), slFmt0)
+        Cfg.weightGainRate = 1.0
+        SetSliderOptionValueST(FloatToPercent(Cfg.weightGainRate), slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -443,13 +470,13 @@ EndState
 
 State TG_HEIGHT
     Event OnSelectST()
-        Config.CanGainHeight = !Config.CanGainHeight
-        SetToggleOptionValueST(Config.CanGainHeight)
+        Cfg.CanGainHeight = !Cfg.CanGainHeight
+        SetToggleOptionValueST(Cfg.CanGainHeight)
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        Config.CanGainHeight = False
+        Cfg.CanGainHeight = False
         SetToggleOptionValueST(False)
         ForcePageReset()
     EndEvent
@@ -461,7 +488,7 @@ EndState
 
 State SL_HEIGHTMAX
     Event OnSliderOpenST()
-        float val = FloatToPercent(Config.HeightMax)
+        float val = FloatToPercent(Cfg.HeightMax)
         SetSliderDialogStartValue(val)
         SetSliderDialogDefaultValue(val)
         SetSliderDialogRange(FloatToPercent(0.01), FloatToPercent(0.2))
@@ -469,13 +496,13 @@ State SL_HEIGHTMAX
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.HeightMax =  PercentToFloat(val)
+        Cfg.HeightMax =  PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.HeightMax = 0.06
-        SetSliderOptionValueST(FloatToPercent(SandowPP.Config.HeightMax), slFmt0)
+        Cfg.HeightMax = 0.06
+        SetSliderOptionValueST(FloatToPercent(Cfg.HeightMax), slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -485,7 +512,7 @@ EndState
 
 State SL_HEIGHTDAYS
     Event OnSliderOpenST()
-        float val = SandowPP.Config.HeightDaysToGrow
+        float val = Cfg.HeightDaysToGrow
         SetSliderDialogStartValue(val)
         SetSliderDialogDefaultValue(val)
         SetSliderDialogRange(30, 150)
@@ -493,13 +520,13 @@ State SL_HEIGHTDAYS
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        SandowPP.Config.HeightDaysToGrow =  val as int
+        Cfg.HeightDaysToGrow =  val as int
         SetSliderOptionValueST(val, slFmt0r)
     EndEvent
 
     Event OnDefaultST()
-        SandowPP.Config.HeightDaysToGrow = 120
-        SetSliderOptionValueST(SandowPP.Config.HeightDaysToGrow, slFmt0r)
+        Cfg.HeightDaysToGrow = 120
+        SetSliderOptionValueST(Cfg.HeightDaysToGrow, slFmt0r)
     EndEvent
 
     Event OnHighlightST()
@@ -513,13 +540,13 @@ float Property SCALE_STEP = 0.01 AutoReadOnly
 
 State TG_HEADSZ
     Event OnSelectST()
-        Config.CanResizeHead = !Config.CanResizeHead
-        SetToggleOptionValueST(Config.CanResizeHead)
+        Cfg.CanResizeHead = !Cfg.CanResizeHead
+        SetToggleOptionValueST(Cfg.CanResizeHead)
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        Config.CanResizeHead = False
+        Cfg.CanResizeHead = False
         SetToggleOptionValueST(False)
         ForcePageReset()
     EndEvent
@@ -531,17 +558,17 @@ EndState
 
 State SL_HEADSZ_MN
     Event OnSliderOpenST()
-        CreateSlider(Config.HeadSizeMin, SCALE_MIN, SCALE_MAX, SCALE_STEP)
+        CreateSlider(Cfg.HeadSizeMin, SCALE_MIN, SCALE_MAX, SCALE_STEP)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.HeadSizeMin = val
+        Cfg.HeadSizeMin = val
         SetSliderOptionValueST(val, slFmt2r)
     EndEvent
 
     Event OnDefaultST()
-        Config.HeadSizeMin = 1.0
-        SetSliderOptionValueST(Config.HeadSizeMin, slFmt2r)
+        Cfg.HeadSizeMin = 1.0
+        SetSliderOptionValueST(Cfg.HeadSizeMin, slFmt2r)
     EndEvent
 
     Event OnHighlightST()
@@ -551,17 +578,17 @@ EndState
 
 State SL_HEADSZ_MX
     Event OnSliderOpenST()
-        CreateSlider(Config.HeadSizeMax, SCALE_MIN, SCALE_MAX, SCALE_STEP)
+        CreateSlider(Cfg.HeadSizeMax, SCALE_MIN, SCALE_MAX, SCALE_STEP)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.HeadSizeMax = val
+        Cfg.HeadSizeMax = val
         SetSliderOptionValueST(val, slFmt2r)
     EndEvent
 
     Event OnDefaultST()
-        Config.HeadSizeMax = 1.0
-        SetSliderOptionValueST(Config.HeadSizeMax, slFmt2r)
+        Cfg.HeadSizeMax = 1.0
+        SetSliderOptionValueST(Cfg.HeadSizeMax, slFmt2r)
     EndEvent
 
     Event OnHighlightST()
@@ -574,15 +601,23 @@ EndState
 ; #########################################################
 
 int Function PageMainStats(int pos)
-    SetCursorPosition(pos)
-    AddHeaderOption("<font color='#daa520'>$Stats</font>")
-
     SandowPP.PrepareAlgorithmData()
-    AddTextOptionST("TX_BW", "$Weight:", SandowPP.GetMCMWeight() + "%" )
-    AddTextOptionST( "TX_TRAINING", "$Weight Gain Potential:", SandowPP.GetMCMWGP() + "%" )
-    AddTextOptionST( "TX_CUSTOM1", SandowPP.GetMCMCustomLabel1(), SandowPP.GetMCMCustomData1() )
-    AddTextOptionST( "TX_STATUS", "", SandowPP.GetMCMStatus() )
-    Return pos + ToNewPos(5)
+    SetCursorPosition(pos)
+
+    AddHeaderOption(Header("$Stats"))
+    AddTextOptionST("TX_BW", "$Weight:", SPP.GetMCMWeight() + "%" )
+    AddTextOptionST( "TX_TRAINING", "$Weight Gain Potential:", SPP.GetMCMWGP() + "%" )
+    int count = 3
+    ; Posibly won't exist
+    If SPP.GetMCMCustomLabel1() && SPP.GetMCMCustomData1()
+        AddTextOptionST("TX_CUSTOM1", SPP.GetMCMCustomLabel1(), SPP.GetMCMCustomData1() )
+        count += 1
+    EndIf
+    If SPP.GetMCMStatus()
+        AddTextOptionST("TX_STATUS", "", SandowPP.GetMCMStatus())
+        count += 1
+    EndIf
+    Return pos + ToNewPos(count)
 EndFunction
 
 State TX_BW
@@ -644,31 +679,31 @@ EndState
 Function PageWidget()
     SetCursorFillMode(TOP_TO_BOTTOM)
     AddHeaderOption("<font color='#daa520'>$Configuration</font>")
-    AddSliderOptionST("SL_RWUPDTIME", "$Update time", Config.rwUpdateTime, slFmt0r + " s")
-    AddSliderOptionST("SL_RWALPHA", "$Opacity", Config.rwOpacity, slFmt0)
-    AddSliderOptionST("SL_RWSCALE", "$Scale", FloatToPercent(Config.rwScale), slFmt0)
+    AddSliderOptionST("SL_RWUPDTIME", "$Update time", Cfg.rwUpdateTime, slFmt0r + " s")
+    AddSliderOptionST("SL_RWALPHA", "$Opacity", Cfg.rwOpacity, slFmt0)
+    AddSliderOptionST("SL_RWSCALE", "$Scale", FloatToPercent(Cfg.rwScale), slFmt0)
 
     SetCursorPosition(1)
     AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    AddMenuOptionST("MN_RWHAL", "$Horizontal Align", Config.rwHAlign)
-    AddMenuOptionST("MN_RWVAL", "$Vertical Align", Config.rwVAlign)
-    AddSliderOptionST("SL_RWX", "$X Offset", Config.rwX, slFmt0r)
-    AddSliderOptionST("SL_RWY", "$Y Offset", Config.rwY, slFmt0r)
+    AddMenuOptionST("MN_RWHAL", "$Horizontal Align", Cfg.rwHAlign)
+    AddMenuOptionST("MN_RWVAL", "$Vertical Align", Cfg.rwVAlign)
+    AddSliderOptionST("SL_RWX", "$X Offset", Cfg.rwX, slFmt0r)
+    AddSliderOptionST("SL_RWY", "$Y Offset", Cfg.rwY, slFmt0r)
 EndFunction
 
 State SL_RWUPDTIME
     Event OnSliderOpenST()
-        CreateSlider(Config.rwUpdateTime, 1.0, 20.0, 1.0)
+        CreateSlider(Cfg.rwUpdateTime, 1.0, 20.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.rwUpdateTime =  val
-        SetSliderOptionValueST(Config.rwUpdateTime, slFmt0r + " s")
+        Cfg.rwUpdateTime =  val
+        SetSliderOptionValueST(Cfg.rwUpdateTime, slFmt0r + " s")
     EndEvent
 
     Event OnDefaultST()
-        Config.rwUpdateTime = 3.0
-        SetSliderOptionValueST(Config.rwUpdateTime, slFmt0r + " s")
+        Cfg.rwUpdateTime = 3.0
+        SetSliderOptionValueST(Cfg.rwUpdateTime, slFmt0r + " s")
     EndEvent
 
     Event OnHighlightST()
@@ -678,17 +713,17 @@ EndState
 
 State SL_RWALPHA
     Event OnSliderOpenST()
-        CreateSlider(Config.rwOpacity, 10, 100, 5)
+        CreateSlider(Cfg.rwOpacity, 10, 100, 5)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.rwOpacity =  val
-        SetSliderOptionValueST(Config.rwOpacity, slFmt0)
+        Cfg.rwOpacity =  val
+        SetSliderOptionValueST(Cfg.rwOpacity, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.rwOpacity = 100
-        SetSliderOptionValueST(Config.rwOpacity, slFmt0)
+        Cfg.rwOpacity = 100
+        SetSliderOptionValueST(Cfg.rwOpacity, slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -698,17 +733,17 @@ EndState
 
 State SL_RWSCALE
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Config.rwScale), 10, 200, 1)
+        CreateSlider(FloatToPercent(Cfg.rwScale), 10, 200, 1)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.rwScale = PercentToFloat(val)
+        Cfg.rwScale = PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.rwScale = 1.0
-        SetSliderOptionValueST(FloatToPercent(Config.rwScale), slFmt0)
+        Cfg.rwScale = 1.0
+        SetSliderOptionValueST(FloatToPercent(Cfg.rwScale), slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -718,18 +753,18 @@ EndState
 
 State MN_RWHAL
     Event OnMenuOpenST()
-        int p = IndexOfS(_hAlign, Config.rwHAlign)
+        int p = IndexOfS(_hAlign, Cfg.rwHAlign)
         OpenMenu(p, p, _hAlign)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        Config.rwHAlign = _hAlign[index]
-        SetMenuOptionValueST(Config.rwHAlign)
+        Cfg.rwHAlign = _hAlign[index]
+        SetMenuOptionValueST(Cfg.rwHAlign)
     EndEvent
 
     Event OnDefaultST()
-        Config.rwHAlign = _hAlign[0]
-        SetMenuOptionValueST(Config.rwHAlign)
+        Cfg.rwHAlign = _hAlign[0]
+        SetMenuOptionValueST(Cfg.rwHAlign)
     EndEvent
 
     Event OnHighlightST()
@@ -739,18 +774,18 @@ EndState
 
 State MN_RWVAL
     Event OnMenuOpenST()
-        int p = IndexOfS(_vAlign, Config.rwVAlign)
+        int p = IndexOfS(_vAlign, Cfg.rwVAlign)
         OpenMenu(p, p, _vAlign)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        Config.rwVAlign = _vAlign[index]
-        SetMenuOptionValueST(Config.rwVAlign)
+        Cfg.rwVAlign = _vAlign[index]
+        SetMenuOptionValueST(Cfg.rwVAlign)
     EndEvent
 
     Event OnDefaultST()
-        Config.rwVAlign = _vAlign[0]
-        SetMenuOptionValueST(Config.rwVAlign)
+        Cfg.rwVAlign = _vAlign[0]
+        SetMenuOptionValueST(Cfg.rwVAlign)
     EndEvent
 
     Event OnHighlightST()
@@ -760,16 +795,16 @@ EndState
 
 State SL_RWX
     Event OnSliderOpenST()
-        CreateSlider(Config.rwX, -425, 425, 1)
+        CreateSlider(Cfg.rwX, -425, 425, 1)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.rwX = val
+        Cfg.rwX = val
         SetSliderOptionValueST(val, slFmt0r)
     EndEvent
 
     Event OnDefaultST()
-        Config.rwX = 0
+        Cfg.rwX = 0
         SetSliderOptionValueST(0, slFmt0r)
     EndEvent
 
@@ -780,16 +815,16 @@ EndState
 
 State SL_RWY
     Event OnSliderOpenST()
-        CreateSlider(Config.rwY, -240, 240, 1)
+        CreateSlider(Cfg.rwY, -240, 240, 1)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.rwY = val
+        Cfg.rwY = val
         SetSliderOptionValueST(val, slFmt0r)
     EndEvent
 
     Event OnDefaultST()
-        Config.rwY = 0
+        Cfg.rwY = 0
         SetSliderOptionValueST(0, slFmt0r)
     EndEvent
 
@@ -809,37 +844,37 @@ Function PageSkills()
     ;================================
     SetCursorPosition(0)
     AddHeaderOption("<font color='#daa520'>$MCM_WGPHeader</font>")
-    AddSliderOptionST("SL_AR", "$Archery", SandowPP.Config.skillRatioAr, slFmt, flag)
-    AddSliderOptionST("SL_BL", "$Block", SandowPP.Config.skillRatioBl, slFmt, flag)
-    AddSliderOptionST("SL_HA", "$Heavy Armor", SandowPP.Config.skillRatioHa, slFmt, flag)
-    AddSliderOptionST("SL_LA", "$Light Armor", SandowPP.Config.skillRatioLa, slFmt, flag)
-    AddSliderOptionST("SL_1H", "$One Handed", SandowPP.Config.skillRatio1H, slFmt, flag)
-    AddSliderOptionST("SL_SM", "$Smithing", SandowPP.Config.skillRatioSm, slFmt, flag)
-    AddSliderOptionST("SL_SN", "$Sneak", SandowPP.Config.skillRatioSn, slFmt, flag)
-    AddSliderOptionST("SL_2H", "$Two Handed", SandowPP.Config.skillRatio2H, slFmt, flag)
+    AddSliderOptionST("SL_AR", "$Archery", Cfg.skillRatioAr, slFmt, flag)
+    AddSliderOptionST("SL_BL", "$Block", Cfg.skillRatioBl, slFmt, flag)
+    AddSliderOptionST("SL_HA", "$Heavy Armor", Cfg.skillRatioHa, slFmt, flag)
+    AddSliderOptionST("SL_LA", "$Light Armor", Cfg.skillRatioLa, slFmt, flag)
+    AddSliderOptionST("SL_1H", "$One Handed", Cfg.skillRatio1H, slFmt, flag)
+    AddSliderOptionST("SL_SM", "$Smithing", Cfg.skillRatioSm, slFmt, flag)
+    AddSliderOptionST("SL_SN", "$Sneak", Cfg.skillRatioSn, slFmt, flag)
+    AddSliderOptionST("SL_2H", "$Two Handed", Cfg.skillRatio2H, slFmt, flag)
 
     SetCursorPosition(1)
     AddHeaderOption("")
-    AddSliderOptionST("SL_AL", "$Alteration", SandowPP.Config.skillRatioAl, slFmt, flag)
-    AddSliderOptionST("SL_CO", "$Conjuration", SandowPP.Config.skillRatioCo, slFmt, flag)
-    AddSliderOptionST("SL_DE", "$Destruction", SandowPP.Config.skillRatioDe, slFmt, flag)
-    AddSliderOptionST("SL_IL", "$Illusion", SandowPP.Config.skillRatioIl, slFmt, flag)
-    AddSliderOptionST("SL_RE", "$Restoration", SandowPP.Config.skillRatioRe, slFmt, flag)
+    AddSliderOptionST("SL_AL", "$Alteration", Cfg.skillRatioAl, slFmt, flag)
+    AddSliderOptionST("SL_CO", "$Conjuration", Cfg.skillRatioCo, slFmt, flag)
+    AddSliderOptionST("SL_DE", "$Destruction", Cfg.skillRatioDe, slFmt, flag)
+    AddSliderOptionST("SL_IL", "$Illusion", Cfg.skillRatioIl, slFmt, flag)
+    AddSliderOptionST("SL_RE", "$Restoration", Cfg.skillRatioRe, slFmt, flag)
 
     ;================================
-    If !SandowPP.Config.IsSandow()
+    If !Cfg.IsSandow()
         Return
     EndIf
     SetCursorPosition(20)
     AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    AddSliderOptionST("SL_FP", "$MCM_SlFatiguePhys", ToPercent(SandowPP.Config.physFatigueRate), xslFmt)
+    AddSliderOptionST("SL_FP", "$MCM_SlFatiguePhys", ToPercent(Cfg.physFatigueRate), xslFmt)
 
     SetCursorPosition(21)
     AddHeaderOption("")
 EndFunction
 
 int Function DisableSkills()
-    If Config.skillsLocked
+    If Cfg.skillsLocked
         Return OPTION_FLAG_DISABLED
     Else
         Return OPTION_FLAG_NONE
@@ -848,231 +883,231 @@ EndFunction
 
 State SL_AR
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatioAr)
+        CreateSkillSliderPhys(Cfg.skillRatioAr)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioAr =  val
+        Cfg.skillRatioAr =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioAr = SandowPP.Config.skillDefaultAr
-        SetSliderOptionValueST(SandowPP.Config.skillRatioAr, slFmt)
+        Cfg.skillRatioAr = Cfg.skillDefaultAr
+        SetSliderOptionValueST(Cfg.skillRatioAr, slFmt)
     endEvent
 EndState
 
 State SL_BL
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatioBl)
+        CreateSkillSliderPhys(Cfg.skillRatioBl)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioBl =  val
+        Cfg.skillRatioBl =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioBl = SandowPP.Config.skillDefaultBl
-        SetSliderOptionValueST(SandowPP.Config.skillRatioBl, slFmt)
+        Cfg.skillRatioBl = Cfg.skillDefaultBl
+        SetSliderOptionValueST(Cfg.skillRatioBl, slFmt)
     endEvent
 EndState
 
 State SL_HA
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatioHa)
+        CreateSkillSliderPhys(Cfg.skillRatioHa)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioHa =  val
+        Cfg.skillRatioHa =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioHa = SandowPP.Config.skillDefaultHa
-        SetSliderOptionValueST(SandowPP.Config.skillRatioHa, slFmt)
+        Cfg.skillRatioHa = Cfg.skillDefaultHa
+        SetSliderOptionValueST(Cfg.skillRatioHa, slFmt)
     endEvent
 EndState
 
 State SL_LA
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatioLa)
+        CreateSkillSliderPhys(Cfg.skillRatioLa)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioLa =  val
+        Cfg.skillRatioLa =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioLa = SandowPP.Config.skillDefaultLa
-        SetSliderOptionValueST(SandowPP.Config.skillRatioLa, slFmt)
+        Cfg.skillRatioLa = Cfg.skillDefaultLa
+        SetSliderOptionValueST(Cfg.skillRatioLa, slFmt)
     endEvent
 EndState
 
 State SL_1H
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatio1H)
+        CreateSkillSliderPhys(Cfg.skillRatio1H)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatio1H =  val
+        Cfg.skillRatio1H =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatio1H = SandowPP.Config.skillDefault1H
-        SetSliderOptionValueST(SandowPP.Config.skillRatio1H, slFmt)
+        Cfg.skillRatio1H = Cfg.skillDefault1H
+        SetSliderOptionValueST(Cfg.skillRatio1H, slFmt)
     endEvent
 EndState
 
 State SL_SN
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatioSn)
+        CreateSkillSliderPhys(Cfg.skillRatioSn)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioSn =  val
+        Cfg.skillRatioSn =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioSn = SandowPP.Config.skillDefaultSn
-        SetSliderOptionValueST(SandowPP.Config.skillRatioSn, slFmt)
+        Cfg.skillRatioSn = Cfg.skillDefaultSn
+        SetSliderOptionValueST(Cfg.skillRatioSn, slFmt)
     endEvent
 EndState
 
 State SL_SM
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatioSm)
+        CreateSkillSliderPhys(Cfg.skillRatioSm)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioSm =  val
+        Cfg.skillRatioSm =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioSm = SandowPP.Config.skillDefaultSm
-        SetSliderOptionValueST(SandowPP.Config.skillRatioSm, slFmt)
+        Cfg.skillRatioSm = Cfg.skillDefaultSm
+        SetSliderOptionValueST(Cfg.skillRatioSm, slFmt)
     endEvent
 EndState
 
 State SL_2H
     Event OnSliderOpenST()
-        CreateSkillSliderPhys(SandowPP.Config.skillRatio2H)
+        CreateSkillSliderPhys(Cfg.skillRatio2H)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatio2H =  val
+        Cfg.skillRatio2H =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatio2H = SandowPP.Config.skillDefault2H
-        SetSliderOptionValueST(SandowPP.Config.skillRatio2H, slFmt)
+        Cfg.skillRatio2H = Cfg.skillDefault2H
+        SetSliderOptionValueST(Cfg.skillRatio2H, slFmt)
     endEvent
 EndState
 
 State SL_AL
     Event OnSliderOpenST()
-        CreateSkillSliderMag(SandowPP.Config.skillRatioAl)
+        CreateSkillSliderMag(Cfg.skillRatioAl)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioAl =  val
+        Cfg.skillRatioAl =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioAl = SandowPP.Config.skillDefaultAl
-        SetSliderOptionValueST(SandowPP.Config.skillRatioAl, slFmt)
+        Cfg.skillRatioAl = Cfg.skillDefaultAl
+        SetSliderOptionValueST(Cfg.skillRatioAl, slFmt)
     endEvent
 EndState
 
 State SL_CO
     Event OnSliderOpenST()
-        CreateSkillSliderMag(SandowPP.Config.skillRatioCo)
+        CreateSkillSliderMag(Cfg.skillRatioCo)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioCo =  val
+        Cfg.skillRatioCo =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioCo = SandowPP.Config.skillDefaultCo
-        SetSliderOptionValueST(SandowPP.Config.skillRatioCo, slFmt)
+        Cfg.skillRatioCo = Cfg.skillDefaultCo
+        SetSliderOptionValueST(Cfg.skillRatioCo, slFmt)
     endEvent
 EndState
 
 State SL_DE
     Event OnSliderOpenST()
-        CreateSkillSliderMag(SandowPP.Config.skillRatioDe)
+        CreateSkillSliderMag(Cfg.skillRatioDe)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioDe =  val
+        Cfg.skillRatioDe =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioDe = SandowPP.Config.skillDefaultDe
-        SetSliderOptionValueST(SandowPP.Config.skillRatioDe, slFmt)
+        Cfg.skillRatioDe = Cfg.skillDefaultDe
+        SetSliderOptionValueST(Cfg.skillRatioDe, slFmt)
     endEvent
 EndState
 
 State SL_IL
     Event OnSliderOpenST()
-        CreateSkillSliderMag(SandowPP.Config.skillRatioIl)
+        CreateSkillSliderMag(Cfg.skillRatioIl)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioIl =  val
+        Cfg.skillRatioIl =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioIl = SandowPP.Config.skillDefaultIl
-        SetSliderOptionValueST(SandowPP.Config.skillRatioIl, slFmt)
+        Cfg.skillRatioIl = Cfg.skillDefaultIl
+        SetSliderOptionValueST(Cfg.skillRatioIl, slFmt)
     endEvent
 EndState
 
 State SL_RE
     Event OnSliderOpenST()
-        CreateSkillSliderMag(SandowPP.Config.skillRatioRe)
+        CreateSkillSliderMag(Cfg.skillRatioRe)
     EndEvent
 
     event OnSliderAcceptST(float val)
-        SandowPP.Config.skillRatioRe =  val
+        Cfg.skillRatioRe =  val
         SetSliderOptionValueST(val, slFmt)
     endEvent
 
     event OnDefaultST()
-        SandowPP.Config.skillRatioRe = SandowPP.Config.skillDefaultRe
-        SetSliderOptionValueST(SandowPP.Config.skillRatioRe, slFmt)
+        Cfg.skillRatioRe = Cfg.skillDefaultRe
+        SetSliderOptionValueST(Cfg.skillRatioRe, slFmt)
     endEvent
 EndState
 
 State SL_FP
     Event OnSliderOpenST()
-        CreateFatigueSlider(SandowPP.Config.physFatigueRate)
+        CreateFatigueSlider(Cfg.physFatigueRate)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        SandowPP.Config.physFatigueRate =  PercentToFloat(val)
+        Cfg.physFatigueRate =  PercentToFloat(val)
         SetSliderOptionValueST(val, xslFmt)
     EndEvent
 
     Event OnDefaultST()
-        SandowPP.Config.physFatigueRate = PercentToFloat(10)
+        Cfg.physFatigueRate = PercentToFloat(10)
         SetSliderOptionValueST(10, xslFmt)
     EndEvent
 
     Event OnHighlightST()
-        float sk = SandowPP.Config.skillRatioRe
-        float mr = SandowPP.Config.magFatigueRateMultiplier
-        float r = SandowPP.Config.physFatigueRate * mr
+        float sk = Cfg.skillRatioRe
+        float mr = Cfg.magFatigueRateMultiplier
+        float r = Cfg.physFatigueRate * mr
         float rr = FloatToPercent(sk * r)
         string s = "$MCM_SlWGPMultInfo{" + FloatToStr(mr, 1) + "}{" + FloatToStr(rr) + "}"
         SetInfoText(s)
@@ -1095,30 +1130,30 @@ int Function PageRippedPlayer(int pos)
     AddHeaderOption("<font color='#daa520'>$Player</font>")
     If (SPP.texMngr.IsValidRace(SPP.Player))
         ; Hide menu when the player wants to bulk & cut or get ripped by behavior, because it doesn't make sense in those cases
-        If !(Config.RippedPlayerBulkCut || Config.IsBruce())
-            AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[Config.RippedPlayerMethod])
+        If !(Cfg.RippedPlayerBulkCut || Cfg.IsBruce())
+            AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[Cfg.RippedPlayerMethod])
             result += 1
         EndIf
         ; Hide bulk & cut when it doesn't make sense
-        If Config.RippedPlayerMethodIsBehavior() || Config.IsBruce()
-            AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", Config.RippedPlayerBulkCut)
+        If Cfg.RippedPlayerMethodIsBehavior() || Cfg.IsBruce()
+            AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", Cfg.RippedPlayerBulkCut)
             result += 1
-            If Config.RippedPlayerBulkCut
-                AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", Config.RippedPlayerBulkCutDays, _sl_DaysFmt)
-                AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhv[Config.RippedPlayerBulkCutBhv])
+            If Cfg.RippedPlayerBulkCut
+                AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", Cfg.RippedPlayerBulkCutDays, _sl_DaysFmt)
+                AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhv[Cfg.RippedPlayerBulkCutBhv])
                 result += 2
             EndIf
         EndIf
 
         ; Show constant config only when it's required.
-        If Config.RippedPlayerMethodIsConst()
-            AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(Config.RippedPlayerConstLvl), slFmt0)
+        If Cfg.RippedPlayerMethodIsConst()
+            AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(Cfg.RippedPlayerConstLvl), slFmt0)
         EndIf
 
         ; Texture bounds for player
-        If !Config.RippedPlayerMethodIsNone() && !Config.RippedPlayerMethodIsConst()
-            AddSliderOptionST("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(Config.RippedPlayerLB), slFmt0)
-            AddSliderOptionST("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(Config.RippedPlayerUB), slFmt0)
+        If !Cfg.RippedPlayerMethodIsNone() && !Cfg.RippedPlayerMethodIsConst()
+            AddSliderOptionST("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(Cfg.RippedPlayerLB), slFmt0)
+            AddSliderOptionST("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(Cfg.RippedPlayerUB), slFmt0)
         EndIf
     Else
         AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
@@ -1130,16 +1165,16 @@ EndFunction
 
 State SL_RippedPlayerLB
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Config.RippedPlayerLB), 0.0, FloatToPercent(Config.RippedPlayerUB) - 1.0, 1.0)
+        CreateSlider(FloatToPercent(Cfg.RippedPlayerLB), 0.0, FloatToPercent(Cfg.RippedPlayerUB) - 1.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.RippedPlayerLB = PercentToFloat(val)
+        Cfg.RippedPlayerLB = PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerLB = 0.0
+        Cfg.RippedPlayerLB = 0.0
         SetSliderOptionValueST(0.0, slFmt0)
     EndEvent
 
@@ -1150,16 +1185,16 @@ EndState
 
 State SL_RippedPlayerUB
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Config.RippedPlayerUB), FloatToPercent(Config.RippedPlayerLB) + 1.0, 100.0, 1.0)
+        CreateSlider(FloatToPercent(Cfg.RippedPlayerUB), FloatToPercent(Cfg.RippedPlayerLB) + 1.0, 100.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.RippedPlayerUB = PercentToFloat(val)
+        Cfg.RippedPlayerUB = PercentToFloat(val)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerUB = 1.0
+        Cfg.RippedPlayerUB = 1.0
         SetSliderOptionValueST(100, slFmt0)
     EndEvent
 
@@ -1173,25 +1208,25 @@ Function RippedPlayerSetAlpha(float alpha)
 EndFunction
 
 Function RippedPlayerSetCnstAlpha()
-    RippedPlayerSetAlpha(Config.RippedPlayerConstLvl)
-    ; SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Config.RippedPlayerConstLvl)
+    RippedPlayerSetAlpha(Cfg.RippedPlayerConstLvl)
+    ; SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Cfg.RippedPlayerConstLvl)
 EndFunction
 
 State SL_RippedPlayerConstAlpha
     Event OnSliderOpenST()
-        CreatePercentSlider(Config.RippedPlayerConstLvl)
+        CreatePercentSlider(Cfg.RippedPlayerConstLvl)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.RippedPlayerConstLvl =  PercentToFloat(val)
+        Cfg.RippedPlayerConstLvl =  PercentToFloat(val)
         RippedPlayerSetCnstAlpha()
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerConstLvl = 1.0
+        Cfg.RippedPlayerConstLvl = 1.0
         RippedPlayerSetCnstAlpha()
-        SetSliderOptionValueST(FloatToPercent(Config.RippedPlayerConstLvl), slFmt0)
+        SetSliderOptionValueST(FloatToPercent(Cfg.RippedPlayerConstLvl), slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -1201,17 +1236,17 @@ EndState
 
 State SL_RippedBulkDaysSwap
     Event OnSliderOpenST()
-        CreateSlider(Config.RippedPlayerBulkCutDays, 1.0, 20.0, 1.0)
+        CreateSlider(Cfg.RippedPlayerBulkCutDays, 1.0, 20.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Config.RippedPlayerBulkCutDays = val as int
-        SetSliderOptionValueST(Config.RippedPlayerBulkCutDays, _sl_DaysFmt)
+        Cfg.RippedPlayerBulkCutDays = val as int
+        SetSliderOptionValueST(Cfg.RippedPlayerBulkCutDays, _sl_DaysFmt)
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerBulkCutDays = 4
-        SetSliderOptionValueST(Config.RippedPlayerBulkCutDays, _sl_DaysFmt)
+        Cfg.RippedPlayerBulkCutDays = 4
+        SetSliderOptionValueST(Cfg.RippedPlayerBulkCutDays, _sl_DaysFmt)
     EndEvent
 
     Event OnHighlightST()
@@ -1228,21 +1263,21 @@ EndState
 State MN_RippedPlayerOpt
     Event OnMenuOpenST()
         ; Start, default, options
-        OpenMenu(Config.RippedPlayerMethod, 0, _rippedPlayerMethods)
+        OpenMenu(Cfg.RippedPlayerMethod, 0, _rippedPlayerMethods)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        Config.RippedPlayerMethod = index
-        SetMenuOptionValueST(_rippedPlayerMethods[Config.RippedPlayerMethod])
+        Cfg.RippedPlayerMethod = index
+        SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
         ; Bruce Lee behavior was actually selected from here
-        If Config.RippedPlayerMethodIsBehavior()
-            Config.Behavior = Config.bhBruce
-        ElseIf Config.RippedPlayerMethodIsConst()
+        If Cfg.RippedPlayerMethodIsBehavior()
+            Cfg.Behavior = Cfg.bhBruce
+        ElseIf Cfg.RippedPlayerMethodIsConst()
             RippedPlayerSetCnstAlpha()
-        ElseIf Config.RippedPlayerMethodIsWeight()
+        ElseIf Cfg.RippedPlayerMethodIsWeight()
             SPP.texMngr.AlphaFromWeight(SPP.Player)
             ; RippedPlayerSetAlpha(SPP.AlgoWCSandow.GetPlayerWeight() / 100)
-        ElseIf Config.RippedPlayerMethodIsWeInv()
+        ElseIf Cfg.RippedPlayerMethodIsWeInv()
             SPP.texMngr.AlphaFromWeightInv(SPP.Player)
             ; RippedPlayerSetAlpha(1.0 - (SPP.AlgoWCSandow.GetPlayerWeight() / 100))
         EndIf
@@ -1250,30 +1285,30 @@ State MN_RippedPlayerOpt
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerMethod = 0
+        Cfg.RippedPlayerMethod = 0
         SPP.texMngr.Clear(SPP.Player)
-        SetMenuOptionValueST(_rippedPlayerMethods[Config.RippedPlayerMethod])
+        SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
         ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
-        SetInfoText("$MCM_RippedApplyInfo{" + Config.RippedPlayerMethodInfo() + "}")
+        SetInfoText("$MCM_RippedApplyInfo{" + Cfg.RippedPlayerMethodInfo() + "}")
     EndEvent
 EndState
 
 State MN_RippedBulkBhv
     Event OnMenuOpenST()
-        OpenMenu(Config.RippedPlayerBulkCutBhv, 0, _rippedPlayerBulkBhv)
+        OpenMenu(Cfg.RippedPlayerBulkCutBhv, 0, _rippedPlayerBulkBhv)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        Config.RippedPlayerBulkCutBhv = index
-        SetMenuOptionValueST(_rippedPlayerBulkBhv[Config.RippedPlayerBulkCutBhv])
+        Cfg.RippedPlayerBulkCutBhv = index
+        SetMenuOptionValueST(_rippedPlayerBulkBhv[Cfg.RippedPlayerBulkCutBhv])
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerBulkCutBhv = 0
-        SetMenuOptionValueST(_rippedPlayerBulkBhv[Config.RippedPlayerBulkCutBhv])
+        Cfg.RippedPlayerBulkCutBhv = 0
+        SetMenuOptionValueST(_rippedPlayerBulkBhv[Cfg.RippedPlayerBulkCutBhv])
         ForcePageReset()
     EndEvent
 
@@ -1284,13 +1319,13 @@ EndState
 
 State TG_RippedPlayerBulkCut
     Event OnSelectST()
-        Config.RippedPlayerBulkCut = !Config.RippedPlayerBulkCut
-        SetToggleOptionValueST(Config.RippedPlayerBulkCut)
+        Cfg.RippedPlayerBulkCut = !Cfg.RippedPlayerBulkCut
+        SetToggleOptionValueST(Cfg.RippedPlayerBulkCut)
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        Config.RippedPlayerBulkCut = False
+        Cfg.RippedPlayerBulkCut = False
         SetToggleOptionValueST(False)
         ForcePageReset()
     EndEvent
@@ -1327,7 +1362,7 @@ int Function LoadFlag(int aPresetNum)
 EndFunction
 
 Function SavePreset(int aPresetNum)
-    SandowPP.PresetManager.SaveFile(aPresetNum, SandowPP.Config)
+    SandowPP.PresetManager.SaveFile(aPresetNum, Cfg)
     ShowMessage("$Preset saved", False)
 EndFunction
 
@@ -1340,7 +1375,7 @@ Function TryLoadPreset(int aPresetNum)
     EndIf
 
     ; Assign new data
-    Config.Assign(pData)
+    Cfg.Assign(pData)
     ShowMessage("$Preset loaded succesfully", False)
 EndFunction
 
@@ -1380,6 +1415,28 @@ EndState
 State TX_PL3
     Event OnSelectST()
         TryLoadPreset(3)
+    EndEvent
+EndState
+
+
+; #########################################################################
+; Generic tags functions
+; #########################################################################
+string Function TagExists(bool condition)
+    If condition
+        return "$Found"
+    Else
+        return Error("$Not found")
+    EndIf
+EndFunction
+
+Function TagPapyrusUtil()
+    AddTextOptionST("TX_NfPapyrusU", "PapyrusUtil", TagExists(PapyrusUtilExists()), OPTION_FLAG_DISABLED )
+EndFunction
+
+State TX_NfPapyrusU
+    Event OnHighlightST()
+        SetInfoText("$MCM_CompatPapyrusUtilInfo")
     EndEvent
 EndState
 
@@ -1447,4 +1504,12 @@ int Function FlagByBool(bool aVal)
     Else
         Return OPTION_FLAG_DISABLED
     EndIf
+EndFunction
+
+string Function Header(string text)
+    return "$MCM_Header{" + text + "}"
+EndFunction
+
+string Function Error(string text)
+    return "$MCM_Error{" + text + "}"
 EndFunction

@@ -104,6 +104,7 @@ bool Function SetTextureSet(Actor akTarget)
 EndFunction
 
 Function SetAlpha(Actor akTarget, float alpha)
+    trace("SetAlpha " + aktarget + " " + alpha)
     bool isFemale = IsFemale(akTarget)
     ; bool isFemale = akTarget.GetLeveledActorBase().GetSex()
     ; This call needs some explanation.
@@ -157,6 +158,7 @@ EndFunction
 
 float Function GetActorWeight(Actor akTarget)
     {Returns actor weight as percent.}
+    trace("GetActorWeight " + aktarget)
     return akTarget.GetActorBase().GetWeight() / 100.0
 EndFunction
 
@@ -170,6 +172,7 @@ EndFunction
 float Function LerpAlpha(Actor akTarget, float alpha)
     {Linearly interpolates an alpha between player configured bounds.}
     bool isFemale = IsFemale(akTarget)
+    ; TODO: Arreglar
     If (akTarget == Player)
         debug.messagebox("Lerp player")
         return LerpPlayerAlpha(alpha)
@@ -179,6 +182,7 @@ EndFunction
 
 float Function LerpPlayerAlpha(float alpha)
     {Lerps alpha from player MCM settings.}
+    trace("LerpPlayerAlpha " + alpha)
     return Lerp(Cfg.RippedPlayerLB, Cfg.RippedPlayerUB, alpha)
 EndFunction
 

@@ -1,10 +1,10 @@
-Scriptname DM_SandowPP_ReportMeterBase extends DM_MeterWidgetScript Hidden 
+Scriptname DM_SandowPP_ReportMeterBase extends DM_MeterWidgetScript Hidden
 Import DM_SandowPP_Globals
 
 Event OnUpdateDisplay(DM_SandowPP_Report sender, float aPercent,  int aType)
     {Update data. Core behavior.}
-    Trace(Self + ".OnUpdateDisplay()")
-    
+    ; Trace(Self + ".OnUpdateDisplay()")
+
     Percent = aPercent
     FlashColor(sender, aType)
 EndEvent

@@ -52,3 +52,7 @@ EndFunction
 Function Trace(string aMsg, int aSeverity = 0) Global
     Debug.TraceUser("Sandow Plus Plus", aMsg, aSeverity)
 EndFunction
+
+bool Function PapyrusUtilExists() Global
+    Return PapyrusUtil.GetVersion() > 1
+EndFunction

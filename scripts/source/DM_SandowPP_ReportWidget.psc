@@ -31,7 +31,7 @@ float Property X = 0.0 Auto
 {Horizontal position of the widget in pixels at a resolution of 1280x720 [0.0, 1280.0]. Default: 0.0}
 float Property Y = 0.0 Auto
 {Vertical position of the widget in pixels at a resolution of 1280x720 [0.0, 720.0]. Default: 0.0}
-string Property VAlign = "top" Auto 
+string Property VAlign = "top" Auto
 {Vertical anchor point of the widget ["top", "center", "bottom"]. Default: "top"}
 string Property HAlign = "left" Auto
 {Horizontal anchor point of the widget ["left", "center", "right"]. Default: "left"}
@@ -61,7 +61,7 @@ EndFunction
 Function OnExit()
     {Code executed when selecting any other report type}
     Trace(Self + ".OnExit()")
-    
+
     Visible = False
     Clear()
 EndFunction
@@ -88,11 +88,11 @@ Function InitMeters()
 EndFunction
 
 Function ResetPermaHide()
-    _permaHide = New bool[4] 
+    _permaHide = New bool[4]
 EndFunction
 
 Function ResetDispatcher()
-    _messageDispatcher = New int[10] 
+    _messageDispatcher = New int[10]
 EndFunction
 
 ;##########################################################################
@@ -132,7 +132,7 @@ EndEvent
 
 Function Notification(DM_SandowPP_ReportArgs args)
     {Notify what happened}
-    Trace("ReportWidget.Notification()")
+    ; Trace("ReportWidget.Notification()")
 
     NotifyWithText(args)
     Dispatch(args)
@@ -140,11 +140,11 @@ EndFunction
 
 Function Dispatch(DM_SandowPP_ReportArgs args)
     {Forward the message to the proper meter}
-    Trace("ReportWidget.Dispatch()")
-    Trace("Category = " + args.aCategory)
-    Trace("Type = " + args.aType)
-    Trace("Float value = " + args.aFVal)
-    
+    ; Trace("ReportWidget.Dispatch()")
+    ; Trace("Category = " + args.aCategory)
+    ; Trace("Type = " + args.aType)
+    ; Trace("Float value = " + args.aFVal)
+
     If args.aCategory == 0
         Return
     EndIf
@@ -158,7 +158,7 @@ Function HideIfMax(DM_SandowPP_ReportMeterBase m, int mId, int aCat, float aPerc
     {Meters that can be hidden when reaching max value are hardcoded to weight and WGP meters}
     Trace("ReportWidget.HideIfMax()")
     Trace(m)
-    
+
     If !(aCat == mcWeight || aCat == mcWGP)
         Return
     EndIf
@@ -209,10 +209,10 @@ EndFunction
 
 Function RegisterMessageCategory(int aCat, int id = -1)
     {Enables a meter to catch report messages}
-    Trace("ReportWidget.RegisterMessageCategory()")
-    Trace("aCat = " + aCat)
-    Trace("id = " + id)
-    
+    ; Trace("ReportWidget.RegisterMessageCategory()")
+    ; Trace("aCat = " + aCat)
+    ; Trace("id = " + id)
+
     If id >= 0 && aCat > 0
         _messageDispatcher[aCat] = id
     EndIf
@@ -327,7 +327,7 @@ Function UpdateConfig()
         If !_permaHide[i]
             SetMeterAppearance(i, pos)
             pos += 1
-        Else    
+        Else
             _meters[i].Hide()
         EndIf
         i += 1
