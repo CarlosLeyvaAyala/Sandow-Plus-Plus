@@ -16,8 +16,8 @@
         <Variable Name="version" Value="3.2"/>
         <Variable Name="releaseDir" Value="D:\Skyrim SE\MO2\mods\Sandow-Plus-Plus-Src"/>
         <Variable Name="backupDir" Value=".\_ignore\_backups\"/>
-        <Variable Name="lib" Value="D:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"/>
         <Variable Name="MO" Value="D:\Skyrim SE\MO2\mods"/>
+        <Variable Name="lib" Value="D:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"/>
     </Variables>
 
     <Imports>
