@@ -14,15 +14,16 @@
         <Variable Name="mod" Value="Sandow Plus Plus"/>
         <Variable Name="esp" Value="SandowPP"/>
         <Variable Name="version" Value="3.2"/>
-        <Variable Name="releaseDir" Value="D:\Skyrim SE\MO2\mods\Sandow-Plus-Plus-Src"/>
+        <Variable Name="MO" Value="E:\Skyrim SE\MO2\mods"/>
+        <Variable Name="lib" Value="@MO\DM-SkyrimSE-Library\scripts"/>
+        <Variable Name="releaseDir" Value="@MO\Sandow-Plus-Plus-Src"/>
         <Variable Name="backupDir" Value=".\_ignore\_backups\"/>
-        <Variable Name="MO" Value="D:\Skyrim SE\MO2\mods"/>
-        <Variable Name="lib" Value="D:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"/>
+        <Variable Name="Skyrim" Value="D:\Steam\steamapps\common\Skyrim Special Edition"/>
     </Variables>
 
     <Imports>
         <Import>.\Scripts\Source</Import>
-        <Import>D:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition\Data\Scripts\Source</Import>
+        <Import>@Skyrim\Data\Scripts\Source</Import>
         <Import>@MO\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
         <Import>@MO\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
         <Import>@MO\RaceMenu\scripts\source</Import>
