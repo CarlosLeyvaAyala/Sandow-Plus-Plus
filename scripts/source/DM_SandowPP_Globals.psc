@@ -21,11 +21,11 @@ int Function clCritical() Global
 EndFunction
 
 int Function ModMajorVersion() Global
-    Return 3
+    Return 4
 EndFunction
 
 int Function ModMinorVersion() Global
-    Return 2
+    Return 0
 EndFunction
 
 int Function ModPatchVersion() Global
@@ -55,4 +55,12 @@ EndFunction
 
 bool Function PapyrusUtilExists() Global
     Return PapyrusUtil.GetVersion() > 1
+EndFunction
+
+bool Function SexLabExists() Global
+    Return game.IsPluginInstalled("SexLab.esm")
+EndFunction
+
+bool Function NiOverrideExists() Global
+    Return NiOverride.GetScriptVersion() > 0
 EndFunction

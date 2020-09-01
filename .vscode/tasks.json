@@ -1,0 +1,20 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Pyro",
+            "type": "shell",
+            "detail": "Compile project with Pyro.",
+            "command": "\"D:\\Pyro\\pyro.exe\"",
+            "problemMatcher": [],
+            "args": ["${workspaceFolder}\\skyrimse.ppj"],
+
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

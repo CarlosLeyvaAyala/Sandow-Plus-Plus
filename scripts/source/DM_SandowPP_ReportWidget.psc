@@ -156,8 +156,8 @@ EndFunction
 
 Function HideIfMax(DM_SandowPP_ReportMeterBase m, int mId, int aCat, float aPercent)
     {Meters that can be hidden when reaching max value are hardcoded to weight and WGP meters}
-    Trace("ReportWidget.HideIfMax()")
-    Trace(m)
+    ; Trace("ReportWidget.HideIfMax()")
+    ; Trace(m)
 
     If !(aCat == mcWeight || aCat == mcWGP)
         Return
@@ -169,10 +169,10 @@ EndFunction
 
 bool Function HideMeterIfMax(DM_SandowPP_ReportMeterBase m, int mId, float aPercent)
     {Hides a single meter if reached max percent. Returns <True> if changes were made.}
-    Trace("ReportWidget.HideMeterIfMax()")
+    ; Trace("ReportWidget.HideMeterIfMax()")
     bool hideThis = aPercent >= 1.0
     If MeterIsHidden(mId) == hideThis
-        Trace("No changes made.")
+        ; Trace("No changes made.")
         Return False
     EndIf
     HidePermanently(mId, hideThis)
@@ -220,12 +220,12 @@ EndFunction
 
 Function HidePermanently(int id, bool aHide)
     {Avoid a meter from ever showing}
-    Trace("ReportWidget.HidePermanently(" + id + ", " + aHide + ")")
+    ; Trace("ReportWidget.HidePermanently(" + id + ", " + aHide + ")")
     _permaHide[id] = aHide
 EndFunction
 
 Function HideNow(int id, bool aHide)
-    Trace("ReportWidget.HideNow(" + id + ", " + aHide + ")")
+    ; Trace("ReportWidget.HideNow(" + id + ", " + aHide + ")")
     If _meters[id].IsHidden()
         Return
     EndIf
@@ -238,8 +238,8 @@ EndFunction
 
 bool Function MeterIsHidden(int id)
     bool r = _permaHide[id]
-    Trace("ReportWidget.MeterIsHidden(" + id + ")")
-    Trace("IsHidden = " + r)
+    ; Trace("ReportWidget.MeterIsHidden(" + id + ")")
+    ; Trace("IsHidden = " + r)
     Return r
 EndFunction
 

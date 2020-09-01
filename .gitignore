@@ -5,7 +5,6 @@
 
 _ignore/*
 *.code-workspace
-tasks.json
 *.pex
 *.zip
 *.7z

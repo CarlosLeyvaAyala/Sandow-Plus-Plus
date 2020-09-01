@@ -105,6 +105,7 @@ EndFunction
 
 Function SetAlpha(Actor akTarget, float alpha)
     trace("SetAlpha " + aktarget + " " + alpha)
+    alpha = ConstrainF(alpha, 0.0, 1.0)
     bool isFemale = IsFemale(akTarget)
     ; bool isFemale = akTarget.GetLeveledActorBase().GetSex()
     ; This call needs some explanation.
@@ -136,7 +137,6 @@ EndFunction
 TextureSet Function SelectTextureSet(Actor akTarget)
     {Selects a texture set suitable for known races}
     bool isFemale = IsFemale(akTarget)
-    ; bool isFemale = akTarget.GetLeveledActorBase().GetSex() == 1
     If IsHumanoid(akTarget)
         If isFemale
             return femaleTexSet
@@ -162,34 +162,100 @@ float Function GetActorWeight(Actor akTarget)
     return akTarget.GetActorBase().GetWeight() / 100.0
 EndFunction
 
-bool Function SetTextureAndLerpA(Actor akTarget, float alpha)
-    {Sets a suitable texture set and a LERPed alpha.}
-    If SetTextureSet(akTarget)
-        SetAlpha(akTarget, LerpAlpha(akTarget, alpha))
-    EndIf
-EndFunction
+; bool Function SetTextureAndLerpA(Actor akTarget, float alpha)
+;     {Sets a suitable texture set and a LERPed alpha.}
+;     If SetTextureSet(akTarget)
+;         SetAlpha(akTarget, LerpAlpha(akTarget, alpha))
+;     EndIf
+; EndFunction
 
 float Function LerpAlpha(Actor akTarget, float alpha)
-    {Linearly interpolates an alpha between player configured bounds.}
+    {Linearly interpolates an alpha between player configured bounds. Automatically gets info for sex and race.}
     bool isFemale = IsFemale(akTarget)
     ; TODO: Arreglar
     If (akTarget == Player)
-        debug.messagebox("Lerp player")
         return LerpPlayerAlpha(alpha)
     EndIf
     return alpha
 EndFunction
 
+Function SetLerpAlpha(Actor akTarget, float alpha)
+    {Gets a linearly interpolated alpha and sets it to an actor.}
+    SetAlpha(aktarget, LerpAlpha(aktarget, alpha))
+EndFunction
+
 float Function LerpPlayerAlpha(float alpha)
-    {Lerps alpha from player MCM settings.}
-    trace("LerpPlayerAlpha " + alpha)
+    {Lerps alpha from player MCM settings. You can use this for behavior set alpha, too.}
+    trace("LerpPlayerAlpha ")
     return Lerp(Cfg.RippedPlayerLB, Cfg.RippedPlayerUB, alpha)
 EndFunction
 
 Function AlphaFromWeight(Actor akTarget)
-    SetTextureAndLerpA(akTarget, GetActorWeight(akTarget))
+    SetLerpAlpha(akTarget, GetActorWeight(akTarget))
 EndFunction
 
 Function AlphaFromWeightInv(Actor akTarget)
-    SetTextureAndLerpA(akTarget, 1.0 - GetActorWeight(akTarget))
+    SetLerpAlpha(akTarget, 1.0 - GetActorWeight(akTarget))
+EndFunction
+
+Function AlphaFromSkills(Actor akTarget)
+    float hi = 1.25
+    float md = 0.75
+    float lo = 0.50
+    float hv = aktarget.GetBaseActorValue("HeavyArmor") * hi
+    float sn = aktarget.GetBaseActorValue("Sneak") * hi
+    float th = aktarget.GetBaseActorValue("TwoHanded") * hi
+    float bl = aktarget.GetBaseActorValue("Block") * hi
+    float lt = aktarget.GetBaseActorValue("LightArmor") * md
+    float oh = aktarget.GetBaseActorValue("OneHanded") * md
+    float at = aktarget.GetBaseActorValue("Alteration") * md
+    float ar = aktarget.GetBaseActorValue("Marksman") * lo
+    float sm = aktarget.GetBaseActorValue("Smithing") * 2.0
+    trace("Skills")
+    trace(hv)
+    trace(sn)
+    trace(th)
+    trace(bl)
+    trace(lt)
+    trace(oh)
+    trace(at)
+    trace(ar)
+    trace(sm)
+    float alpha = (hv + sn + th + bl + lt + oh + at + ar + sm) / 500.0
+    SetLerpAlpha(akTarget, alpha)
+EndFunction
+
+Function SetAlphaFromOptions(Actor akTarget)
+    {Sets an actor alpha based on MCM options. DO NOT USE FOR BEHAVIOR SET ALPHA.}
+    If  aktarget == Player
+        PlayerAlphaFromOptions()
+    EndIf
+EndFunction
+
+Function PlayerAlphaFromOptions()
+    {Sets the player alpha based on MCM options.}
+    If Cfg.RippedPlayerMethodIsConst()
+        trace("Set const")
+        SetAlpha(Player, Cfg.RippedPlayerConstLvl)
+    ElseIf Cfg.RippedPlayerMethodIsSkill()
+        trace("Set skill")
+        AlphaFromSkills(Player)
+    ElseIf Cfg.RippedPlayerMethodIsWeight()
+        trace("Set by weight")
+        AlphaFromWeight(Player)
+    ElseIf Cfg.RippedPlayerMethodIsWeInv()
+        trace("Set by weight inv")
+        AlphaFromWeightInv(Player)
+    Else
+        Clear(Player)
+    EndIf
+EndFunction
+
+bool Function InitializeActor(Actor akTarget)
+    {Sets a suitable texture set and a suitable alpha.}
+    If SetTextureSet(akTarget)
+        SetAlphaFromOptions(akTarget)
+        return true
+    EndIf
+    return false
 EndFunction

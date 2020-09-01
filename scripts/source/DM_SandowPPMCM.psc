@@ -139,6 +139,8 @@ event OnPageReset(string aPage)
         PageRipped()
     ElseIf aPage == _ppSkills
         PageSkills()
+    ElseIf aPage == _ppCompat
+        PageCompat()
     Else
         PageMain()
     EndIf
@@ -162,8 +164,6 @@ Function PageMain()
     ; Row 1
     int presets = PageMainPresets(0)
     int stats = PageMainStats(1)
-    trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ presets " + presets)
-    trace("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ stats " + stats)
     ; Row 2
     int row2 = MaxI(stats - 1, presets)
     int pos2 = PageMainConfiguration(row2)
@@ -1170,11 +1170,13 @@ State SL_RippedPlayerLB
 
     Event OnSliderAcceptST(float val)
         Cfg.RippedPlayerLB = PercentToFloat(val)
+        SPP.texMngr.PlayerAlphaFromOptions()
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
         Cfg.RippedPlayerLB = 0.0
+        SPP.texMngr.PlayerAlphaFromOptions()
         SetSliderOptionValueST(0.0, slFmt0)
     EndEvent
 
@@ -1190,11 +1192,13 @@ State SL_RippedPlayerUB
 
     Event OnSliderAcceptST(float val)
         Cfg.RippedPlayerUB = PercentToFloat(val)
+        SPP.texMngr.PlayerAlphaFromOptions()
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
         Cfg.RippedPlayerUB = 1.0
+        SPP.texMngr.PlayerAlphaFromOptions()
         SetSliderOptionValueST(100, slFmt0)
     EndEvent
 
@@ -1203,14 +1207,14 @@ State SL_RippedPlayerUB
     EndEvent
 EndState
 
-Function RippedPlayerSetAlpha(float alpha)
-    SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, alpha)
-EndFunction
+; Function RippedPlayerSetAlpha(float alpha)
+;     SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, alpha)
+; EndFunction
 
-Function RippedPlayerSetCnstAlpha()
-    RippedPlayerSetAlpha(Cfg.RippedPlayerConstLvl)
-    ; SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Cfg.RippedPlayerConstLvl)
-EndFunction
+; Function RippedPlayerSetCnstAlpha()
+;     RippedPlayerSetAlpha(Cfg.RippedPlayerConstLvl)
+;     ; SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Cfg.RippedPlayerConstLvl)
+; EndFunction
 
 State SL_RippedPlayerConstAlpha
     Event OnSliderOpenST()
@@ -1219,13 +1223,15 @@ State SL_RippedPlayerConstAlpha
 
     Event OnSliderAcceptST(float val)
         Cfg.RippedPlayerConstLvl =  PercentToFloat(val)
-        RippedPlayerSetCnstAlpha()
+        ; RippedPlayerSetCnstAlpha()
+        SPP.texMngr.PlayerAlphaFromOptions()
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
         Cfg.RippedPlayerConstLvl = 1.0
-        RippedPlayerSetCnstAlpha()
+        ; RippedPlayerSetCnstAlpha()
+        SPP.texMngr.PlayerAlphaFromOptions()
         SetSliderOptionValueST(FloatToPercent(Cfg.RippedPlayerConstLvl), slFmt0)
     EndEvent
 
@@ -1269,24 +1275,28 @@ State MN_RippedPlayerOpt
     Event OnMenuAcceptST(int index)
         Cfg.RippedPlayerMethod = index
         SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
-        ; Bruce Lee behavior was actually selected from here
+
         If Cfg.RippedPlayerMethodIsBehavior()
+            ; Bruce Lee behavior was actually selected from here
             Cfg.Behavior = Cfg.bhBruce
-        ElseIf Cfg.RippedPlayerMethodIsConst()
-            RippedPlayerSetCnstAlpha()
-        ElseIf Cfg.RippedPlayerMethodIsWeight()
-            SPP.texMngr.AlphaFromWeight(SPP.Player)
-            ; RippedPlayerSetAlpha(SPP.AlgoWCSandow.GetPlayerWeight() / 100)
-        ElseIf Cfg.RippedPlayerMethodIsWeInv()
-            SPP.texMngr.AlphaFromWeightInv(SPP.Player)
-            ; RippedPlayerSetAlpha(1.0 - (SPP.AlgoWCSandow.GetPlayerWeight() / 100))
+        Else
+            SPP.texMngr.InitializeActor(SPP.Player)
+        ; ElseIf Cfg.RippedPlayerMethodIsConst()
+        ;     RippedPlayerSetCnstAlpha()
+        ; ElseIf Cfg.RippedPlayerMethodIsWeight()
+        ;     SPP.texMngr.AlphaFromWeight(SPP.Player)
+        ;     ; RippedPlayerSetAlpha(SPP.AlgoWCSandow.GetPlayerWeight() / 100)
+        ; ElseIf Cfg.RippedPlayerMethodIsWeInv()
+        ;     SPP.texMngr.AlphaFromWeightInv(SPP.Player)
+        ;     ; RippedPlayerSetAlpha(1.0 - (SPP.AlgoWCSandow.GetPlayerWeight() / 100))
         EndIf
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerMethod = 0
-        SPP.texMngr.Clear(SPP.Player)
+        Cfg.RippedPlayerMethod = Cfg.rpmNone
+        SPP.texMngr.PlayerAlphaFromOptions()
+        ; SPP.texMngr.Clear(SPP.Player)
         SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
         ForcePageReset()
     EndEvent
@@ -1335,6 +1345,19 @@ State TG_RippedPlayerBulkCut
     EndEvent
 EndState
 
+
+; #########################################################
+; ###                       COMPAT                      ###
+; #########################################################
+
+Function PageCompat()
+    SetCursorFillMode(TOP_TO_BOTTOM)
+    TagPapyrusUtil()
+    TagNiOverride()
+    If SexLabExists()
+        TagSexlab()
+    EndIf
+EndFunction
 
 ; #########################################################
 ; ###                       PRESETS                     ###
@@ -1431,12 +1454,33 @@ string Function TagExists(bool condition)
 EndFunction
 
 Function TagPapyrusUtil()
-    AddTextOptionST("TX_NfPapyrusU", "PapyrusUtil", TagExists(PapyrusUtilExists()), OPTION_FLAG_DISABLED )
+    ; AddTextOptionST("TX_NfPapyrusU", "PapyrusUtil", TagExists(PapyrusUtilExists()), OPTION_FLAG_DISABLED )
+    AddTextOptionST("TX_NfPapyrusU", "PapyrusUtil", TagExists(PapyrusUtilExists()))
+EndFunction
+
+Function TagNiOverride()
+    AddTextOptionST("TX_NfNiOverride", "NiOverride", TagExists(NiOverrideExists()))
+EndFunction
+
+Function TagSexlab()
+    AddTextOptionST("TX_NfSexlab", "Sexlab", TagExists(SexLabExists()))
 EndFunction
 
 State TX_NfPapyrusU
     Event OnHighlightST()
         SetInfoText("$MCM_CompatPapyrusUtilInfo")
+    EndEvent
+EndState
+
+State TX_NfNiOverride
+    Event OnHighlightST()
+        SetInfoText("$MCM_CompatNiOverrideInfo")
+    EndEvent
+EndState
+
+State TX_NfSexlab
+    Event OnHighlightST()
+        SetInfoText("$MCM_CompatSexlabInfo")
     EndEvent
 EndState
 

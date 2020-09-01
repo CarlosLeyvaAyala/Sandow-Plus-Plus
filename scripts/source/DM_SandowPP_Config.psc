@@ -188,6 +188,8 @@ string Function RippedPlayerMethodInfo()
         return "$MCM_RippedApplyInfoWeight"
     ElseIf RippedPlayerMethodIsWeInv()
         return "$MCM_RippedApplyInfoWeightInv"
+    ElseIf RippedPlayerMethodIsSkill()
+        return "$MCM_RippedApplyInfoSkill"
     Else
         return "$MCM_RippedApplyInfoBhv"
     EndIf
@@ -207,6 +209,10 @@ EndFunction
 
 bool Function RippedPlayerMethodIsWeInv()
     return RippedPlayerMethod == rpmWInv
+EndFunction
+
+bool Function RippedPlayerMethodIsSkill()
+    return RippedPlayerMethod == rpmSkill
 EndFunction
 
 bool Function RippedPlayerMethodIsBehavior()

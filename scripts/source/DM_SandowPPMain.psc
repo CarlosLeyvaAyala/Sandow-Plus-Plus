@@ -119,9 +119,9 @@ Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
         Algorithm.ReportOnHotkey(AlgorithmData)
     EndIf
-    If KeyCode == 200
-        la()
-    EndIf
+    ; If KeyCode == 200
+    ;     la()
+    ; EndIf
 EndEvent
 
 Event OnInit()
@@ -188,7 +188,7 @@ Function OnGameReload()
     HeightChanger.ReapplyHeight()
     ; txset()         ; TODO: DELETE
     ; texMngr = (AlgoWCPumping as Quest) as DM_SandowPP_TextureMngr
-    RegisterForKey(200)
+    ;RegisterForKey(200)
     ; Debug.Notification("Init SPP " + texMngr)
     texMngr.InitData()
     ; texMngr.Debug(Player)
@@ -199,7 +199,7 @@ Event SexLabEnter(string eventName, string argString, float argNum, form sender)
     {Sexlab integration}
     ; sslThreadController c = sender as sslThreadController
     ; If !c || !c.HasPlayer
-    ; 	return
+    ;   return
     ; EndIf
 
     CurrentState.LastSkillGainTime = Now()
@@ -208,7 +208,8 @@ EndEvent
 Function RegisterEvents()
     { Register all events needed for this to work }
     HeightChanger.RegisterEvents()
-    If Game.GetModByName("SexLab.esm") != 255
+    ; If Game.GetModByName("SexLab.esm") != 255
+    If SexLabExists()
         ; SexLab = Game.GetFormFromFile(0x00D62, "SexLab.esm") as Quest
         ; RegisterForModEvent("AnimationStart", "SexLabEnter")
     EndIf

@@ -13,7 +13,7 @@
     <Variables>
         <Variable Name="mod" Value="Sandow Plus Plus"/>
         <Variable Name="esp" Value="SandowPP"/>
-        <Variable Name="version" Value="3.2"/>
+        <Variable Name="version" Value="4.0"/>
         <Variable Name="MO" Value="E:\Skyrim SE\MO2\mods"/>
         <Variable Name="lib" Value="@MO\DM-SkyrimSE-Library\scripts"/>
         <Variable Name="releaseDir" Value="@MO\Sandow-Plus-Plus-Src"/>
@@ -27,6 +27,9 @@
         <Import>@MO\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
         <Import>@MO\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
         <Import>@MO\RaceMenu\scripts\source</Import>
+        <Import>@MO\SkyUI\scripts\source</Import>
+        <Import>@MO\SkyUI_5.1_SDK\Scripts\source</Import>
+        <Import>@MO\SkyUI_5.1_SDK\Scripts</Import>
         <Import>@MO\SexLabFrameworkSE v163 BETA8\scripts\</Import>
         <Import>@lib\Source</Import>
     </Imports>
