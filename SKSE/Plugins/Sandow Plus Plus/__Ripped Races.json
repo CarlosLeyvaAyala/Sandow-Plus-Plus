@@ -1,8 +1,8 @@
 {
 	"int": {
-		"humanlistsize": 16,
-		"catlistsize": 2,
-		"lizardlistsize": 2
+		"humanoidsSize": 16,
+		"catsSize": 2,
+		"lizardsSize": 2
 	},
 	"stringList": {
 		"humanoids": [
@@ -22,7 +22,7 @@
 			"RedguardRaceVampire",
 			"WoodElfRace",
 			"WoodElfRaceVampire"
-		],		
+		],
 		"cats": [
 			"KhajiitRace",
 			"KhajiitRaceVampire"
@@ -30,6 +30,6 @@
 		"lizards": [
 			"ArgonianRace",
 			"ArgonianRaceVampire"
-		]		
+		]
 	}
 }

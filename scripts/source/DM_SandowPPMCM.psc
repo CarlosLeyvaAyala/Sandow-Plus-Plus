@@ -81,7 +81,6 @@ Event OnConfigInit()
     Pages[1] = _ppSkills
     Pages[2] = _ppRipped
     Pages[3] = _ppWidget
-    ; Pages[4] = _ppProfiles
     Pages[4] = _ppCompat
 
     _hAlign = new string[3]

@@ -71,7 +71,6 @@ DM_SandowPP_Algorithm _algorithm
 ; ########################################################################
 ; Events
 ; ########################################################################
-;string Property NINODE_HEAD = "NPC Head [Head]" AutoReadOnly
 Function ChangeHeadSize()
     DM_SandowPP_Config c = Config
     If c.CanResizeHead && SkelNodeExists(Player, NINODE_HEAD())
@@ -175,8 +174,10 @@ Function CalcPlayerRippedness()
             ; SwapBulkCut()
     Else
         ;  Simple muscle def. options
+        Trace("Simple muscle def")
         If !(Config.RippedPlayerMethodIsNone() || Config.RippedPlayerMethodIsBehavior())
-            texMngr.PlayerAlphaFromOptions()
+            ; Reapply texture because some actions can clean it
+            texMngr.InitializeActor(Player)
         EndIf
     EndIf
 EndFunction
@@ -212,6 +213,7 @@ Function OnGameReload()
     HeightChanger.ReapplyHeight()
     ;RegisterForKey(200)
     texMngr.InitData()
+    texMngr.Debug(Player)
 EndFunction
 
 Event SexLabEnter(string eventName, string argString, float argNum, form sender)

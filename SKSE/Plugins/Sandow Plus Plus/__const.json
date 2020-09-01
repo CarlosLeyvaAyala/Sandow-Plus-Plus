@@ -1,0 +1,44 @@
+{
+	"int": {
+		"humanlistsize": 16,
+		"catlistsize": 2,
+		"lizardlistsize": 2
+	},
+	"float": {
+		"skillratiore": 0.15,
+		"skillratiosm": 0.25,
+		"skillratiosn": 0.25
+	},
+	"stringList": {
+		"humanoids": [
+			"BretonRace",
+			"BretonRaceVampire",
+			"DarkElfRace",
+			"DarkElfRaceVampire",
+			"HighElfRace",
+			"HighElfRaceVampire",
+			"ImperialRace",
+			"ImperialRaceVampire",
+			"NordRace",
+			"NordRaceVampire",
+			"OrcRace",
+			"OrcRaceVampire",
+			"RedguardRace",
+			"RedguardRaceVampire",
+			"WoodElfRace",
+			"WoodElfRaceVampire"
+		],
+		"cats": [
+			"KhajiitRace",
+			"KhajiitRaceVampire"
+		],
+		"lizards": [
+			"ArgonianRace",
+			"ArgonianRaceVampire"
+		]
+	},
+	"string": {
+		"rwhalign": "Right",
+		"rwvalign": "Center"
+	}
+}

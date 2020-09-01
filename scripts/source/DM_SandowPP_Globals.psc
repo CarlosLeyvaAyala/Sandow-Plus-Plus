@@ -1,5 +1,23 @@
 Scriptname DM_SandowPP_Globals Hidden
 
+string Function JsonFileName(string fname) Global
+    {Gets a filename that points to this Mod's folder.}
+    return "../Sandow Plus Plus/" + fname
+EndFunction
+
+string Function CfgConst() Global
+    {Returns the filename of the constants file.}
+    return JsonFileName("__const.json")
+EndFunction
+
+string[] Function ReadStrArray(string FileName, string KeyName) Global
+    {Instantiates and creates an array. The array needs a varable telling its size provided by the same file; if that doesn't exist, it creates a default sized array of 255.}
+    string[] result
+    result = Utility.CreateStringArray(JsonUtil.GetIntValue(FileName, KeyName + "Size",255))
+    result = JsonUtil.StringListToArray(FileName, KeyName)
+    return result
+EndFunction
+
 ; Message colors
 int Function clDefault() Global
     Return 0xFFFFFF
