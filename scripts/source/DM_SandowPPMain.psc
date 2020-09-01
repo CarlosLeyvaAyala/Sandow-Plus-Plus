@@ -162,10 +162,34 @@ Event OnSleepStop(bool aInterrupted)
     CurrentState.Assign( Algorithm.OnSleep(AlgorithmData) )             ; Main calculation. Yep; that's all.
     CurrentState.WeightGainMultiplier = 1.0                             ; Weight gain from anabolics expires on sleep
     ChangeHeadSize()
+    CalcPlayerRippedness()
     If Config.VerboseMod
         Algorithm.ReportSleep(AlgorithmData)
     EndIf
 endEvent
+
+int _bulkCutDays = 0
+Function CalcPlayerRippedness()
+    {Calculate muscular definition settings for player.}
+    If Config.RippedPlayerBulkCut
+            ; SwapBulkCut()
+    Else
+        ;  Simple muscle def. options
+        If !(Config.RippedPlayerMethodIsNone() || Config.RippedPlayerMethodIsBehavior())
+            texMngr.PlayerAlphaFromOptions()
+        EndIf
+    EndIf
+EndFunction
+
+Function SwapBulkCut()
+    {Swap bulkin and cutting behaviors.}
+    _bulkCutDays += 1
+    If _bulkCutDays >= Config.RippedPlayerBulkCutDays
+        _bulkCutDays = 0
+        Debug.Notification("$RippedNotiBulk")
+        Debug.Notification("$RippedNotiCut")
+    EndIf
+EndFunction
 
 Function PrepareAlgorithmData()
     { Algorithms need data to function properly. This method properly points to that data. }
@@ -186,13 +210,8 @@ Function OnGameReload()
     RegisterEvents()
     PrepareAlgorithmData()
     HeightChanger.ReapplyHeight()
-    ; txset()         ; TODO: DELETE
-    ; texMngr = (AlgoWCPumping as Quest) as DM_SandowPP_TextureMngr
     ;RegisterForKey(200)
-    ; Debug.Notification("Init SPP " + texMngr)
     texMngr.InitData()
-    ; texMngr.Debug(Player)
-    ; Player.AddSpell(rippedSpell)
 EndFunction
 
 Event SexLabEnter(string eventName, string argString, float argNum, form sender)

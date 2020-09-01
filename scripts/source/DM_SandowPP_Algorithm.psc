@@ -1,4 +1,4 @@
-Scriptname DM_SandowPP_Algorithm extends Quest Hidden 
+Scriptname DM_SandowPP_Algorithm extends Quest Hidden
 { Interface to implement algorithms that change the player in some way when they sleep }
 
 Import DM_SandowPP_Globals
@@ -15,11 +15,11 @@ EndFunction
 Function OnEnterAlgorithm(DM_SandowPP_AlgorithmData aData)
     {Initial setup when switching to this algorithm}
     SetupWidget(aData)
-EndFunction    
+EndFunction
 
 Function OnExitAlgorithm(DM_SandowPP_AlgorithmData aData)
     {Do things when getting out from this}
-EndFunction    
+EndFunction
 
 float Function SleepFullRestHours()
     Return 10.0
@@ -38,54 +38,60 @@ Function SetupCommonWidget(DM_SandowPP_AlgorithmData aData, int a3rdMeterEvt)
     r.RegisterMessageCategory(a3rdMeterEvt, 2)
     r.RegisterMessageCategory(r.mcInactivity, 3)
     r.HidePermanently(3, !aData.Config.CanLoseWeight)       ; Hide meter if <CanLoseWeight> is disabled
-    r.HideNow(3, !aData.Config.CanLoseWeight)       
-EndFunction    
+    r.HideNow(3, !aData.Config.CanLoseWeight)
+EndFunction
 
 Function SetupWidget(DM_SandowPP_AlgorithmData aData)
     {Needed to be overrided by descendants if they want to support widget reporting}
-EndFunction    
+EndFunction
 
 Function ReportEssentials(DM_SandowPP_AlgorithmData aData)
     {Bare minimum data useful for the player. Used for widgets and such.}
     ; To be compatible, a Report.Notification() must send whole data.
-EndFunction    
+EndFunction
 
 DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)
     {Does something on the player when they go to sleep.}
     return Result      ; Always return this Property
-EndFunction    
+EndFunction
 
 Function ReportOnHotkey(DM_SandowPP_AlgorithmData aData)
     {Reports things on demand}
     aData.Report.OnHotkeyReport(Self)
-EndFunction    
+EndFunction
 
 Function ReportSleep(DM_SandowPP_AlgorithmData aData)
     {Reports things after done sleeping}
-EndFunction    
+EndFunction
 
 Function ReportSkillLvlUp(DM_SandowPP_AlgorithmData aData)
     {Reports things at skill level up}
-EndFunction    
+EndFunction
 
 string Function GetMCMStatus(DM_SandowPP_AlgorithmData aData)
     {Shows your current state in the MCM}
     Return ""
-EndFunction    
+EndFunction
 
 string Function GetMCMCustomData1(DM_SandowPP_AlgorithmData aData)
     {MCM Custom label functions}
     Return ""
-EndFunction    
+EndFunction
 
 string Function GetMCMCustomLabel1(DM_SandowPP_AlgorithmData aData)
     Return ""
-EndFunction    
+EndFunction
 
 string Function GetMCMCustomInfo1(DM_SandowPP_AlgorithmData aData)
     Return ""
-EndFunction    
+EndFunction
 
 string Function MCMInfo()
     Return "***ERROR***"
+EndFunction
+
+float Function DiminishingRatio(float x)
+    {Formula to calculate Diminishing Returns. [0.0, 1.0]. <x> can be Weight or muscle definition.}
+    Trace("DiminishingRatio(" + x + ")")
+    Return 2.7786 * DM_Utils.Exp(-2.3 * x) + 0.2214
 EndFunction

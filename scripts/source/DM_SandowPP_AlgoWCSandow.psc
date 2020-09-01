@@ -146,7 +146,7 @@ EndFunction
 
 float Function CalculateDiminishingReturns(float weightGain, float currW, bool aDiminish)
     if aDiminish
-        Return DiminishingRatio(currW) * weightGain
+        Return DiminishingRatio(currW / 100.0) * weightGain
     EndIf
     Return weightGain
 EndFunction
@@ -202,13 +202,13 @@ Function PartialRest(DM_SandowPP_State aState)
     aState.SkillFatigue -= restHours
 EndFunction
 
-float Function DiminishingRatio(float x)
-    {Formula to calculate Diminishing Returns}
-    float a = 0.00028
-    float b = -0.05188
-    float c = 2.956
-    Return (a * x * x) + (b * x) + c
-EndFunction
+; float Function DiminishingRatio(float x)
+;     {Formula to calculate Diminishing Returns}
+;     float a = 0.00028
+;     float b = -0.05188
+;     float c = 2.956
+;     Return (a * x * x) + (b * x) + c
+; EndFunction
 
 ; This function only accepts real hours, not game hours.
 ; Ie, using 0.08 (2 game hours) will get you wrong data,

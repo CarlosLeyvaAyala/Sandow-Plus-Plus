@@ -1207,15 +1207,6 @@ State SL_RippedPlayerUB
     EndEvent
 EndState
 
-; Function RippedPlayerSetAlpha(float alpha)
-;     SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, alpha)
-; EndFunction
-
-; Function RippedPlayerSetCnstAlpha()
-;     RippedPlayerSetAlpha(Cfg.RippedPlayerConstLvl)
-;     ; SPP.texMngr.SetTextureSetAndAlpha(SPP.Player, Cfg.RippedPlayerConstLvl)
-; EndFunction
-
 State SL_RippedPlayerConstAlpha
     Event OnSliderOpenST()
         CreatePercentSlider(Cfg.RippedPlayerConstLvl)
@@ -1281,14 +1272,6 @@ State MN_RippedPlayerOpt
             Cfg.Behavior = Cfg.bhBruce
         Else
             SPP.texMngr.InitializeActor(SPP.Player)
-        ; ElseIf Cfg.RippedPlayerMethodIsConst()
-        ;     RippedPlayerSetCnstAlpha()
-        ; ElseIf Cfg.RippedPlayerMethodIsWeight()
-        ;     SPP.texMngr.AlphaFromWeight(SPP.Player)
-        ;     ; RippedPlayerSetAlpha(SPP.AlgoWCSandow.GetPlayerWeight() / 100)
-        ; ElseIf Cfg.RippedPlayerMethodIsWeInv()
-        ;     SPP.texMngr.AlphaFromWeightInv(SPP.Player)
-        ;     ; RippedPlayerSetAlpha(1.0 - (SPP.AlgoWCSandow.GetPlayerWeight() / 100))
         EndIf
         ForcePageReset()
     EndEvent
@@ -1296,7 +1279,6 @@ State MN_RippedPlayerOpt
     Event OnDefaultST()
         Cfg.RippedPlayerMethod = Cfg.rpmNone
         SPP.texMngr.PlayerAlphaFromOptions()
-        ; SPP.texMngr.Clear(SPP.Player)
         SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
         ForcePageReset()
     EndEvent
