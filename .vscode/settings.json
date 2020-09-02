@@ -156,5 +156,72 @@
         "**/.fake": true,
         "**/.ionide": true,
         "**/*_temp.tex": true
+    },
+    // Use highlight
+    //  https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight
+    "highlight.regexes": {
+        "(; ?TODO:?)(.*)": [
+            {
+                "overviewRulerColor": "#ffcc00",
+                "backgroundColor": "#ffcc00",
+                "color": "#1f1f1f",
+                "fontWeight": "bold",
+                "overviewRulerLane": "4"
+            },
+            {
+                "backgroundColor": "#d9ad00",
+                "color": "#1f1f1f"
+            }
+        ],
+        "(;>)(.*)": [
+            {
+                "overviewRulerLane": "7",
+                "overviewRulerColor": "#61500C",
+                "backgroundColor": "#7d6608",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+            },
+            {
+                "fontWeight": "bold",
+                "backgroundColor": "#7d6608",
+                "color": "#1f1f1f"
+            }
+        ],
+        "(;@.*:)(.*)": [
+            {
+                "overviewRulerColor": "tomato",
+                "backgroundColor": "tomato",
+                "color": "#1f1f1f",
+                "fontWeight": "bold"
+            },
+            {
+                "backgroundColor": "tomato",
+                "color": "#1f1f1f"
+            }
+        ],
+        "(; ?WARNING:?)(.*)": [
+            {
+                "backgroundColor": "goldenrod",
+                // "textDecoration": "underline dotted orange",
+                "fontWeight": "bold"
+            },
+            {
+                "backgroundColor": "goldenrod",
+                // "textDecoration": "underline dotted orange",
+                "fontWeight": "bold"
+            }
+        ],
+        "(; ?FIXME:?)(.*)": [
+            {
+                "overviewRulerColor": "#ff0000",
+                "backgroundColor": "#aa0000",
+                "color": "#efefef",
+                "fontWeight": "bold"
+            },
+            {
+                "backgroundColor": "#aa0000",
+                "color": "#efefef"
+            }
+        ],
     }
 }

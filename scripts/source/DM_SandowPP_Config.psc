@@ -154,12 +154,12 @@ int Property rtWidget
     EndFunction
 EndProperty
 
-; #########################################################
-; ###                       RIPPED                      ###
-; #########################################################
 
-; ==============================
-; Player options
+;>=========================================================
+;>===                       RIPPED                      ===
+;>=========================================================
+
+;> ============== Player options ==============
 int Property rpmNone = 0 AutoReadOnly
 int Property rpmConst = 1 AutoReadOnly
 int Property rpmWeight = 2 AutoReadOnly
@@ -219,10 +219,62 @@ bool Function RippedPlayerMethodIsBehavior()
     return RippedPlayerMethod == rpmBhv
 EndFunction
 
+;> ============== NPC options ==============
+int Property rpmRand = 5 AutoReadOnly
+int Property rpmThin = 6 AutoReadOnly
+int Property rpmMuscle = 7 AutoReadOnly
 
-; #########################################################
-; ###                       WIDGET                      ###
-; #########################################################
+bool Function RippedNPCMethodIsNone(int method)
+    return method == rpmNone
+EndFunction
+
+bool Function RippedNPCMethodIsConst(int method)
+    return method == rpmConst
+EndFunction
+
+bool Function RippedNPCMethodIsWeight(int method)
+    return method == rpmWeight
+EndFunction
+
+bool Function RippedNPCMethodIsWeInv(int method)
+    return method == rpmWInv
+EndFunction
+
+bool Function RippedNPCMethodIsSkill(int method)
+    return method == rpmSkill
+EndFunction
+
+bool Function RippedNPCMethodIsRandom(int method)
+    return method == rpmRand
+EndFunction
+
+bool Function RippedNPCMethodIsThinnerLeanner(int method)
+    return method == rpmThin
+EndFunction
+
+bool Function RippedNPCMethodIsMuscularLeaner(int method)
+    return method == rpmMuscle
+EndFunction
+
+;@Expandable: Add new races here
+
+;> Humanoid male
+int Property RipNPCHumMaleMethod = 0 Auto
+float Property RipNPCHumMaleConst = 1.0 Auto
+float Property RipNPCHumMaleLB = 0.0 Auto
+float Property RipNPCHumMaleUB = 1.0 Auto
+
+;> Humanoid female
+int Property RipNPCHumFemMethod = 0 Auto
+float Property RipNPCHumFemConst = 1.0 Auto
+float Property RipNPCHumFemLB = 0.0 Auto
+float Property RipNPCHumFemUB = 1.0 Auto
+; int Property RipNPCHumFem = 0 Auto
+
+
+;>=========================================================
+;>===                       WIDGET                      ===
+;>=========================================================
 
 float Property rwUpdateTime
     Function set(float val)
@@ -322,11 +374,11 @@ bool property CanResizeHead = False Auto Hidden
 float property HeadSizeMin = 1.0 Auto Hidden
 float property HeadSizeMax = 1.0 Auto Hidden
 
-; ########################################################################
+;>=========================================================###############
 ; Public constants
 int property hotkeyInvalid = -1 AutoReadOnly
 
-; ########################################################################
+;>=========================================================###############
 ; Private variables
 bool _hungerAffectsGains
 int _hkShowStatus
@@ -334,9 +386,9 @@ int _behavior
 int _presetManager
 int _reportType
 
-; ########################################################################
+;>=========================================================###############
 ; Public functions. Call them from wherever you want.
-; ########################################################################
+;>=========================================================###############
 
 Function DefaultSkills()
     skillRatio2H = skillDefault2H
@@ -390,10 +442,10 @@ bool Function IsWidget()
     Return ReportType == rtWidget
 EndFunction
 
-; ########################################################################
+;>=========================================================###############
 ; Private functions. These are designed to be used only within
 ; this script. Never call them from the outside.
-; ########################################################################
+;>=========================================================###############
 
 Function Configure()
     If Owner != None && !BatchLoading
