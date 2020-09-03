@@ -59,7 +59,7 @@ string[] _behaviors
 string[] _vAlign
 string[] _hAlign
 string[] _rippedPlayerMethods
-string[] _rippedPlayerBulkBhv
+string[] _rippedPlayerBulkBhvMenu
 
 
 ;>=========================================================
@@ -117,9 +117,9 @@ Event OnConfigInit()
     _rippedPlayerMethods[Cfg.rpmSkill] = "$By skills"
     _rippedPlayerMethods[Cfg.rpmBhv] = "$By behavior"
 
-    _rippedPlayerBulkBhv = new string[2]
-    _rippedPlayerBulkBhv[Cfg.bulkSPP] = "Sandow Plus Plus"
-    _rippedPlayerBulkBhv[Cfg.bulkPI] = "Pumping Iron"
+    _rippedPlayerBulkBhvMenu = new string[2]
+    _rippedPlayerBulkBhvMenu[Cfg.bulkSPP] = "Sandow Plus Plus"
+    _rippedPlayerBulkBhvMenu[Cfg.bulkPI] = "Pumping Iron"
 EndEvent
 
 event OnVersionUpdate(int aVersion)
@@ -149,10 +149,16 @@ Event OnGameReload()
     DM_SandowPP_Globals.Trace("MCM.OnGameReload()")
     parent.OnGameReload()
     SandowPP.OnGameReload()
-    Cfg = SandowPP.Config
-    SPP = SandowPP
+    InitVars()
 EndEvent
 
+Function InitVars()
+    {Initializes variables needed for this to work.}
+    Cfg = SandowPP.Config
+    SPP = SandowPP
+    _rippedPlayer = SPP.texMngr.PlayerSettings
+    _rippedPlayerA = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
+EndFunction
 
 ;>=========================================================
 ;>===                       MAIN                        ===
@@ -276,7 +282,7 @@ int Function PageMainConfiguration(int pos)
     SetCursorPosition(pos)
     ;AddEmptyOption()
     AddHeaderOption(Header("$Configuration"))
-    If !Cfg.RippedPlayerBulkCut
+    If !_rippedPlayer.bulkCut
         AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Cfg.Behavior])
     Else
         AddTextOptionST("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
@@ -1117,65 +1123,82 @@ EndState
 ;>=========================================================
 ;>===                       RIPPED                      ===
 ;>=========================================================
-Function PageRipped()
-    SetCursorFillMode(TOP_TO_BOTTOM)
-    int playr = PageRippedPlayer(0)
-EndFunction
 
 string _sl_DaysFmt = "$sl_DaysFmt"
+DM_SandowPP_RippedPlayer _rippedPlayer
+DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerA
+
+Function PageRipped()
+    SetCursorFillMode(TOP_TO_BOTTOM)
+    ; Row 1
+    int playr = PageRippedPlayer(0)
+    int npc = PageRippedNPCAll(1)
+    ; Row 2+
+    int row2 = MaxI(npc - 1, playr)
+    SetCursorPosition(row2)
+    Header("Patatas")
+EndFunction
+
 int Function PageRippedPlayer(int pos)
     SetCursorPosition(pos)
-    int result = 1
-    AddHeaderOption("<font color='#daa520'>$Player</font>")
+    int count = 1
+    Header("$Player")
     If (SPP.texMngr.IsValidRace(SPP.Player))
         ; Hide menu when the player wants to bulk & cut or get ripped by behavior, because it doesn't make sense in those cases
-        If !(Cfg.RippedPlayerBulkCut || Cfg.IsBruce())
-            AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[Cfg.RippedPlayerMethod])
-            result += 1
+        If !(_rippedPlayer.bulkCut || Cfg.IsBruce())
+            AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[_rippedPlayer.Method])
+            count += 1
+        Else
+            AddTextOptionST("TX_RippedPlayerHiddenMethod", "$Behavior", SPP.Algorithm.Signature(), FlagByBool(false))
         EndIf
         ; Hide bulk & cut when it doesn't make sense
-        If Cfg.RippedPlayerMethodIsBehavior() || Cfg.IsBruce()
-            AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", Cfg.RippedPlayerBulkCut)
-            result += 1
-            If Cfg.RippedPlayerBulkCut
-                AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", Cfg.RippedPlayerBulkCutDays, _sl_DaysFmt)
-                AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhv[Cfg.RippedPlayerBulkCutBhv])
-                result += 2
+        If _rippedPlayerA.MethodIsBehavior() || Cfg.IsBruce()
+            AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", _rippedPlayer.bulkCut)
+            count += 1
+            If _rippedPlayer.bulkCut
+                AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", _rippedPlayer.bulkCutDays, _sl_DaysFmt)
+                AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
+                count += 2
             EndIf
         EndIf
 
         ; Show constant config only when it's required.
-        If Cfg.RippedPlayerMethodIsConst()
-            AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(Cfg.RippedPlayerConstLvl), slFmt0)
+        If _rippedPlayerA.MethodIsConst()
+            AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
         EndIf
 
         ; Texture bounds for player
-        If !Cfg.RippedPlayerMethodIsNone() && !Cfg.RippedPlayerMethodIsConst()
-            AddSliderOptionST("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(Cfg.RippedPlayerLB), slFmt0)
-            AddSliderOptionST("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(Cfg.RippedPlayerUB), slFmt0)
+        If !_rippedPlayerA.MethodIsNone() && !_rippedPlayerA.MethodIsConst()
+            AddSliderOptionST("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(_rippedPlayer.LB), slFmt0)
+            AddSliderOptionST("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(_rippedPlayer.UB), slFmt0)
         EndIf
     Else
         AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
-        result += 1
+        count += 1
     EndIf
-    return result
+    return pos + ToNewPos(count)
 EndFunction
 
+State TX_RippedPlayerHiddenMethod
+    Event OnHighlightST()
+        SetInfoText("$MCM_RippedPlayerHiddenMethod")
+    EndEvent
+EndState
 
 State SL_RippedPlayerLB
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Cfg.RippedPlayerLB), 0.0, FloatToPercent(Cfg.RippedPlayerUB) - 1.0, 1.0)
+        CreateSlider(FloatToPercent(_rippedPlayer.LB), 0.0, FloatToPercent(_rippedPlayer.UB) - 1.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Cfg.RippedPlayerLB = PercentToFloat(val)
-        SPP.texMngr.PlayerAlphaFromOptions()
+        _rippedPlayer.LB = PercentToFloat(val)
+        SPP.texMngr.InitializeActor(SPP.Player)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerLB = 0.0
-        SPP.texMngr.PlayerAlphaFromOptions()
+        _rippedPlayer.LB = 0.0
+        SPP.texMngr.InitializeActor(SPP.Player)
         SetSliderOptionValueST(0.0, slFmt0)
     EndEvent
 
@@ -1186,18 +1209,18 @@ EndState
 
 State SL_RippedPlayerUB
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Cfg.RippedPlayerUB), FloatToPercent(Cfg.RippedPlayerLB) + 1.0, 100.0, 1.0)
+        CreateSlider(FloatToPercent(_rippedPlayer.UB), FloatToPercent(_rippedPlayer.LB) + 1.0, 100.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Cfg.RippedPlayerUB = PercentToFloat(val)
-        SPP.texMngr.PlayerAlphaFromOptions()
+        _rippedPlayer.UB = PercentToFloat(val)
+        SPP.texMngr.InitializeActor(SPP.Player)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerUB = 1.0
-        SPP.texMngr.PlayerAlphaFromOptions()
+        _rippedPlayer.UB = 1.0
+        SPP.texMngr.InitializeActor(SPP.Player)
         SetSliderOptionValueST(100, slFmt0)
     EndEvent
 
@@ -1208,21 +1231,20 @@ EndState
 
 State SL_RippedPlayerConstAlpha
     Event OnSliderOpenST()
-        CreatePercentSlider(Cfg.RippedPlayerConstLvl)
+        CreatePercentSlider(_rippedPlayer.constAlpha)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Cfg.RippedPlayerConstLvl =  PercentToFloat(val)
-        ; RippedPlayerSetCnstAlpha()
-        SPP.texMngr.PlayerAlphaFromOptions()
+        _rippedPlayer.constAlpha =  PercentToFloat(val)
+        SPP.texMngr.InitializeActor(SPP.Player)
         SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerConstLvl = 1.0
+        _rippedPlayer.constAlpha = 1.0
         ; RippedPlayerSetCnstAlpha()
-        SPP.texMngr.PlayerAlphaFromOptions()
-        SetSliderOptionValueST(FloatToPercent(Cfg.RippedPlayerConstLvl), slFmt0)
+        SPP.texMngr.InitializeActor(SPP.Player)
+        SetSliderOptionValueST(FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -1232,17 +1254,17 @@ EndState
 
 State SL_RippedBulkDaysSwap
     Event OnSliderOpenST()
-        CreateSlider(Cfg.RippedPlayerBulkCutDays, 1.0, 20.0, 1.0)
+        CreateSlider(_rippedPlayer.bulkCutDays, 1.0, 20.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        Cfg.RippedPlayerBulkCutDays = val as int
-        SetSliderOptionValueST(Cfg.RippedPlayerBulkCutDays, _sl_DaysFmt)
+        _rippedPlayer.bulkCutDays = val as int
+        SetSliderOptionValueST(_rippedPlayer.bulkCutDays, _sl_DaysFmt)
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerBulkCutDays = 4
-        SetSliderOptionValueST(Cfg.RippedPlayerBulkCutDays, _sl_DaysFmt)
+        _rippedPlayer.bulkCutDays = 4
+        SetSliderOptionValueST(_rippedPlayer.bulkCutDays, _sl_DaysFmt)
     EndEvent
 
     Event OnHighlightST()
@@ -1259,14 +1281,14 @@ EndState
 State MN_RippedPlayerOpt
     Event OnMenuOpenST()
         ; Start, default, options
-        OpenMenu(Cfg.RippedPlayerMethod, 0, _rippedPlayerMethods)
+        OpenMenu(_rippedPlayer.Method, 0, _rippedPlayerMethods)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        Cfg.RippedPlayerMethod = index
-        SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
+        _rippedPlayer.Method = index
+        SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
 
-        If Cfg.RippedPlayerMethodIsBehavior()
+        If _rippedPlayerA.MethodIsBehavior()
             ; Bruce Lee behavior was actually selected from here
             Cfg.Behavior = Cfg.bhBruce
         Else
@@ -1276,30 +1298,30 @@ State MN_RippedPlayerOpt
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerMethod = Cfg.rpmNone
-        SPP.texMngr.PlayerAlphaFromOptions()
-        SetMenuOptionValueST(_rippedPlayerMethods[Cfg.RippedPlayerMethod])
+        _rippedPlayer.Method = Cfg.rpmNone
+        SPP.texMngr.InitializeActor(SPP.Player)
+        SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
         ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
-        SetInfoText("$MCM_RippedApplyInfo{" + Cfg.RippedPlayerMethodInfo() + "}")
+        SetInfoText("$MCM_RippedApplyInfo{" + _rippedPlayerA.MethodInfo() + "}")
     EndEvent
 EndState
 
 State MN_RippedBulkBhv
     Event OnMenuOpenST()
-        OpenMenu(Cfg.RippedPlayerBulkCutBhv, 0, _rippedPlayerBulkBhv)
+        OpenMenu(_rippedPlayer.bulkCutBhv, 0, _rippedPlayerBulkBhvMenu)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        Cfg.RippedPlayerBulkCutBhv = index
-        SetMenuOptionValueST(_rippedPlayerBulkBhv[Cfg.RippedPlayerBulkCutBhv])
+        _rippedPlayer.bulkCutBhv = index
+        SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerBulkCutBhv = 0
-        SetMenuOptionValueST(_rippedPlayerBulkBhv[Cfg.RippedPlayerBulkCutBhv])
+        _rippedPlayer.bulkCutBhv = 0
+        SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
         ForcePageReset()
     EndEvent
 
@@ -1310,13 +1332,13 @@ EndState
 
 State TG_RippedPlayerBulkCut
     Event OnSelectST()
-        Cfg.RippedPlayerBulkCut = !Cfg.RippedPlayerBulkCut
-        SetToggleOptionValueST(Cfg.RippedPlayerBulkCut)
+        _rippedPlayer.bulkCut = !_rippedPlayer.bulkCut
+        SetToggleOptionValueST(_rippedPlayer.bulkCut)
         ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        Cfg.RippedPlayerBulkCut = False
+        _rippedPlayer.bulkCut = False
         SetToggleOptionValueST(False)
         ForcePageReset()
     EndEvent
@@ -1326,6 +1348,15 @@ State TG_RippedPlayerBulkCut
     EndEvent
 EndState
 
+;>=========================================================
+;> Ripped NPC
+int Function PageRippedNPCAll(int pos)
+    SetCursorPosition(pos)
+
+    int count = 1
+    Header("$MCM_RippedNPCGlobal")
+    return pos + ToNewPos(count)
+EndFunction
 
 ;>=========================================================
 ;>===                       COMPAT                      ===

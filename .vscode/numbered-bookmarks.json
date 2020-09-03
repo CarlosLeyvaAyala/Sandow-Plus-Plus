@@ -4,7 +4,7 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				204,
+				206,
 				-1,
 				-1,
 				-1,
@@ -19,15 +19,31 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMCM.psc",
 			"bookmarks": [
 				-1,
-				1272,
+				1355,
+				1134,
+				-1,
+				-1,
+				-1,
+				-1,
 				-1,
 				-1,
 				141,
+				1359
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_TextureMngr.psc",
+			"bookmarks": [
+				-1,
+				237,
+				112,
 				-1,
 				-1,
 				-1,
 				-1,
-				1333
+				-1,
+				-1,
+				-1
 			]
 		}
 	]

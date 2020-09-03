@@ -168,14 +168,16 @@ Event OnSleepStop(bool aInterrupted)
 endEvent
 
 int _bulkCutDays = 0
+DM_SandowPP_RippedPlayer _rippedPlayer
+DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerAlpha
 Function CalcPlayerRippedness()
     {Calculate muscular definition settings for player.}
-    If Config.RippedPlayerBulkCut
+    If _rippedPlayer.bulkCut
             ; SwapBulkCut()
     Else
         ;  Simple muscle def. options
         Trace("Simple muscle def")
-        If !(Config.RippedPlayerMethodIsNone() || Config.RippedPlayerMethodIsBehavior())
+        If !(_rippedPlayerAlpha.MethodIsNone() || _rippedPlayerAlpha.MethodIsBehavior())
             ; Reapply texture because some actions can clean it
             texMngr.InitializeActor(Player)
         EndIf
@@ -185,7 +187,7 @@ EndFunction
 Function SwapBulkCut()
     {Swap bulkin and cutting behaviors.}
     _bulkCutDays += 1
-    If _bulkCutDays >= Config.RippedPlayerBulkCutDays
+    If _bulkCutDays >= _rippedPlayer.bulkCutDays
         _bulkCutDays = 0
         Debug.Notification("$RippedNotiBulk")
         Debug.Notification("$RippedNotiCut")
@@ -206,7 +208,7 @@ Function OnGameReload()
     {Setup things again after reloading a save. Mostly registering events again}
     OpenLog()
     Trace("Reloading a saved game")
-    Config.Owner = Self         ; For some reason, Config.Owner refuses to stay as configured in the CK
+    InitVars()
     RegisterAgainHotkeys()
     RegisterEvents()
     PrepareAlgorithmData()
@@ -214,6 +216,12 @@ Function OnGameReload()
     ;RegisterForKey(200)
     texMngr.InitData()
     texMngr.Debug(Player)
+EndFunction
+
+Function InitVars()
+    Config.Owner = Self         ; For some reason, Config.Owner refuses to stay as configured in the CK
+    _rippedPlayer = texMngr.PlayerSettings
+    _rippedPlayerAlpha = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
 
 Event SexLabEnter(string eventName, string argString, float argNum, form sender)

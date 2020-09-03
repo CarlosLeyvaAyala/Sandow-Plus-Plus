@@ -7,6 +7,7 @@ Actor property Player auto
 DM_SandowPP_ReportArgs property RArg auto
 DM_SandowPP_State property Result Auto
 
+;@abstract:
 string Function Signature()
     {REQUIRED. Used to differentiate between algorithms}
     return ""

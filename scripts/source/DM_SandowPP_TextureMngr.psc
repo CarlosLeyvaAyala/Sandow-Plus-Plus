@@ -2,9 +2,25 @@
 ;  Overview
 ;  ===========================================
 ; This is the main script that changes an Actor appeareance.
-; It basically decides how and which texture to apply to any given actor.
-; This needs to interact with the Global Configuration settings  to do so.
-; WARNING: 
+; It basically decides how and which texture to apply to any given actor and automates the
+; MCM options for NPCs.
+
+;@Overview:
+;       * Initializes everything needed to get actors ripped.
+;       * Scans the environment every <x> seconds to apply the spell that keeps track of whom NPCs
+;         have been set their muscle definition.
+;         This spell expires after 30 min, so it can be reapplied to NPCs.
+
+;@Info:
+; To add a new race based on the ones that already exist:
+;       * Add its name to  "__Ripped Races.json" under whichever texture is right.
+
+; To add more races (like avian races and shit):
+;       * Do the same steps as adding support for already existing races.
+;       * Create a new texture set in the CK, pointing to the most ripped texture.
+;       * Create new "DM_SandowPP_RippedActor" descendants and add them to new quests.
+;         Don't forget to set all their needed properties.
+;       * Add those new quests to the "DM_SPP_RippedRaces" formlist in the CK.
 
 Scriptname DM_SandowPP_TextureMngr Extends Quest
 {Decides which texture set an actor should use. Used to make them ripped}
@@ -12,69 +28,203 @@ Scriptname DM_SandowPP_TextureMngr Extends Quest
 Import DM_SandowPP_Globals
 Import DM_Utils
 
-; DM_SandowPPMain Property Owner Auto
 Actor property Player auto
-TextureSet Property femaleTexSet Auto
-TextureSet Property maleTexSet Auto
-DM_SandowPP_Config Property Cfg Auto
+; DM_SandowPP_Config Property Cfg Auto
+Formlist Property racesSettings Auto
+{List of all quests that contain racial settings.}
+DM_SandowPP_RippedPlayer Property PlayerSettings Auto
+{Quest that contain settings for the player.}
+Spell Property NPCRippedSpell Auto
+{Add this to an NPC to mark it as ripped.}
+MagicEffect Property NPCRippedFx Auto
+{Add this to an NPC to mark it as ripped.}
+Keyword Property ActorTypeNPC Auto
+{Keyword to scan only for NPCs.}
+DM_SandowPP_RippedActor Property AllNPCs Auto
+{Global config helper. Used for the MCM.}
+; string _node = "Body [Ovl5]"
 
-string[] _validHumanoids
-string[] _validCats
-string[] _validLizards
-string _node = "Body [Ovl5]"
 
+;TODO: Delete
+Function Debug(Actor akTarget)
+    ; Debug.MessageBox(GetRacialSettings(Player).Name())
+    AllNPCs.method = 1
+    AllNPCs.constAlpha = 1.0
+    ApplyGlobalSettings()
+    ApplyToNPCs(true)
 
+    InitializeActor(Player)
+    TestOverride(Player)
+    ; string actorRace = MiscUtil.GetActorRaceEditorID(akTarget)
+    ; Debug.Notification("Target Sex " + IsFemale(akTarget))
+    ; int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
+    ; NetImmerse.SetNodeTextureSet(Player, "Body [Ovl0]", femaleTexSet, false)
+    ; NiOverride.AddNodeOverrideInt(akTarget, true,  "Body [Ovl0]", 7, -1, skinColor, true)
+EndFunction
 
 ;>=========================================================
 ;>===                      PUBLIC                       ===
 ;>=========================================================
 
 ;> Use these functions when you want to enable muscle definition.
+Function InitData()
+    {Initializes this script. Call this on game reload.}
+    InitRacialSettings()
+    InitPlayerTexture()
+EndFunction
 
 bool Function InitializeActor(Actor akTarget)
     {Sets a suitable texture set and a suitable alpha.}
-    If SelectAndSetTextureSet(akTarget)
-        SetAlphaFromOptions(akTarget)
+    Trace("DM_SandowPP_TextureMngr.InitializeActor " + akTarget.getLeveledActorBase().getName())
+    DM_SandowPP_RippedActor settings = SelectSettings(akTarget)
+    If settings != None
+        Trace("Found settings " + settings.Name())
+        Trace("Texture set applied " + settings.texSet)
+        Trace("Method " + settings.method)
+        SetTextureSet(akTarget, settings.texSet)
+        SetTexAlpha(akTarget, settings.GetAlpha(akTarget))
+        ; int i = 1
+        ; While (i <= 5)
+        ;     SetTextureSet(akTarget, settings.texSet, "Body [Ovl" + i + "]")
+        ;     SetTexAlpha(akTarget, settings.GetAlpha(akTarget), "Body [Ovl" + i + "]")
+        ;     i += 1
+        ; EndWhile
         return true
     EndIf
     return false
 EndFunction
 
-float Function LerpPlayerAlpha(float alpha)
-    {Lerps alpha from player MCM settings. You can use this for behavior set alpha, too.}
-    trace("LerpPlayerAlpha " + alpha)
-    return Lerp(Cfg.RippedPlayerLB, Cfg.RippedPlayerUB, alpha)
+Function Clear(Actor akTarget)
+    SetTexAlpha(akTarget, 0.0)
+    SetTextureSet(akTarget, None)
 EndFunction
 
+; Applies ripped settings to nearby NPCs.
+; If forceUpdate, it outright sets values bypassing the spell check.
+Function ApplyToNPCs(bool forceUpdate = false)
+    Trace("ApplyToNPCs()")
+    Actor[] npcs = MiscUtil.ScanCellNPCs(Player, 2048.0, None, false)
+    int i = npcs.length
+    Trace("NPCs found: " + i)
+    While i > 0
+        i -= 1
+        Trace("Applying to: " + npcs[i] + npcs[i].getLeveledActorBase().getName())
+        If npcs[i] != Player
+    ; return  ; FIXME: Delete this
+            TestOverride(npcs[i])
+            ; If forceUpdate
+            ;     InitializeActor(npcs[i])
+            ; Else
+            ;     ApplyToNPC(npcs[i])
+            ; EndIf
+        EndIf
+     EndWhile
+EndFunction
+
+Event OnUpdate()
+    ; TestOverride(Player)
+    UnregisterForUpdate()
+    Trace("OnUpdate()")
+    ApplyToNPCs(true)
+    RegisterForSingleUpdate(5.0)
+EndEvent
 
 ;>=========================================================
-;>===                      PRIVATE                      ===
+;>===                       MCM                         ===
 ;>=========================================================
 
+Function ApplyGlobalSettings()
+    {Applies the global settings to all races.}
+    int i = racesSettings.GetSize()
+    While i > 0
+        i -= 1
+        RippedActor(i).AssignSettings(AllNPCs)
+    EndWhile
+EndFunction
+
+;@Private:
 ;>Building blocks. These aren't designed for interacting with other scripts.
 
-bool Function SelectAndSetTextureSet(Actor akTarget)
-    {Selects and sets a suitable texture set to apply to an actor so can look ripped.}
-    ; Get a suitable texture set or exit if we couldn't find it
-    TextureSet tx = SelectTextureSet(akTarget)
-    If !tx
-        return false
-    EndIf
-    SetTextureSet(aktarget, tx)
-    return true
+;>=========================================================
+;>===                       SETUP                       ===
+;>=========================================================
+
+Function InitRacialSettings()
+    {Initialize racial settings.}
+    int n = racesSettings.GetSize()
+    DM_SandowPP_RippedActor raceS
+    While n > 0
+        n -= 1
+        raceS = racesSettings.GetAt(n) as DM_SandowPP_RippedActor
+        raceS.Init()
+    EndWhile
 EndFunction
 
-bool Function SetTextureSet(Actor akTarget, TextureSet tx)
-    {Blindly sets a texture set to a target.}
+DM_SandowPP_RippedActor Function GetRacialSettings(Actor akTarget)
+    {Gets racial settings for an Actor.}
+    ; We iterate from 0 to max because most likely races (humanoids) are first in the list
+    int i = 0
+    int n = racesSettings.GetSize()
+    DM_SandowPP_RippedActor raceS
+    While i < n
+        raceS = RippedActor(i)
+        ; raceS = racesSettings.GetAt(i) as DM_SandowPP_RippedActor
+        If raceS.IsMe(akTarget)
+            return raceS
+        EndIf
+        i += 1
+    EndWhile
+    return None
+EndFunction
 
+DM_SandowPP_RippedActor Function RippedActor(int idx)
+    {Returns the ripped actor at <idx> from the supported races Formlist.}
+    return racesSettings.GetAt(idx) as DM_SandowPP_RippedActor
+EndFunction
+
+Function InitPlayerTexture()
+    {Gets the texture of the player based on their race and sex.}
+    PlayerSettings.texSet = GetRacialSettings(Player).texSet
+EndFunction
+
+Function ApplyToNPC(Actor akTarget)
+    {Applies ripped settings to one NPC only if its lacks a mark or it has expired.}
+    Trace("ApplyToNPC() " + akTarget)
+    If !akTarget.HasMagicEffect(NPCRippedFx)
+        InitializeActor(akTarget)
+        ResetNPCSpell(akTarget)
+    EndIf
+EndFunction
+
+Function ResetNPCSpell(Actor akTarget)
+    {Resets the spell telling the NPC has already been processed.}
+    If akTarget.HasSpell(NPCRippedSpell)
+        akTarget.RemoveSpell(NPCRippedSpell)
+    EndIf
+    akTarget.AddSpell(NPCRippedSpell)
+EndFunction
+
+DM_SandowPP_RippedActor Function SelectSettings(Actor akTarget)
+    {Selects suitable settings for akTarget.}
+    DM_SandowPP_RippedActor settings = GetRacialSettings(akTarget)
+    If akTarget == Player
+        settings = PlayerSettings
+    Else
+        settings = GetRacialSettings(akTarget)
+    EndIf
+    return settings
+EndFunction
+
+bool Function SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body [Ovl5]")
+    {Blindly sets a texture set to a target.}
+    Trace("SetTextureSet() On node " + node)
     ; This function is so heavily commented because there's no documentation on NiOverride
     bool isFemale = IsFemale(akTarget)
-    trace("DM_SandowPP_TextureMngr.SetTextureSet()" + aktarget + " isFemale " + isFemale(akTarget))
 
     ; Index is irrelevant for all these specific operations. It's **somewhat** documented in the NiOverride source code.
     int irrelevant = -1
     ; It NEEDS to be this override layer (is that called like that? No info anywhere). Don't ask me why it doesn't work with other nodes, like "Body [Ovl0]" et al.
-    string node = "Body [Ovl5]"
+    ; string node = "Body [Ovl5]"
     ; Get the skin tint color of the Actor to reapply it soon
     int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
     ; Add the texture set we want to show
@@ -82,24 +232,49 @@ bool Function SetTextureSet(Actor akTarget, TextureSet tx)
     NiOverride.AddNodeOverrideFloat(akTarget, isFemale,  node, 8, irrelevant, 0.0, true)
     ; Last operation resets the skin tint color to white, making the character's body pale. Restore the color we got earlier.
     NiOverride.AddNodeOverrideInt(akTarget, isFemale,  node, 7, irrelevant, skinColor, true)
-    ; Profit! Have a nice day.    
+    ; Profit! Have a nice day.
 EndFunction
 
-TextureSet Function SelectTextureSet(Actor akTarget)
-    {Selects a texture set suitable for known races and sexes.}
-    If IsFemale(akTarget)
-        return SelectFemaleTextureSet(aktarget)
-    Else
-        return SelectMaleTextureSet(aktarget)        
-    EndIf
+Function TestOverride(Actor akTarget)
+
+    string tx = "\\textures\\actors\\character\\Sandow PP\\female\\w100.dds"
+    ; AddSkinOverrideString(ObjectReference ref, bool isFemale, bool firstPerson, int slotMask, int key, int index, string value, bool persist)
+    int idx = 1     ; Normal maps
+    int ky = 9
+    ; While idx <= 8
+    ;     Trace("*********** " + NiOverride.GetSkinPropertyString(akTarget, false, 0x04, ky, idx) + " idx = " + idx)
+    ;     idx += 1
+    ; EndWhile
+    int i = 0
+    string node = "Body [Ovl5]"
+
+    ; While (i <= 5)
+    ;     node = "Body [Ovl" + i + "]"
+    ;     Trace("*********** " + NiOverride.GetNodeOverrideString(akTarget, IsFemale(akTarget), node, ky, idx) + " " + node)
+    ;     NiOverride.AddNodeOverrideString(akTarget, IsFemale(akTarget), node, ky, idx, tx, false)
+    ;     NiOverride.AddNodeOverrideFloat(akTarget, IsFemale(akTarget), node, ky, idx, 1.0, false)
+    ;     Trace("*********** " + NiOverride.GetNodeOverrideString(akTarget, IsFemale(akTarget), node, ky, idx) + " " + node)
+    ;     i += 1
+    ; EndWhile
+    ; string hands = NiOverride.GetSkinPropertyString(akTarget, false, 0x08, ky, idx)
+    ; Trace("*********** " + hands + " idx = " + idx)
+    ; Trace("*********** " + NiOverride.GetSkinPropertyString(akTarget, false, 0x04, ky, idx) + " idx = " + idx)
+    ; NiOverride.AddSkinOverrideString(akTarget, IsFemale(akTarget), false, 0x04, ky, idx, tx, false)
+    ; NiOverride.AddSkinOverrideFloat(akTarget, IsFemale(akTarget), false, 0x04, ky, idx, 0.50, false)
+    ; NiOverride.AddSkinOverrideString(akTarget, IsFemale(akTarget), false, 0x08, ky, idx, hands, false)
+    ; Trace("*********** " + NiOverride.GetSkinPropertyString(akTarget, false, 0x04, ky, idx) + " idx = " + idx)
+    TextureSet ts = RippedActor(1).texSet
+    ; NiOverride.AddSkinOverrideTextureSet(akTarget, IsFemale(akTarget), false, 0x05, 6, -1, ts, false)
+    NiOverride.AddNodeOverrideTextureSet(akTarget, IsFemale(akTarget), node, 6, -1, ts, true)
 EndFunction
 
-Function SetAlpha(Actor akTarget, float alpha)
+Function SetTexAlpha(Actor akTarget, float alpha, string node = "Body [Ovl5]")
     {Sets how ripped the player will look.}
-    trace("SetAlpha " + aktarget + " " + alpha)
+    trace("SetAlpha " + akTarget.getLeveledActorBase().getName() + " " + alpha)
+    Trace("On node " + node)
     alpha = ConstrainF(alpha, 0.0, 1.0)
     bool isFemale = IsFemale(akTarget)
-    ; bool isFemale = akTarget.GetLeveledActorBase().GetSex()
+
     ; This call needs some explanation.
     ; AddNodeOverrideFloat(ObjectReference ref, bool isFemale, string node, int key, int index, float value, bool persist)
 
@@ -113,240 +288,21 @@ Function SetAlpha(Actor akTarget, float alpha)
 
     ; Key = 8 is used to tell NiOverride to change the alpha channel value.
     ; Index is irrelevant to this operation, so -1 it is.
-    NiOverride.AddNodeOverrideFloat(akTarget, isFemale,  "Body [Ovl5]", 8, -1, alpha, true)
+    NiOverride.AddNodeOverrideFloat(akTarget, isFemale,  node, 8, -1, alpha, true)
     trace(akTarget + " " + alpha)
 EndFunction
 
-Function InitData()
-    {Initializes this script. Call this on game reload.}
-    LoadValidRaces()
-EndFunction
-
-Function Debug(Actor akTarget)
-    Debug.MessageBox(_validCats)
-    ; string actorRace = MiscUtil.GetActorRaceEditorID(akTarget)
-    ; Debug.Notification("Target Sex " + IsFemale(akTarget))
-    ; int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
-    ; NetImmerse.SetNodeTextureSet(Player, "Body [Ovl0]", femaleTexSet, false)
-    ; NiOverride.AddNodeOverrideInt(akTarget, true,  "Body [Ovl0]", 7, -1, skinColor, true)
-EndFunction
 
 ;>=========================================================
 ;>===                 RACE VALIDATORS                   ===
 ;>=========================================================
 
-Function LoadValidRaces()
-    {Loads an array of races that can be ripped.}
-    ; Read this from an external *.json to easily patch.
-    string f = JsonFileName("__Ripped Races.json")
-
-    ; Actors that use a humanoid skin
-    _validHumanoids = ReadStrArray(f, "humanoids")
-    ; ; Actors that use a khajiit skin
-    _validCats = ReadStrArray(f, "cats")
-    ; ; Actors that use an argonian skin
-    _validLizards = ReadStrArray(f, "lizards")
-EndFunction
-
 bool Function IsValidRace(Actor akTarget)
     {Checks if an actor has a compatible race.}
-    return IsHumanoid(akTarget) || IsCat(akTarget) || IsLizard(akTarget)
-EndFunction
-
-bool Function IsCat(Actor akTarget)
-    {Checks if an actor is Khajiit or variant.}
-    return IndexOfS(_validCats, MiscUtil.GetActorRaceEditorID(akTarget)) != -1
-EndFunction
-
-bool Function IsLizard(Actor akTarget)
-    {Checks if an actor is Khajiit or variant.}
-    return IndexOfS(_validLizards, MiscUtil.GetActorRaceEditorID(akTarget)) != -1
-EndFunction
-
-bool Function IsHumanoid(Actor akTarget)
-    {Checks if an actor is humanoid.}
-    return IndexOfSBin(_validHumanoids, MiscUtil.GetActorRaceEditorID(akTarget)) != -1
-EndFunction
-
-bool Function SetTextureSetAndAlpha(Actor akTarget, float alpha)
-    {Sets a suitable texture set and a direct (ie. not LERPed) alpha.}
-    If SelectAndSetTextureSet(akTarget)
-        SetAlpha(akTarget, alpha)
-        return true
-    EndIf
-    return false
-EndFunction
-
-TextureSet Function SelectFemaleTextureSet(Actor akTarget)
-    {Selects a female texture set suitable for known races.}
-    ;@Expandable: Add new races here
-    If IsHumanoid(akTarget)
-        return femaleTexSet
-        ; TODO: Add all races
-    EndIf
-    ; No known race
-    return None
-EndFunction
-
-TextureSet Function SelectMaleTextureSet(Actor akTarget)
-    {Selects a male texture set suitable for known races.}
-    ;@Expandable: Add new races here
-    If IsHumanoid(akTarget)
-        return maleTexSet
-        ; TODO: Add all races
-    EndIf
-    ; No known race
-    return None
+    return GetRacialSettings(akTarget) != None
 EndFunction
 
 bool Function IsFemale(Actor akTarget)
     {It seems GetSex won't work if used inside a Global function; it can't be added to a library.}
     return akTarget.GetLeveledActorBase().GetSex() == 1
-EndFunction
-
-Function Clear(Actor akTarget)
-    SetAlpha(akTarget, 0.0)
-EndFunction
-
-float Function GetActorWeight(Actor akTarget)
-    {Returns actor weight as percent.}
-    trace("GetActorWeight " + aktarget)
-    return akTarget.GetActorBase().GetWeight() / 100.0
-EndFunction
-
-;>=========================================================
-;>===                  ALPHA METHODS                    ===
-;>=========================================================
-
-
-float Function LerpAlpha(Actor akTarget, float alpha)
-    {Linearly interpolates an alpha between player configured bounds. Automatically gets info for sex and race.}
-    If (akTarget == Player)
-        return LerpPlayerAlpha(alpha)
-    ElseIf IsFemale(akTarget)
-    ;@Expandable: Add new races here
-    ELse
-    EndIf
-    return alpha
-EndFunction
-
-Function SetLerpAlpha(Actor akTarget, float alpha)
-    {Gets a linearly interpolated alpha and sets it to an actor.}
-    SetAlpha(aktarget, LerpAlpha(aktarget, alpha))
-EndFunction
-
-Function AlphaFromWeight(Actor akTarget)
-    SetLerpAlpha(akTarget, GetActorWeight(akTarget))
-EndFunction
-
-Function AlphaFromWeightInv(Actor akTarget)
-    SetLerpAlpha(akTarget, 1.0 - GetActorWeight(akTarget))
-EndFunction
-
-Function AlphaFromSkills(Actor akTarget)
-    float hi = 1.25
-    float md = 0.75
-    float lo = 0.50
-    float hv = aktarget.GetBaseActorValue("HeavyArmor") * hi
-    float sn = aktarget.GetBaseActorValue("Sneak") * hi
-    float th = aktarget.GetBaseActorValue("TwoHanded") * hi
-    float bl = aktarget.GetBaseActorValue("Block") * hi
-    float lt = aktarget.GetBaseActorValue("LightArmor") * md
-    float oh = aktarget.GetBaseActorValue("OneHanded") * md
-    float at = aktarget.GetBaseActorValue("Alteration") * md
-    float ar = aktarget.GetBaseActorValue("Marksman") * lo
-    float sm = aktarget.GetBaseActorValue("Smithing") * 2.0
-    ; trace("Skills")
-    ; trace(hv)
-    ; trace(sn)
-    ; trace(th)
-    ; trace(bl)
-    ; trace(lt)
-    ; trace(oh)
-    ; trace(at)
-    ; trace(ar)
-    ; trace(sm)
-    float alpha = (hv + sn + th + bl + lt + oh + at + ar + sm) / 500.0
-    SetLerpAlpha(akTarget, alpha)
-EndFunction
-
-Function SetAlphaFromOptions(Actor akTarget)
-    {Sets an actor alpha based on MCM options. ;WARNING: do not use for an alpha set by a behavior (ie. Bruce Lee).}
-    If  aktarget == Player
-        PlayerAlphaFromOptions()
-    ELse
-        NPCAlphaFromOptions(aktarget)
-    EndIf
-EndFunction
-
-Function PlayerAlphaFromOptions()
-    {Sets the player alpha based on MCM options.}
-    If Cfg.RippedPlayerMethodIsConst()
-        trace("Set const")
-        SetAlpha(Player, Cfg.RippedPlayerConstLvl)
-    ElseIf Cfg.RippedPlayerMethodIsSkill()
-        trace("Set skill")
-        AlphaFromSkills(Player)
-    ElseIf Cfg.RippedPlayerMethodIsWeight()
-        trace("Set by weight")
-        AlphaFromWeight(Player)
-    ElseIf Cfg.RippedPlayerMethodIsWeInv()
-        trace("Set by weight inv")
-        AlphaFromWeightInv(Player)
-    Else
-        Clear(Player)
-    EndIf
-EndFunction
-
-Function NPCAlphaFromOptions(Actor akTarget)
-    {Sets an NPC alpha based on MCM options.}
-    int option = NPCAlphaOption(akTarget)
-    ;TODO: Desarrollar esto
-    ; If Cfg.RippedNPCMethodIsConst(option)
-    ;     trace("Set const")
-    ;     SetAlpha(Player, Cfg.RippedPlayerConstLvl)
-    ; ElseIf Cfg.RippedPlayerMethodIsSkill()
-    ;     trace("Set skill")
-    ;     AlphaFromSkills(akTarget)
-    ; ElseIf Cfg.RippedNPCMethodIsWeight()
-    ;     trace("Set by weight")
-    ;     AlphaFromWeight(akTarget)
-    ; ElseIf Cfg.RippedNPCMethodIsWeInv()
-    ;     trace("Set by weight inv")
-    ;     AlphaFromWeightInv(akTarget)
-    ; Else
-    ;     Clear(Player)
-    ; EndIf
-EndFunction
-
-int Function NPCAlphaOption(Actor aktarget)
-    {Gets which ripped option an NPC has.}
-    IF IsFemale(aktarget)
-        return NPCFemaleAlphaOption(aktarget)
-    Else
-        return NPCMaleAlphaOption(aktarget)
-    EndIf
-    return Cfg.rpmNone
-EndFunction
-
-int Function NPCFemaleAlphaOption(Actor aktarget)
-    {Gets which ripped option a female NPC has.}
-    ;@Expandable: Add new races here
-    IF IsHumanoid(aktarget)
-        return Cfg.RipNPCHumFemMethod
-    Else
-        ; TODO: Add all posible options
-    EndIf
-    return Cfg.rpmNone
-EndFunction
-
-int Function NPCMaleAlphaOption(Actor aktarget)
-    {Gets which ripped option a male NPC has.}
-    ;@Expandable: Add new races here
-    IF IsHumanoid(aktarget)
-        return Cfg.RipNPCHumMaleMethod
-    Else
-        ; TODO: Add all posible options
-    EndIf
-    return Cfg.rpmNone
 EndFunction
