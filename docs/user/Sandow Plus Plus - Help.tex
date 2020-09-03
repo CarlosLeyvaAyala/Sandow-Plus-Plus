@@ -1,3 +1,18 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is a help file intended to be released for this 
+% mod's users.
+% 
+% This is a LaTeX file. You need to download any LaTeX 
+% distribution to be able to compile and release this
+% help document.
+%
+% It may look too complicated to download everything and
+% learn YET ANOTHER computer language, but the results are
+% well worth the pain.
+% This document would take even longer to be done in Word
+% or whatever.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \documentclass[11pt]{article} 
 %\documentclass[12pt]{article} 
 
@@ -7,6 +22,7 @@
 \usepackage{lmodern}
 \usepackage{setspace}
 \usepackage{amsmath}
+\usepackage[normalem]{ulem}
 
 \usepackage[bottom]{footmisc}
 
@@ -85,7 +101,8 @@
 \newcommand{\W}{WGP}
 \newcommand{\B}{Behavior}
 \newcommand{\Bs}{Behaviors}
-
+\newcommand{\PI}{Pumping Iron}
+\newcommand{\SPP}{Sandow Plus Plus}
 
 \newlength{\imgMed} 
 \setlength{\imgMed}{10cm}
@@ -200,8 +217,8 @@ To change \Bs, just select one from the MCM.
 Let us start with the simplest and the one you are most likely accustomed to, since it's the most popular weight gaining mod in Skyrim.
 
 %---------------------------------------------------------------
-\section{The Pumping Iron \B}
-When selecting this, you will get the exact same functionality you would expect from \href{https://www.nexusmods.com/skyrimspecialedition/mods/13434}{Pumping Iron}\footnote{Thanks to Gopher for graciously giving me permission for using his method!}, but you will also get all the \idea{quality of life additions native to this mod}.
+\section{The \PI{} \B}
+When selecting this, you will get the exact same functionality you would expect from \href{https://www.nexusmods.com/skyrimspecialedition/mods/13434}{\PI}\footnote{Thanks to Gopher for graciously giving me permission for using his method!}, but you will also get all the \idea{quality of life additions native to this mod}.
 
 \subsection{Summary}
 \begin{table}[H]
@@ -218,27 +235,56 @@ When selecting this, you will get the exact same functionality you would expect 
     \end{table}
 
 
-\subsection{Mechanics}
+\subsection{Mechanics in depth}
+Train, then go to sleep when the time is right. \\
+You need to train constantly because you lose 10\% \W{} each day.
 
-Inactivity
-You can lose weight by inactivity if the option to lose weight is checked. Right now that's the only way to lose weight using this behavior (you don't want more ways to lose weight; going from 0% to 100% is already quite hard).
-The weight loss rate is 1% a day after 42 hours of not leveling up any skill that contributes to your WGP.
+For each hour slept in a row, you gain 0.1\% \W{} by default, up to 1\% for 10 or more hours.\\
+You need to wait 12 hours before you can gain \w{} again by sleeping.
 
-Be warned: those days are counted starting from the last time you trained. So if you haven't trained for 42 hours, you will lose 1.75% right off the bat.
+The main idea here is training quite frecuently and that's how this \B feels.
 
-Skill configuration
-You can't configure your skill contribution to WGP because there's nothing stopping you from cranking everything up to max and make this a really boring mod (in the Sandow Plus Plus behavior doing that would lead to overtraining, but not here).
+That's probably what you already know, so let's see the new additions by this mod.
+
+\subsubsection{Inactivity}
+You can lose \w{} by inactivity if the option to lose \w{} is checked. Right now that's the only way to lose weight using this \B\footnote{You don't want more ways to lose weight; going from 0\% to 100\% is already quite hard}.
+The weight loss rate is 1\% a day after 42 hours of not leveling up any skill that contributes to your \W.
+
+Be warned: those days are counted starting from the last time you trained. So if you haven't trained for 42 hours, you will lose 1.75\% right off the bat.
+
+Yeah, the inactivity window before you start to see losses is quite short.\\
+Weight loss didn't exist in the original \PI, so I tweaked the time expecting to stay true to the feeling of playing \PI{}\footnote{That is, feeling like all gym rats feel when they want to kill themselves because skipping just one training day could set back their gains.}.
+
+\subsubsection{Skill configuration}
+You can't configure your skill contribution to \W{} because there's nothing stopping you from cranking everything up to max and make this a really boring mod\footnote{In the Sandow Plus Plus behavior doing that would lead to overtraining, but not here}.\\
 You will still get training from Sneak, Alteration and Restoration, though.
 
-I'm quite aware mages will still get the short end of the stick.
-I'll deal with that problem in a 'mmursive way in a future update.
+Still, this \B's gains can be tweaked using the oççueauuaouadiudeeidud so this \B{} can become even harder\footnote{Why would anyone want THAT???} or you can get the easy route and set it up to gain up to 2\% a day.\\
+That option was added so you could better differentiate how much time it takes men to be a mountain of muscles and women to have \sout{bigger tits} way less muscle development, not to cheat\ldots but I won't blame you if you want to use it to cheat in this \B.
 
-Status reports
-There's no fatigue in this behavior, so you get messages telling you how many hours you have left before you can sleep to gain weight, instead.
+Because of its mechanics, in the original \PI{} mod it was already difficult going from zero to hero even as a pure warrior; going as a mage was simply impossible.\\
+This mod added training sacks, so even mages can get proper training. \\
+Due to its playing rules, this \B{} benefits quite a lot from using them.
+
+\subsection{Status reports}
+There's no fatigue in this behavior, so status reports show you messages telling you how many hours you have left before you can sleep to gain weight, instead.\\
 12 hours, as per Gopher design.
 
+\subsubsection{Widget}
+Bar 3 tells you how much time you got before you can go to sleep to gain \w.\\
+When it fills up to max and starts flashing it means you can now go to sleep.
 
-\begin{table}[]
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\imgMed]{widget-PI-sleep}
+    \label{fig:widget-PI-sleep}
+\end{figure}
+
+Bars 1, 2 and 4 are do the same for \SPP{} and \PI{}. 
+
+% ---------------------------------------------------------------
+\section{The \SPP{} \B}
+\begin{table}[H]
     \centering
     \begin{tabular}{l|l}
     \hline
@@ -282,104 +328,6 @@ And don't worry about performance. This mod only runs when you ask it to do it, 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 
-% \subsubsection*{Inputs}
-% \begin{table}[H]
-% \begin{tabular}{m{\argname} m{\argdesc}}
-% \code{From} & ``What I don't want in the names?'' \\
-% \code{To} & ``What I want instead.''
-% \end{tabular}
-% \end{table}
-
-% %---------------------------------------------------------------
-% \subsection*{Prepend}
-
-% %---------------------------------------------------------------
-
-% %---------------------------------------------------------------
-% \subsection*{Trim front}
-% Deletes blank spaces at the start of the name.
-
-% %---------------------------------------------------------------
-% \subsection*{Trim all}
-% Deletes blank spaces both at the start and end of the name.
-
-% %---------------------------------------------------------------
-% \subsection*{Trim tail}
-% Deletes blank spaces at the end of the name.
-
-% %---------------------------------------------------------------
-% \subsection*{Don't apply changes}
-% When checked, the script will simulate the operations but not actually do them. Useful for watching what you will change before actually doing it. \\
-% If you are satisfied with your results, run the script once again and uncheck this option.
-
-% Enabled by default. \\
-% If this feature annoys you, open the script, search for this line:
-
-
-% \code{defaultDebugMode = true;}
-
-% \noindent
-% And change it to:
-
-% \code{defaultDebugMode = false;}
-
-% \noindent
-% Now this feature is disabled by default.
-
-
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \pagebreak
-% \section{How to use -- Tutorial} \label{sec:tutorial}
-
-% I wrote this tutorial so you can use my script in the way I designed it to work.\\
-% In this tutorial, we are going from the simplest and most easy things, to more complex ones.
-
-% I'm using the severely underrated sorting mod \IFS, so this tutorial will be written adhering to its author (astoundingly clever) conventions.
-
-% Since this tutorial starts from the very beginning, if you already know how to create renaming mods you might want to skip that part and go directly to whatever function you would like to see in action. If so, use the table of contents to navigate as you please. 
-
-% At any rate, even if you know what you are doing, I suggest you to start at the beginning of the tutorial at \cref{tut:prepend}, because it goes sequentially. 
-
-
-% \begin{figure}[H]
-%   \centering
-%     \includegraphics[scale=1]{tut_fs000400_allDBcopied}
-%   \caption{Your mod should look like this at this point}
-%   \label{fig:tut_fs000400_allDBcopied}
-% \end{figure}
-
-% Right now you should have all armor, weapons and ingredients from Dragonbron copied to your mod, as you saw in \cref{fig:tut_fs000400_allDBcopied}.
-
-% %||||||||||||||||||||||||||||||||||||||||||||||||||
-% \begin{shaded}
-% \begin{Verbatim}[fontsize=\scriptsize]
-% ################ STARTING BATCH RENAMING (03:53:44 a. m.) ################
-% Replacing "reagent" with "".
-
-% "Reagent:Felsaad Tern Feathersreagent" renamed as "Reagent:Felsaad Tern Feathers"
-% "Reagent:Emperor Parasol Mossreagent" renamed as "Reagent:Emperor Parasol Moss"
-% "Reagent:Ash Creep Clusterreagent" renamed as "Reagent:Ash Creep Cluster"
-% "Reagent:Netch Jellyreagent" renamed as "Reagent:Netch Jelly"
-% "Reagent:Ash Hopper Jellyreagent" renamed as "Reagent:Ash Hopper Jelly"
-% "Reagent:Boar Tuskreagent" renamed as "Reagent:Boar Tusk"
-% "Reagent:Burnt Spriggan Woodreagent" renamed as "Reagent:Burnt Spriggan Wood"
-% "Reagent:Spawn Ashreagent" renamed as "Reagent:Spawn Ash"
-% "Reagent:Scathecrawreagent" renamed as "Reagent:Scathecraw"
-% "Reagent:Trama Rootreagent" renamed as "Reagent:Trama Root"
-% "Reagent:Ashen Grass Podreagent" renamed as "Reagent:Ashen Grass Pod"
-% "Reagent:Hawk's Eggreagent" renamed as "Reagent:Hawk's Egg"
-% "Reagent:Salmon Roereagent" renamed as "Reagent:Salmon Roe"
-% "Reagent:Thorn Hookreagent" renamed as "Reagent:Thorn Hook"
-% "Reagent:Screaming Mawreagent" renamed as "Reagent:Screaming Maw"
-% "Reagent:Rot Scalereagent" renamed as "Reagent:Rot Scale"
-% ################ ENDING BATCH RENAMING (03:53:44 a. m.) ################
-% \end{Verbatim}
-% \end{shaded}
-% %||||||||||||||||||||||||||||||||||||||||||||||||||
-
-
-% Thank you all for reading this and using my script. I see you all are people of culture as well.
 
 
 \end{document}

@@ -1,0 +1,101 @@
+========================
+Overview for players
+========================
+* You become ripped by doing excercise and sleeping (TODO: when
+eating properly; ie. not too much, not too few).
+* How fast you get ripped depends on how heavy you are; thinner players
+get ripped faster.
+* You lose muscle definition by inactivity and lack of sleep (TODO:
+by over/under eating). Inactivity is worse than lack of sleep.
+	The more you weight, the less harsh the penalty (because muscles give
+	you some room to caloric expenditure IRL)
+* You must workout every day.
+
+For this behavior NiOverride (included in Racemenu) is required.
+
+========================
+Overview for programmers
+========================
+You can see all the logic behind the formulas here:
+https://docs.google.com/spreadsheets/d/1r10g-b73KjagmzT5Rm1SrWUY7ROhxtawBxy-vV4Yyms/edit?usp=sharing
+
+* This behavior has a private variable that keeps track of the player's
+total training points.
+* Player's definition percent (alpha for the ripped texture set) is:
+		alpha = training / ripped formula
+* Ripped formulas
+			a * e^(0.02 * Weight) + c
+		Where <a> and <c> are calculated based on the player input.
+* Player can only win a max of 1.0 training points when sleeping. Sleep
+gains cap at 10 hours.
+* Max Inactivity time = 24
+* Penalties for lack of sleep
+		When been awaken < 18 hrs				No penalty
+		When been awaken => 18 but < 26			X-Small penalty
+			awaken / 120
+		When been awaken => 26					Small penalty
+			awaken / 100		(caps at 1.2)
+* Penalties for inactivity
+		When inactive >= 24 hrs					Exponential penalty
+			0.108 * e^(0.052 * inactivity) + 0.15		cap at 16
+* Weight penalty modifier
+		-0.2 * e^(0.0153 * weight) + 0.122
+* Widget bars
+	1: Ripped texture set alpha
+	2: WGP (caps at 1)
+	3: Hours awaken / 26
+	4: Inactivity / 24
+
+========================
+Algorithms
+========================
+Behavior internal variables
+		WGP					// Used to restore to this benavior WGP
+		currentAlpha		// Needed for properly calculating diminishing returns
+
+When entering this behavior
+	Apply behavior texture set
+	Save and clear CurrentState.WGP
+
+When exiting this behavior
+	if not bulker-cutter
+		Set texture set alpha to 0
+	else
+		Tell the manager to apply the alpha calculated by this behavior
+	Restore former CurrentState.WGP
+
+Apply behavior texture set
+	Tell the texture set manager to apply the ripped texture set
+	if the manager could apply it
+		Tell the manager to apply the alpha calculated by this behavior
+
+When sleeping
+	Calculate gains or loses
+	Tell the manager to apply the alpha calculated by this behavior
+
+Calculate gains
+	CurrentState.WGP = Min(1.0, CurrentState.WGP)
+	training for today = CurrentState.WGP * Capped sleeping time * 0.1 * diminishingReturns(currentAlpha)
+	CurrentState.WGP -= training for today
+	training += training for today
+
+Calculate alpha
+	a = (max - min) / (e^(100b) - 1)
+	b = 0.02
+	c = min - a
+	maxDays = a * e^(b * weight) + c. 			// Where 0 <= weight <= 100.
+	currentAlpha = training / maxDays
+	return currentAlpha
+
+Calculate loses
+	By inactivity
+	By sleep
+	TODO: not eating properly
+	multiply loses by weight factor
+	training -= loses
+
+Calculate gains or loses
+	if can lose
+		Calculate loses
+	else
+		Calculate gains
