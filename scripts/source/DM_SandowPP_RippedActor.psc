@@ -10,7 +10,9 @@
 ; Each time we talk about what the player wants, we are talking about things configurable at the MCM.
 
 Scriptname DM_SandowPP_RippedActor extends Quest Hidden
-{Script used to store muscle definition configurations.}
+{Script used to store muscle definition configurations. This is mostly a throwback for when
+I thought it was possible to change NPCs textures. Might get used as intended when NiOverride
+gets finished.}
 Import DM_SandowPP_Globals
 
 int Property method = 0 Auto
@@ -22,7 +24,9 @@ float Property LB = 0.0 Auto
 float Property UB = 1.0 Auto
 {Max. muscle def. the player wants to have.}
 TextureSet Property texSet Auto
-{Which ripped texture set needs to be applied.}
+{The most ripped texture set which needs to be applied.}
+TextureSet Property texSetLo Auto
+{The least ripped texture set which needs to be applied.}
 
 ;>=========================================================
 ;>===                      PUBLIC                       ===

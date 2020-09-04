@@ -211,6 +211,14 @@
                 "fontWeight": "bold"
             }
         ],
+        "(~~ *)(.*)": [
+            {
+            },
+            {
+                // "backgroundColor": "goldenrod",
+                "textDecoration": "line-through",
+            }
+        ],
         "(; ?FIXME:?)(.*)": [
             {
                 "overviewRulerColor": "#ff0000",
