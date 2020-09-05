@@ -48,7 +48,7 @@ string Property slFmt2r = "{2}" AutoReadOnly
 
 string _ppMain = "$Main"
 string _ppSkills = "$Skills"
-string _ppRipped = "$Ripped"
+; string _ppRipped = "$Ripped"
 string _ppWidget = "$Widget"
 ; string _ppProfiles = "$Presets"
 string _ppCompat = "$Compat"
@@ -76,12 +76,11 @@ endFunction
 Event OnConfigInit()
     Cfg = SandowPP.Config
 
-    Pages = new string[5]
+    Pages = new string[4]
     Pages[0] = _ppMain
     Pages[1] = _ppSkills
-    Pages[2] = _ppRipped
-    Pages[3] = _ppWidget
-    Pages[4] = _ppCompat
+    Pages[2] = _ppWidget
+    Pages[3] = _ppCompat
 
     _hAlign = new string[3]
     _hAlign[0] = "left"
@@ -115,7 +114,7 @@ Event OnConfigInit()
     _rippedPlayerMethods[Cfg.rpmWeight] = "$By weight"
     _rippedPlayerMethods[Cfg.rpmWInv] = "$By weight inv"
     _rippedPlayerMethods[Cfg.rpmSkill] = "$By skills"
-    _rippedPlayerMethods[Cfg.rpmBhv] = "$By behavior"
+    _rippedPlayerMethods[Cfg.rpmBhv] = "$By behavior"   ;FIXME: Delete this
 
     _rippedPlayerBulkBhvMenu = new string[2]
     _rippedPlayerBulkBhvMenu[Cfg.bulkSPP] = "Sandow Plus Plus"
@@ -134,8 +133,6 @@ event OnPageReset(string aPage)
     ;     PageProfiles()
     If aPage == _ppWidget
         PageWidget()
-    ElseIf aPage == _ppRipped
-        ; PageRipped()
     ElseIf aPage == _ppSkills
         PageSkills()
     ElseIf aPage == _ppCompat
@@ -170,9 +167,9 @@ Function PageMain()
     int presets = PageMainPresets(0)
     int stats = PageMainStats(1)
     ; Row 2
-    int row2 = MaxI(stats - 1, presets)
-    int mainCfg = PageMainConfiguration(row2)
-    int ripped = PageRippedPlayer(row2 + 1)
+    ; int row2 = MaxI(stats - 1, presets)
+    int mainCfg = PageMainConfiguration(presets)
+    int ripped = PageRippedPlayer(stats)
     ;Row 3
     PageMainOtherOptions(mainCfg)
     PageMainItems(ripped)
@@ -1196,16 +1193,19 @@ EndState
 
 State MN_RippedPlayerOpt
     Event OnMenuOpenST()
-        ; Start, default, options
         OpenMenu(_rippedPlayer.Method, 0, _rippedPlayerMethods)
     EndEvent
 
     Event OnMenuAcceptST(int index)
+        IF _rippedPlayer.Method == index
+            return
+        EndIf
         _rippedPlayer.Method = index
         SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
 
         If _rippedPlayerA.MethodIsBehavior()
             ; Bruce Lee behavior was actually selected from here
+            ;FIXME: Delete this
             Cfg.Behavior = Cfg.bhBruce
         Else
             SPP.texMngr.InitializeActor(SPP.Player)
@@ -1214,6 +1214,9 @@ State MN_RippedPlayerOpt
     EndEvent
 
     Event OnDefaultST()
+        If _rippedPlayer.Method == Cfg.rpmNone
+            return
+        EndIf
         _rippedPlayer.Method = Cfg.rpmNone
         SPP.texMngr.InitializeActor(SPP.Player)
         SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
@@ -1280,6 +1283,7 @@ EndFunction
 
 Function PageCompat()
     SetCursorFillMode(TOP_TO_BOTTOM)
+    Header("$MCM_CompatHeader")
     TagPapyrusUtil()
     TagNiOverride()
     If SexLabExists()

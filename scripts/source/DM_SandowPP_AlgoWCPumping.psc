@@ -11,8 +11,7 @@ float _WeightLossRatio = -0.01
 float _lastTimeWGPQuery
 
 string Function Signature()
-    {REQUIRED. Used to differentiate between algorithms}
-    return "Pumping"
+    return "Pumping Iron"
 EndFunction
 
 DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)

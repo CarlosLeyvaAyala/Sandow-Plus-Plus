@@ -119,10 +119,13 @@ EndFunction
 ;@Public Override:
 ; Tells the body fat levels this algorithm carries.
 float Function GetBodyFat()
+    Trace("Bruce.GetBodyFat()")
     float b = 0.02
     float a = (txMgr.PlayerSettings.maxDaysToMax - txMgr.PlayerSettings.minDaysToMax) / (Exp(100 * b) - 1)
     float c =  txMgr.PlayerSettings.minDaysToMax - a
     float trainingToGoal = a * Exp(b * GetPlayerWeight()) + c
+    Trace("training = " + _training)
+    Trace("trainingToGoal = " + trainingToGoal)
     return _training / trainingToGoal
 EndFunction
 

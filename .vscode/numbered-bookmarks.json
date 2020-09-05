@@ -19,16 +19,16 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMCM.psc",
 			"bookmarks": [
 				-1,
-				1061,
-				-1,
-				174,
 				-1,
 				-1,
+				167,
 				-1,
 				-1,
 				-1,
-				141,
-				1275
+				-1,
+				-1,
+				138,
+				1278
 			]
 		},
 		{
@@ -36,7 +36,7 @@
 			"bookmarks": [
 				-1,
 				88,
-				304,
+				318,
 				-1,
 				-1,
 				-1,
@@ -50,7 +50,7 @@
 			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				282,
+				285,
 				-1,
 				-1,
 				-1,
@@ -65,7 +65,23 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_AlgorithmBodyfatBruce.psc",
 			"bookmarks": [
 				-1,
-				113,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				122
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_AlgoWCSandow.psc",
+			"bookmarks": [
+				-1,
+				80,
 				-1,
 				-1,
 				-1,
@@ -77,10 +93,10 @@
 			]
 		},
 		{
-			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_AlgoWCSandow.psc",
+			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPP_Config.psc",
 			"bookmarks": [
 				-1,
-				81,
+				105,
 				-1,
 				-1,
 				-1,

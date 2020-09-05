@@ -87,10 +87,14 @@ bool Function InitializeActor(Actor akTarget)
     ; Trace("DM_SandowPP_TextureMngr.InitializeActor " + akTarget.getLeveledActorBase().getName())
     DM_SandowPP_RippedActor settings = SelectSettings(akTarget)
     If settings != None
-        ; Set least ripped texture to always visible
-        SetTextureSetAndAlpha(akTarget, settings.texSetLo, 1.0, "Body [Ovl0]")
-        ; Sets most ripped texture as a blend.
-        SetTextureSetAndAlpha(akTarget, settings.texSet, settings.GetAlpha(akTarget))
+        If !settings.Config().MethodIsNone()
+            ; Set least ripped texture to always visible
+            SetTextureSetAndAlpha(akTarget, settings.texSetLo, 1.0, "Body [Ovl0]")
+            ; Sets most ripped texture as a blend.
+            SetTextureSetAndAlpha(akTarget, settings.texSet, settings.GetAlpha(akTarget))
+        Else
+            Clear(akTarget)
+        EndIf
         return true
     EndIf
     return false
@@ -98,7 +102,6 @@ EndFunction
 
 ; Sets the behavior the player will use to calculate their muscle definition
 Function SetPlayerBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
-    Debug.MessageBox(bhv)
     PlayerSettings.SetBehavior(bhv)
 EndFunction
 
@@ -107,8 +110,11 @@ Function InitPlayer()
 EndFunction
 
 Function Clear(Actor akTarget)
-    SetTexAlpha(akTarget, 0.0)
-    SetTextureSet(akTarget, None)
+    Trace("---------- Clearing textures")
+    ; Ripped texture
+    SetTextureSetAndAlpha(akTarget, None, 0.0, "Body [Ovl0]")
+    ; Most ripped texture
+    SetTextureSetAndAlpha(akTarget, None, 0.0)
 EndFunction
 
 ; Applies ripped settings to nearby NPCs.
@@ -257,6 +263,9 @@ EndFunction
 
 ; Blindly sets a texture set to a target.
 bool Function SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body [Ovl1]")
+    If !NiOverrideExists()
+        return false
+    EndIf
     ; This function is so heavily commented because there's no documentation on NiOverride
     bool isFemale = IsFemale(akTarget)
 
@@ -276,13 +285,17 @@ bool Function SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body [
     ; Last operation resets the skin tint color to white, making the character's body pale. Restore the color we got earlier.
     NiOverride.AddNodeOverrideInt(akTarget, isFemale, node, 7, irrelevant, skinColor, true)
     ; Profit! Have a nice day.
+    return true
 EndFunction
 
 ; Sets how much ripped an actor will look.
 ;
 ; "Node" can go from "Body [Ovl0]" to "Body [Ovl5]. Higher layers overwrite lower ones."
-Function SetTexAlpha(Actor akTarget, float alpha, string node = "Body [Ovl1]")
+bool Function SetTexAlpha(Actor akTarget, float alpha, string node = "Body [Ovl1]")
     ; trace("SetAlpha " + akTarget.getLeveledActorBase().getName() + " " + alpha)
+    If !NiOverrideExists()
+        return false
+    EndIf
     alpha = ConstrainF(alpha, 0.0, 1.0)
     bool isFemale = IsFemale(akTarget)
 
@@ -300,6 +313,7 @@ Function SetTexAlpha(Actor akTarget, float alpha, string node = "Body [Ovl1]")
     ; Key = 8 is used to tell NiOverride to change the alpha channel value.
     ; Index is irrelevant to this operation, so -1 it is.
     NiOverride.AddNodeOverrideFloat(akTarget, isFemale,  node, 8, -1, alpha, true)
+    return true
 EndFunction
 
 Function SetTextureSetAndAlpha(Actor akTarget, TextureSet tx, float alpha, string node = "Body [Ovl1]")

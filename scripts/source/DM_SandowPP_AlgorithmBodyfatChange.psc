@@ -3,13 +3,14 @@ Scriptname DM_SandowPP_AlgorithmBodyfatChange extends DM_SandowPP_Algorithm Hidd
 
 ; Import DM_Utils
 ; Import Math
-; Import DM_SandowPP_Globals
+Import DM_SandowPP_Globals
 
 DM_SandowPP_TextureMngr Property txMgr Auto
 
 ;@Public:
 ; Tells the body fat levels this algorithm carries.
 float Function GetBodyFat()
+    Trace("DM_SandowPP_AlgorithmBodyfatChange.GetBodyFat() is abstract. Shouldn't be called!")
     return -1.0
 EndFunction
 

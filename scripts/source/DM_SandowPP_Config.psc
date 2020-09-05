@@ -103,18 +103,26 @@ int property Behavior
 EndProperty
 
 int Property bhPause = 0 AutoReadOnly
-int Property bhSandowPP
-    ; As usual... baked saves TODO: V4.0
-    int Function get()
-        return 1
-    EndFunction
-endProperty
-int Property bhPumpingIron
-    int Function get()
-        return 2
-    EndFunction
-endProperty
+int Property bhSandowPP = 1 AutoreadOnly
+int Property bhPumpingIron = 2 AutoreadOnly
 int Property bhBruce = 3 AutoReadOnly
+
+bool Function IsPaused()
+    Return Behavior == bhPause
+EndFunction
+
+bool Function IsSandow()
+    Return Behavior == bhSandowPP
+EndFunction
+
+bool Function IsPumpingIron()
+    Return Behavior == bhPumpingIron
+EndFunction
+
+bool Function IsBruce()
+    Return Behavior == bhBruce
+EndFunction
+
 
 ; ==============================
 string Property operationResult Auto        ; Used to get file manipulation information
@@ -146,13 +154,7 @@ int property ReportType
 EndProperty
 int Property rtDebug = 0 AutoReadOnly
 int Property rtSkyUiLib = 1 AutoReadOnly
-int Property rtWidget
-    int Function get()
-        ; TODO: change to constant for v4.0
-        {Had to be done like this because I first published this with a wrong value}
-        Return 2
-    EndFunction
-EndProperty
+int Property rtWidget = 2 AutoReadOnly
 
 
 ;>=========================================================
@@ -171,109 +173,10 @@ int Property rpmBhv = 5 AutoReadOnly
 int Property bulkSPP = 0 AutoReadOnly
 int Property bulkPI = 1 AutoReadOnly
 
-; TODO: Delete
-; int Property RippedPlayerMethod = 0 Auto
-; float Property RippedPlayerConstLvl = 1.0 Auto
-; float Property RippedPlayerLB = 0.0 Auto
-; float Property RippedPlayerUB = 1.0 Auto
-
-; bool Property RippedPlayerBulkCut = false Auto
-; int Property RippedPlayerBulkCutDays = 4 Auto
-; int Property RippedPlayerBulkCutBhv = 0 Auto
-
-; string Function RippedPlayerMethodInfo()
-;     If RippedPlayerMethodIsNone()
-;         return "$MCM_RippedApplyInfoNone"
-;     ElseIf RippedPlayerMethodIsConst()
-;         return "$MCM_RippedApplyInfoConstant"
-;     ElseIf RippedPlayerMethodIsWeight()
-;         return "$MCM_RippedApplyInfoWeight"
-;     ElseIf RippedPlayerMethodIsWeInv()
-;         return "$MCM_RippedApplyInfoWeightInv"
-;     ElseIf RippedPlayerMethodIsSkill()
-;         return "$MCM_RippedApplyInfoSkill"
-;     Else
-;         return "$MCM_RippedApplyInfoBhv"
-;     EndIf
-; EndFunction
-
-; bool Function RippedPlayerMethodIsNone()
-;     return RippedPlayerMethod == rpmNone
-; EndFunction
-
-; bool Function RippedPlayerMethodIsConst()
-;     return RippedPlayerMethod == rpmConst
-; EndFunction
-
-; bool Function RippedPlayerMethodIsWeight()
-;     return RippedPlayerMethod == rpmWeight
-; EndFunction
-
-; bool Function RippedPlayerMethodIsWeInv()
-;     return RippedPlayerMethod == rpmWInv
-; EndFunction
-
-; bool Function RippedPlayerMethodIsSkill()
-;     return RippedPlayerMethod == rpmSkill
-; EndFunction
-
-; bool Function RippedPlayerMethodIsBehavior()
-;     return RippedPlayerMethod == rpmBhv
-; EndFunction
-
 ;> ============== NPC options ==============
 int Property rpmRand = 5 AutoReadOnly
 int Property rpmThin = 6 AutoReadOnly
 int Property rpmMuscle = 7 AutoReadOnly
-
-; TODO: Delete
-; bool Function RippedNPCMethodIsNone(int method)
-;     return method == rpmNone
-; EndFunction
-
-; bool Function RippedNPCMethodIsConst(int method)
-;     return method == rpmConst
-; EndFunction
-
-; bool Function RippedNPCMethodIsWeight(int method)
-;     return method == rpmWeight
-; EndFunction
-
-; bool Function RippedNPCMethodIsWeInv(int method)
-;     return method == rpmWInv
-; EndFunction
-
-; bool Function RippedNPCMethodIsSkill(int method)
-;     return method == rpmSkill
-; EndFunction
-
-; bool Function RippedNPCMethodIsRandom(int method)
-;     return method == rpmRand
-; EndFunction
-
-; bool Function RippedNPCMethodIsThinnerLeanner(int method)
-;     return method == rpmThin
-; EndFunction
-
-; bool Function RippedNPCMethodIsMuscularLeaner(int method)
-;     return method == rpmMuscle
-; EndFunction
-
-; ;@Expandable: Add new races here
-
-; ;> Humanoid male
-; int Property RipNPCHumMaleMethod = 0 Auto
-; float Property RipNPCHumMaleConst = 1.0 Auto
-; float Property RipNPCHumMaleLB = 0.0 Auto
-; float Property RipNPCHumMaleUB = 1.0 Auto
-
-; ;> Humanoid female
-; int Property RipNPCHumFemMethod = 0 Auto
-; float Property RipNPCHumFemConst = 1.0 Auto
-; float Property RipNPCHumFemLB = 0.0 Auto
-; float Property RipNPCHumFemUB = 1.0 Auto
-; ; int Property RipNPCHumFem = 0 Auto
-
 
 ;>=========================================================
 ;>===                       WIDGET                      ===
@@ -419,22 +322,6 @@ Function Assign(DM_SandowPP_Config other)
     AssignMisc(other)
     BatchLoading = False
     Configure()
-EndFunction
-
-bool Function IsPaused()
-    Return Behavior == bhPause
-EndFunction
-
-bool Function IsSandow()
-    Return Behavior == bhSandowPP
-EndFunction
-
-bool Function IsPumpingIron()
-    Return Behavior == bhPumpingIron
-EndFunction
-
-bool Function IsBruce()
-    Return Behavior == bhBruce
 EndFunction
 
 bool Function IsSkyUiLib()

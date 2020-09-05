@@ -80,5 +80,5 @@ bool Function SexLabExists() Global
 EndFunction
 
 bool Function NiOverrideExists() Global
-    Return NiOverride.GetScriptVersion() > 0
+    Return NiOverride.GetScriptVersion() > 0 && SKSE.GetPluginVersion("skee") >= 1
 EndFunction

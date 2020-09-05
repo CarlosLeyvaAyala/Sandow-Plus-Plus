@@ -11,12 +11,12 @@ DM_SandowPP_AlgorithmBodyfatChange _bhv
 
 
 ;@override:
+; Gets an alpha based on settings.
 float Function GetAlpha(Actor akTarget)
-    {Gets an alpha based on settings.}
-    If !MethodIsBehavior()
-        return GetAlphaFromOptions(aktarget)
-    ElseIf _bhv != None
+    If _bhv != None
         return LerpAlpha(_bhv.GetBodyFat())
+    Else
+        return GetAlphaFromOptions(aktarget)
     EndIf
     return 0.0
 EndFunction
@@ -44,11 +44,26 @@ EndFunction
 ;>===                     SETTINGS                      ===
 ;>=========================================================
 
+;@Public:
 ; Sets the behavior that controls player muscle definiton
 Function SetBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
+    If bhv != None
+        MethodIsNowBehavior()
+    Else
+        MethodIsNoLongerBehavior()
+    EndIf
     _bhv = bhv
 EndFunction
 
+int _oldBhv
+Function MethodIsNowBehavior()
+    _oldBhv = body.method
+    body.method = cfg.rpmBhv
+EndFunction
+
+Function MethodIsNoLongerBehavior()
+    body.method = _oldBhv
+EndFunction
 
 ;>=========================================================
 ;>===                     COMPARE                       ===

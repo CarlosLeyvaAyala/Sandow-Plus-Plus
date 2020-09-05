@@ -36,14 +36,18 @@ Function Init()
     InitRacesArray()
 EndFunction
 
+; Gets the alpha calculation part from this form.
 float Function GetAlpha(Actor akTarget)
-    {Get the alpha calculation part from this form.}
-    return ((Self as Form) as DM_SandowPP_RippedAlphaCalc).GetAlpha(akTarget)
+    return Config().GetAlpha(akTarget)
 EndFunction
 
+DM_SandowPP_RippedAlphaCalc Function Config()
+    return (Self as Form) as DM_SandowPP_RippedAlphaCalc
+EndFunction
+
+; Gets settings from another ripped actor template. Texture sets aren't assigned because
+; that would break all actor looks.
 Function AssignSettings(DM_SandowPP_RippedActor src)
-    {Gets settings from another ripped actor temlpate. Texture sets aren¡t assigned because
-    that would break all actor looks.}
     method = src.method
     constAlpha = src.constAlpha
     LB = src.LB
@@ -51,8 +55,8 @@ Function AssignSettings(DM_SandowPP_RippedActor src)
 EndFunction
 
 ;@virtual:
+; Determines if akTarget is the same kind as this class.
 bool Function IsMe(Actor akTarget)
-    {Determines if akTarget is the same kind as this class.}
     If ActorIsFemale(akTarget) != IsFemale()
         ; Different sex. Can't be from this type.
         return false
@@ -62,8 +66,8 @@ bool Function IsMe(Actor akTarget)
 EndFunction
 
 ;@abstract:
+; This is used to save its data and such.
 string Function Name()
-    {This is used to save it's data and such.}
     return "***ERRROR***"
 EndFunction
 
@@ -88,13 +92,13 @@ EndFunction
 ;>=========================================================
 
 ;@abstract:
+; Initializes the array of valid races for this configuration.
 Function InitRacesArray()
-    {Initializes the array of valid races for this configuration.}
     Trace("DM_SandowPP_RippedActor.InitRacesArray() shouldn't be called")
 EndFunction
 
+; Loads an array of races with the <aKey> name. Used by this script descendants.
 string[] Function LoadValidRaces(string aKey)
-    {Loads an array of races with the <aKey> name. Used by this script descendants.}
     ; Read this from an external *.json to easily patch.
     string f = JsonFileName("__Ripped Races.json")
     string[] result = ReadStrArray(f, aKey)
@@ -116,7 +120,7 @@ bool Function ActorIsFemale(Actor akTarget)
 EndFunction
 
 ;@abstract:
+; Determines if this template represents females.
 bool Function IsFemale()
-    {Determines if this script represents females.}
     return false
 EndFunction

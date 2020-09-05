@@ -5,14 +5,14 @@
 ::
 :: This script was made to automatically include library files needed
 :: by this mod for being able to work at release.
-:: Download that library from: 
+:: Download that library from:
 :: https://github.com/CarlosLeyvaAyala/DM-SkyrimSE-Library.git
 ::
 :: You only need to care about this file if you inherited this project
 :: and need to release it. Otherwise, ignore it.
 :: It isn't strictly necessary to use this, but it will surely
 :: save you a lot of time.
-:: 
+::
 :: You also need to download 7.zip for this to work.
 
 ECHO OFF
@@ -21,20 +21,20 @@ ECHO OFF
 :: Mod variables
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: This needs to be changed with each new version released
-SET ModVersion=3.2
+SET ModVersion=4.0
 
 :: DON'T CHANGE THESE
 SET modName="Sandow Plus Plus"
 SET modEsp="SandowPP.esp"
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: You need to update ALL these variables so they point towards 
+:: You need to update ALL these variables so they point towards
 :: valid paths in your own computer.
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: 7 zip path
-SET zipExe="C:\Program Files\7-Zip\7z"          
+SET zipExe="C:\Program Files\7-Zip\7z"
 :: Path to my library you downloaded from github
-SET lib="D:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"
+SET lib="E:\Skyrim SE\MO2\mods\DM-SkyrimSE-Library\scripts"
 :: This points towards a dir github will ignore. It saves backups
 :: for newly released versions
 SET backupDir="_ignore\_backups"
@@ -47,7 +47,7 @@ SET req2="DM_MeterWidgetScript.pex"
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Files needed to compile, but not distributable.
-:: These are included in this github repo, but they are 
+:: These are included in this github repo, but they are
 :: already distributed by SkyUI.
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 SET exc1="SKI_WidgetManager.pex"

@@ -48,7 +48,7 @@ DM_SandowPP_AlgoWCSandow Property AlgoWCSandow Auto
 {Sandow++ Behavior}
 DM_SandowPP_AlgoWCPumping Property AlgoWCPumping Auto
 {Pumping Iron Behavior}
-DM_SandowPP_AlgoWCPumping Property AlgoBFBruce Auto
+DM_SandowPP_AlgorithmBodyfatBruce Property AlgoBFBruce Auto
 {Bruce Lee Behavior}
 
 DM_SandowPP_Algorithm Property Algorithm
@@ -256,6 +256,7 @@ Function Configure()
     ConfigureWidget()
 EndFunction
 
+; TODO: Delete
 Function SelectReport()
     {Selects report system}
     Trace("Main.SelectReport(" + Config.ReportType + ")")
@@ -274,16 +275,19 @@ EndFunction
 Function ChangeAlgorithm()
     { Change mod Behavior }
     Trace("Main.ChangeAlgorithm(" + Config.Behavior + ")")
+    Trace("Current: " + Algorithm.Signature())
     DM_SandowPP_Algorithm newAlgo
     If Config.IsPumpingIron()
         newAlgo = AlgoWCPumping
     ElseIf Config.IsPaused()
         newAlgo = AlgoPause
     ElseIf Config.IsBruce()
+        Trace("Is Bruce " + Config.bhBruce)
         newAlgo = AlgoBFBruce
     Else
         newAlgo = AlgoWCSandow
     EndIf
+    Trace("Expected: " + newAlgo.Signature())
 
     ; Change only if switched algorithms
     If _algorithm.Signature() != newAlgo.Signature()
