@@ -18,18 +18,18 @@ EndFunction
 DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)
     {Core calculation}
     Result.Assign(aData.CurrentState)
-    
+
     Trace("===== Pumping.OnSleep() =====")
     Result.TraceAll()
 
-    If Result.HoursAwaken < _sleepHoursDelay 
+    If Result.HoursAwaken < _sleepHoursDelay
         Trace("===== Ending Pumping.OnSleep() =====")
         Return Result
     EndIf
     WGPDecay(Result)
     GrowOrShrink(aData)
     Result.LastSlept = Now()
-    
+
     Result.TraceAll()
     Trace("===== Ending Pumping.OnSleep() =====")
     Return Result      ;Always return this Property
@@ -39,9 +39,9 @@ Function GrowOrShrink(DM_SandowPP_AlgorithmData aData)
     {In 2.0, the only way to lose weight is by inactivity}
     If aData.Config.CanLoseWeight
         float inactivityTime = HoursInactive(Result.LastSkillGainTime) - aData.CurrentState.HoursSlept
-        If inactivityTime >= InactivityHoursToLoseMuscle()
+        If inactivityTime >= InactivityHoursToLoses()
             Shrink(inactivityTime, aData)
-            Return     
+            Return
         EndIf
     EndIf
     If GetPlayerWeight() < 100.0 && Result.WGP > 0.0
@@ -51,11 +51,11 @@ EndFunction
 
 Function Shrink(float inactivityTime, DM_SandowPP_AlgorithmData aData)
     {Once you enter in inactivity state, you lose weight for each pasing hour without training}
-    float ratio = ToGameHours(inactivityTime) * _WeightLossRatio 
-    
+    float ratio = ToGameHours(inactivityTime) * _WeightLossRatio
+
     Trace("Pumping.Shrink(" + inactivityTime + ")")
     Trace("Ratio = " + ratio)
-    
+
     ChangeWeight(GetPlayerWeight() * _WeightLossRatio, aData)
 EndFunction
 
@@ -76,7 +76,7 @@ EndFunction
 Function WGPDecay(DM_SandowPP_State aState)
     {WGP is always decaying}
     Trace("Pumping.WGPDecay()")
-    
+
     float decayVal
     if _lastTimeWGPQuery > 0.0
         float time = Now() - _lastTimeWGPQuery
@@ -84,12 +84,12 @@ Function WGPDecay(DM_SandowPP_State aState)
         aState.WGP -= decayVal
     EndIf
     _lastTimeWGPQuery = Now()
-    
+
     Trace("decayVal = " + decayVal)
 EndFunction
 
 ; ########################################################################
-; Report functions. 
+; Report functions.
 ; ########################################################################
 Function ReportEssentials(DM_SandowPP_AlgorithmData aData)
     {Bare minimum data useful for the player. Used for widgets and such.}
@@ -97,7 +97,7 @@ Function ReportEssentials(DM_SandowPP_AlgorithmData aData)
     ReportWeight(aData)
     ReportWGP(aData)
     ReportNextSleep(aData)
-    ReportInactivity(aData)    
+    ReportInactivity(aData)
 EndFunction
 
 Function ReportOnHotkey(DM_SandowPP_AlgorithmData aData)
@@ -170,17 +170,17 @@ string Function MCMInfo()
 EndFunction
 
 ; ########################################################################
-; Protected overridable functions. 
+; Protected overridable functions.
 ; ########################################################################
 Function OnEnterAlgorithm(DM_SandowPP_AlgorithmData aData)
     {Need to calculate this so your WGP decays correctly when switching to Pumping Iron}
     Trace("*** Player switched to Pumping Iron ***")
-    
+
     Parent.OnEnterAlgorithm(aData)
     aData.CurrentState.WGPGainType = aData.Report.mtDefault     ; No need to flash WGP loss, since you are always losing it
     _lastTimeWGPQuery = MaxF(aData.CurrentState.LastSlept, _lastTimeWGPQuery)
     Trace( "_lastTimeWGPQuery delta = " + (Now() - _lastTimeWGPQuery) )
-    
+
     ; Reset to default and lock WGP gains because freely changing them in this Behavior would be free estate.
     aData.Config.DefaultSkills()
     aData.Config.skillsLocked = True

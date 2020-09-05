@@ -135,7 +135,7 @@ event OnPageReset(string aPage)
     If aPage == _ppWidget
         PageWidget()
     ElseIf aPage == _ppRipped
-        PageRipped()
+        ; PageRipped()
     ElseIf aPage == _ppSkills
         PageSkills()
     ElseIf aPage == _ppCompat
@@ -171,10 +171,11 @@ Function PageMain()
     int stats = PageMainStats(1)
     ; Row 2
     int row2 = MaxI(stats - 1, presets)
-    int pos2 = PageMainConfiguration(row2)
-    PageMainOtherOptions(row2 + 1)
+    int mainCfg = PageMainConfiguration(row2)
+    int ripped = PageRippedPlayer(row2 + 1)
     ;Row 3
-    PageMainItems(pos2)
+    PageMainOtherOptions(mainCfg)
+    PageMainItems(ripped)
 EndFunction
 
 
@@ -184,93 +185,19 @@ EndFunction
 
 int Function PageMainPresets(int pos)
     SetCursorPosition(pos)
-    AddHeaderOption(Header("$Presets"))
-    ; AddHeaderOption("$MCM_Header{" + " $Presets" + "}")
+    Header("$Presets")
     int count = 1
     If PapyrusUtilExists()
-        AddMenuOptionST("MN_PresetLoad", "$Load", "")
+        Menu("MN_PresetLoad", "$Load", "")
         AddInputOptionST("IN_PresetSave", "$Save as...", "")
         count += 2
     Else
         TagPapyrusUtil()
         count += 1
     EndIf
-    ; AddKeyMapOptionST("KM_STATUS", "$Hotkey", Cfg.HkShowStatus)
-    ; AddToggleOptionST("TG_VERBOSE", "$More status info", Cfg.VerboseMod)
     Return pos + ToNewPos(count)
 EndFunction
 
-
-;>=========================================================
-;>===                   MAIN - REPORTS                  ===
-;>=========================================================
-
-int Function PageMainReports(int pos)
-    SetCursorPosition(pos)
-    AddHeaderOption("<font color='#daa520'>$Status report</font>")
-    AddKeyMapOptionST("KM_STATUS", "$Hotkey", Cfg.HkShowStatus)
-    AddToggleOptionST("TG_VERBOSE", "$More status info", Cfg.VerboseMod)
-    AddMenuOptionST("MN_REPORT", "$Report type", _reports[Cfg.ReportType])
-    Return pos + ToNewPos(5)
-EndFunction
-
-State KM_STATUS
-    Event OnKeyMapChangeST(int newKeyCode, string conflictControl, string conflictName)
-        If ( ConfirmHotkeyChange(conflictControl, conflictName) )
-            Cfg.HkShowStatus = newKeyCode
-            SetKeyMapOptionValueST(newKeyCode)
-        EndIf
-    EndEvent
-
-    Event OnDefaultST()
-        SetKeyMapOptionValueST(Cfg.hotkeyInvalid)
-        Cfg.HkShowStatus = Cfg.hotkeyInvalid
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText(SandowPP.Report.MCMHotkeyInfo())
-    EndEvent
-EndState
-
-State TG_VERBOSE
-    Event OnSelectST()
-        Cfg.VerboseMod = !Cfg.VerboseMod
-        SetToggleOptionValueST(Cfg.VerboseMod)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.VerboseMod = True
-        SetToggleOptionValueST(True)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_VerboseInfo")
-    EndEvent
-EndState
-
-State MN_REPORT
-    Event OnMenuOpenST()
-        OpenMenu(Cfg.ReportType, Cfg.ReportType, _reports)
-    EndEvent
-
-    Event OnMenuAcceptST(int index)
-        If Cfg.ReportType == index
-            Return
-        EndIf
-        Cfg.ReportType = index
-        SetMenuOptionValueST(_reports[Cfg.ReportType])
-        ForcePageReset()
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.ReportType = 0
-        SetMenuOptionValueST(_reports[Cfg.ReportType])
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_ReportTypeInfo{" + SandowPP.Report.MCMInfo() + "}")
-    EndEvent
-EndState
 
 
 ;>=========================================================
@@ -281,11 +208,11 @@ int Function PageMainConfiguration(int pos)
     int count = 3
     SetCursorPosition(pos)
     ;AddEmptyOption()
-    AddHeaderOption(Header("$Configuration"))
+    Header("$Configuration")
     If !_rippedPlayer.bulkCut
-        AddMenuOptionST("MN_BEHAVIOR", "$Behavior", _behaviors[Cfg.Behavior])
+        Menu("MN_BEHAVIOR", "$Behavior", _behaviors[Cfg.Behavior])
     Else
-        AddTextOptionST("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
+        Label("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
     EndIf
     AddToggleOptionST("TG_LOSEW", "$Can lose gains", Cfg.CanLoseWeight)
     If !Cfg.IsPumpingIron()
@@ -393,23 +320,20 @@ EndState
 
 int Function PageMainOtherOptions(int pos)
     SetCursorPosition(pos)
-    ;AddEmptyOption()
-    AddHeaderOption(Header("$Other options"))
-    ; AddMenuOptionST("MN_PRESET", "$Preset manager", _presetManagers[Cfg.PresetManager])
-
-    AddSliderOptionST("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Cfg.weightGainRate), slFmt0)
-
-    AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Cfg.CanGainHeight)
-    If Cfg.CanGainHeight
-        AddSliderOptionST("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Cfg.HeightMax), slFmt0)
-        AddSliderOptionST("SL_HEIGHTDAYS", "$Days to max Height", Cfg.HeightDaysToGrow, slFmt0r)
-    EndIf
-
+    Header("$Other options")
+    Slider("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Cfg.weightGainRate), slFmt0)
+    ; Change head size
     int flags = GetSkelFlags(NINODE_HEAD())
     AddToggleOptionST("TG_HEADSZ", "$MCM_HeadSz_Bool", Cfg.CanResizeHead, flags)
     If Cfg.CanResizeHead
-        AddSliderOptionST("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Cfg.HeadSizeMin, slFmt2r, flags)
-        AddSliderOptionST("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Cfg.HeadSizeMax, slFmt2r, flags)
+        Slider("SL_HEADSZ_MN", "$MCM_HeadSz_Mn", Cfg.HeadSizeMin, slFmt2r, flags)
+        Slider("SL_HEADSZ_MX", "$MCM_HeadSz_Mx", Cfg.HeadSizeMax, slFmt2r, flags)
+    EndIf
+    ; Change height
+    AddToggleOptionST("TG_HEIGHT", "$Can gain Height", Cfg.CanGainHeight)
+    If Cfg.CanGainHeight
+        Slider("SL_HEIGHTMAX", "$Max Height", FloatToPercent(Cfg.HeightMax), slFmt0)
+        Slider("SL_HEIGHTDAYS", "$Days to max Height", Cfg.HeightDaysToGrow, slFmt0r)
     EndIf
 
     Return pos + ToNewPos(8)
@@ -422,27 +346,6 @@ int Function GetSkelFlags(string aNodeName)
         Return OPTION_FLAG_NONE
     EndIf
 EndFunction
-
-; State MN_PRESET
-;     Event OnMenuOpenST()
-;         OpenMenu(Cfg.PresetManager, SandowPP.DefaultPresetManager(), _presetManagers)
-;     EndEvent
-
-;     Event OnMenuAcceptST(int index)
-;         Cfg.PresetManager = index
-;         EnsurePresetManager(_presetManagers[index])
-;         SetMenuOptionValueST(_presetManagers[Cfg.PresetManager])
-;     EndEvent
-
-;     Event OnDefaultST()
-;         Cfg.PresetManager = SandowPP.DefaultPresetManager()
-;         SetMenuOptionValueST(_presetManagers[Cfg.PresetManager])
-;     EndEvent
-
-;     Event OnHighlightST()
-;         SetInfoText("$MCM_PresetManagerInfo")
-;     EndEvent
-; EndState
 
 Function EnsurePresetManager(string mgr)
     If SandowPP.PresetManager.Exists() || Cfg.PresetManager == Cfg.pmNone
@@ -609,17 +512,17 @@ int Function PageMainStats(int pos)
     SandowPP.PrepareAlgorithmData()
     SetCursorPosition(pos)
 
-    AddHeaderOption(Header("$Stats"))
-    AddTextOptionST("TX_BW", "$Weight:", SPP.GetMCMWeight() + "%" )
-    AddTextOptionST( "TX_TRAINING", "$Weight Gain Potential:", SPP.GetMCMWGP() + "%" )
+    Header("$Stats")
+    Label("TX_BW", SPP.Algorithm.GetMCMMainStatLabel(), SPP.Algorithm.GetMcmMainStat() + "%" )
+    Label("TX_TRAINING", "$Weight Gain Potential:", SPP.GetMCMWGP() + "%")
     int count = 3
     ; Posibly won't exist
     If SPP.GetMCMCustomLabel1() && SPP.GetMCMCustomData1()
-        AddTextOptionST("TX_CUSTOM1", SPP.GetMCMCustomLabel1(), SPP.GetMCMCustomData1() )
+        Label("TX_CUSTOM1", SPP.GetMCMCustomLabel1(), SPP.GetMCMCustomData1() )
         count += 1
     EndIf
     If SPP.GetMCMStatus()
-        AddTextOptionST("TX_STATUS", "", SandowPP.GetMCMStatus())
+        Label("TX_STATUS", "", SandowPP.GetMCMStatus())
         count += 1
     EndIf
     Return pos + ToNewPos(count)
@@ -654,9 +557,9 @@ EndState
 ;>=========================================================
 int Function PageMainItems(int pos)
     SetCursorPosition(pos)
-    AddHeaderOption("<font color='#daa520'>$Items</font>")
-    AddTextOptionST("TX_IT_SACKS", "$Weight sacks", "$Distribute", FlagByBool(!SandowPP.Items.WeightSacksDistributed) )
-    AddTextOptionST("TX_IT_ANABOL", "$Weight gainers", "$Distribute", FlagByBool(!SandowPP.Items.SillyDistributed) )
+    Header("$Items")
+    Button("TX_IT_SACKS", "$Weight sacks", "$Distribute", FlagByBool(!SPP.Items.WeightSacksDistributed) )
+    Button("TX_IT_ANABOL", "$Weight gainers", "$Distribute", FlagByBool(!SPP.Items.SillyDistributed) )
     Return pos + ToNewPos(3)
 EndFunction
 
@@ -683,18 +586,39 @@ EndState
 
 Function PageWidget()
     SetCursorFillMode(TOP_TO_BOTTOM)
-    AddHeaderOption("<font color='#daa520'>$Configuration</font>")
-    AddSliderOptionST("SL_RWUPDTIME", "$Update time", Cfg.rwUpdateTime, slFmt0r + " s")
-    AddSliderOptionST("SL_RWALPHA", "$Opacity", Cfg.rwOpacity, slFmt0)
-    AddSliderOptionST("SL_RWSCALE", "$Scale", FloatToPercent(Cfg.rwScale), slFmt0)
+    Header("$Configuration")
+    ; AddHeaderOption("<font color='#daa520'>$Configuration</font>")
+    AddKeyMapOptionST("KM_WIDGET", "$MCM_HideShowWidget", Cfg.HkShowStatus)
+    Slider("SL_RWUPDTIME", "$Update time", Cfg.rwUpdateTime, slFmt0r + " s")
+    Slider("SL_RWALPHA", "$Opacity", Cfg.rwOpacity, slFmt0)
+    Slider("SL_RWSCALE", "$Scale", FloatToPercent(Cfg.rwScale), slFmt0)
 
     SetCursorPosition(1)
-    AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    AddMenuOptionST("MN_RWHAL", "$Horizontal Align", Cfg.rwHAlign)
-    AddMenuOptionST("MN_RWVAL", "$Vertical Align", Cfg.rwVAlign)
-    AddSliderOptionST("SL_RWX", "$X Offset", Cfg.rwX, slFmt0r)
-    AddSliderOptionST("SL_RWY", "$Y Offset", Cfg.rwY, slFmt0r)
+    Header("$Other options")
+    ; AddHeaderOption("<font color='#daa520'>$Other options</font>")
+    Menu("MN_RWHAL", "$Horizontal Align", Cfg.rwHAlign)
+    Menu("MN_RWVAL", "$Vertical Align", Cfg.rwVAlign)
+    Slider("SL_RWX", "$X Offset", Cfg.rwX, slFmt0r)
+    Slider("SL_RWY", "$Y Offset", Cfg.rwY, slFmt0r)
 EndFunction
+
+State KM_WIDGET
+    Event OnKeyMapChangeST(int newKeyCode, string conflictControl, string conflictName)
+        If ( ConfirmHotkeyChange(conflictControl, conflictName) )
+            Cfg.HkShowStatus = newKeyCode
+            SetKeyMapOptionValueST(newKeyCode)
+        EndIf
+    EndEvent
+
+    Event OnDefaultST()
+        SetKeyMapOptionValueST(Cfg.hotkeyInvalid)
+        Cfg.HkShowStatus = Cfg.hotkeyInvalid
+    EndEvent
+
+    Event OnHighlightST()
+        SetInfoText("$MCM_HKStatusRWInfo")
+    EndEvent
+EndState
 
 State SL_RWUPDTIME
     Event OnSliderOpenST()
@@ -849,22 +773,22 @@ Function PageSkills()
     ;================================
     SetCursorPosition(0)
     AddHeaderOption("<font color='#daa520'>$MCM_WGPHeader</font>")
-    AddSliderOptionST("SL_AR", "$Archery", Cfg.skillRatioAr, slFmt, flag)
-    AddSliderOptionST("SL_BL", "$Block", Cfg.skillRatioBl, slFmt, flag)
-    AddSliderOptionST("SL_HA", "$Heavy Armor", Cfg.skillRatioHa, slFmt, flag)
-    AddSliderOptionST("SL_LA", "$Light Armor", Cfg.skillRatioLa, slFmt, flag)
-    AddSliderOptionST("SL_1H", "$One Handed", Cfg.skillRatio1H, slFmt, flag)
-    AddSliderOptionST("SL_SM", "$Smithing", Cfg.skillRatioSm, slFmt, flag)
-    AddSliderOptionST("SL_SN", "$Sneak", Cfg.skillRatioSn, slFmt, flag)
-    AddSliderOptionST("SL_2H", "$Two Handed", Cfg.skillRatio2H, slFmt, flag)
+    Slider("SL_AR", "$Archery", Cfg.skillRatioAr, slFmt, flag)
+    Slider("SL_BL", "$Block", Cfg.skillRatioBl, slFmt, flag)
+    Slider("SL_HA", "$Heavy Armor", Cfg.skillRatioHa, slFmt, flag)
+    Slider("SL_LA", "$Light Armor", Cfg.skillRatioLa, slFmt, flag)
+    Slider("SL_1H", "$One Handed", Cfg.skillRatio1H, slFmt, flag)
+    Slider("SL_SM", "$Smithing", Cfg.skillRatioSm, slFmt, flag)
+    Slider("SL_SN", "$Sneak", Cfg.skillRatioSn, slFmt, flag)
+    Slider("SL_2H", "$Two Handed", Cfg.skillRatio2H, slFmt, flag)
 
     SetCursorPosition(1)
     AddHeaderOption("")
-    AddSliderOptionST("SL_AL", "$Alteration", Cfg.skillRatioAl, slFmt, flag)
-    AddSliderOptionST("SL_CO", "$Conjuration", Cfg.skillRatioCo, slFmt, flag)
-    AddSliderOptionST("SL_DE", "$Destruction", Cfg.skillRatioDe, slFmt, flag)
-    AddSliderOptionST("SL_IL", "$Illusion", Cfg.skillRatioIl, slFmt, flag)
-    AddSliderOptionST("SL_RE", "$Restoration", Cfg.skillRatioRe, slFmt, flag)
+    Slider("SL_AL", "$Alteration", Cfg.skillRatioAl, slFmt, flag)
+    Slider("SL_CO", "$Conjuration", Cfg.skillRatioCo, slFmt, flag)
+    Slider("SL_DE", "$Destruction", Cfg.skillRatioDe, slFmt, flag)
+    Slider("SL_IL", "$Illusion", Cfg.skillRatioIl, slFmt, flag)
+    Slider("SL_RE", "$Restoration", Cfg.skillRatioRe, slFmt, flag)
 
     ;================================
     If !Cfg.IsSandow()
@@ -872,7 +796,7 @@ Function PageSkills()
     EndIf
     SetCursorPosition(20)
     AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    AddSliderOptionST("SL_FP", "$MCM_SlFatiguePhys", ToPercent(Cfg.physFatigueRate), xslFmt)
+    Slider("SL_FP", "$MCM_SlFatiguePhys", ToPercent(Cfg.physFatigueRate), xslFmt)
 
     SetCursorPosition(21)
     AddHeaderOption("")
@@ -1128,49 +1052,41 @@ string _sl_DaysFmt = "$sl_DaysFmt"
 DM_SandowPP_RippedPlayer _rippedPlayer
 DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerA
 
-Function PageRipped()
-    SetCursorFillMode(TOP_TO_BOTTOM)
-    ; Row 1
-    int playr = PageRippedPlayer(0)
-    int npc = PageRippedNPCAll(1)
-    ; Row 2+
-    int row2 = MaxI(npc - 1, playr)
-    SetCursorPosition(row2)
-    Header("Patatas")
-EndFunction
-
 int Function PageRippedPlayer(int pos)
     SetCursorPosition(pos)
     int count = 1
-    Header("$Player")
+    Header("$Getting ripped")
     If (SPP.texMngr.IsValidRace(SPP.Player))
         ; Hide menu when the player wants to bulk & cut or get ripped by behavior, because it doesn't make sense in those cases
         If !(_rippedPlayer.bulkCut || Cfg.IsBruce())
-            AddMenuOptionST("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[_rippedPlayer.Method])
+            Menu("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[_rippedPlayer.Method])
             count += 1
         Else
-            AddTextOptionST("TX_RippedPlayerHiddenMethod", "$Behavior", SPP.Algorithm.Signature(), FlagByBool(false))
+            Label("TX_RippedPlayerHiddenMethod", "$Behavior", SPP.Algorithm.Signature(), FlagByBool(false))
+            count += 1
         EndIf
         ; Hide bulk & cut when it doesn't make sense
         If _rippedPlayerA.MethodIsBehavior() || Cfg.IsBruce()
             AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", _rippedPlayer.bulkCut)
             count += 1
             If _rippedPlayer.bulkCut
-                AddSliderOptionST("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", _rippedPlayer.bulkCutDays, _sl_DaysFmt)
-                AddMenuOptionST("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
+                Slider("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", _rippedPlayer.bulkCutDays, _sl_DaysFmt)
+                Menu("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
                 count += 2
             EndIf
         EndIf
 
         ; Show constant config only when it's required.
         If _rippedPlayerA.MethodIsConst()
-            AddSliderOptionST("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
+            Slider("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
+            count += 1
         EndIf
 
         ; Texture bounds for player
         If !_rippedPlayerA.MethodIsNone() && !_rippedPlayerA.MethodIsConst()
-            AddSliderOptionST("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(_rippedPlayer.LB), slFmt0)
-            AddSliderOptionST("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(_rippedPlayer.UB), slFmt0)
+            Slider("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(_rippedPlayer.LB), slFmt0)
+            Slider("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(_rippedPlayer.UB), slFmt0)
+            count += 2
         EndIf
     Else
         AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
@@ -1371,88 +1287,6 @@ Function PageCompat()
     EndIf
 EndFunction
 
-;>=========================================================
-;>===                       PRESETS                     ===
-;>=========================================================
-
-Function PageProfiles()
-    SetCursorFillMode(LEFT_TO_RIGHT)
-    AddHeaderOption("<font color='#daa520'>$Load</font>")
-    AddHeaderOption("<font color='#daa520'>$Save</font>")
-
-    AddTextOptionST("TX_PL1", "$Preset {" + 1 + "}", "$Load", LoadFlag(1) )
-    AddTextOptionST("TX_PS1", "$Preset {" + 1 + "}", "$Save", SaveFlag() )
-    AddTextOptionST("TX_PL2", "$Preset {" + 2 + "}", "$Load", LoadFlag(2) )
-    AddTextOptionST("TX_PS2", "$Preset {" + 2 + "}", "$Save", SaveFlag() )
-    AddTextOptionST("TX_PL3", "$Preset {" + 3 + "}", "$Load", LoadFlag(3) )
-    AddTextOptionST("TX_PS3", "$Preset {" + 3 + "}", "$Save", SaveFlag() )
-EndFunction
-
-int Function SaveFlag()
-    Return FlagByBool(SandowPP.PresetManager.Exists())
-EndFunction
-
-int Function LoadFlag(int aPresetNum)
-    Return FlagByBool(SandowPP.PresetManager.Exists() && SandowPP.PresetManager.ProfileExists(aPresetNum))
-EndFunction
-
-Function SavePreset(int aPresetNum)
-    SandowPP.PresetManager.SaveFile(aPresetNum, Cfg)
-    ShowMessage("$Preset saved", False)
-EndFunction
-
-Function TryLoadPreset(int aPresetNum)
-    DM_SandowPP_Config pData = SandowPP.PresetManager.LoadFile(aPresetNum)
-    if pData.operationResult != ""
-        ; Should never get this message, but it was added as a safety measure anyway.
-        ShowMessage("$Can't open preset{" + pData.operationResult + "}", true)
-        Return
-    EndIf
-
-    ; Assign new data
-    Cfg.Assign(pData)
-    ShowMessage("$Preset loaded succesfully", False)
-EndFunction
-
-State TX_PS1
-    Event OnSelectST()
-        SavePreset(1)
-        SetOptionFlagsST(OPTION_FLAG_NONE, false, "TX_PL1")
-    EndEvent
-EndState
-
-State TX_PL1
-    Event OnSelectST()
-        TryLoadPreset(1)
-    EndEvent
-EndState
-
-State TX_PS2
-    Event OnSelectST()
-        SavePreset(2)
-        SetOptionFlagsST(OPTION_FLAG_NONE, false, "TX_PL2")
-    EndEvent
-EndState
-
-State TX_PL2
-    Event OnSelectST()
-        TryLoadPreset(2)
-    EndEvent
-EndState
-
-State TX_PS3
-    Event OnSelectST()
-        SavePreset(3)
-        SetOptionFlagsST(OPTION_FLAG_NONE, false, "TX_PL3")
-    EndEvent
-EndState
-
-State TX_PL3
-    Event OnSelectST()
-        TryLoadPreset(3)
-    EndEvent
-EndState
-
 
 ;>========================================================================#
 ; Generic tags functions
@@ -1562,10 +1396,33 @@ int Function FlagByBool(bool aVal)
     EndIf
 EndFunction
 
-string Function Header(string text)
-    return "$MCM_Header{" + text + "}"
+; string Function Header(string text)
+;     AddHeaderOption(Header("$Presets"))
+;     return "$MCM_Header{" + text + "}"
+; EndFunction
+Function Header(string text)
+    AddHeaderOption("$MCM_Header{" + text + "}")
 EndFunction
 
 string Function Error(string text)
     return "$MCM_Error{" + text + "}"
+EndFunction
+
+; Renames AddTextOptionST() to declutter code
+Function Button(string stateName, string ltext, string rtext, int flags = 0)
+    AddTextOptionST(stateName, ltext, rtext, flags)
+EndFunction
+
+; Renames AddTextOptionST() to declutter code
+Function Label(string stateName, string ltext, string rtext, int flags = 0)
+    AddTextOptionST(stateName, ltext, rtext, flags)
+EndFunction
+
+; Renames Slider() to declutter code
+Function Slider(string stateName, string text, float val, string fmt, int flags = 0)
+    AddSliderOptionST(stateName, text, val, fmt, flags)
+EndFunction
+
+Function Menu(string stateName, string label, string options, int flags = 0)
+    AddMenuOptionST(stateName, label, options, flags)
 EndFunction

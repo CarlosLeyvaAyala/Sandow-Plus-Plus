@@ -20,7 +20,7 @@ New features:
 	* "Bruce Lee" behavior. You can now get ripped without gaining weight.
 	* Automatic Bulk & Cut. For each number of SLEEPING SESSIONS passed (MCM configurable), this mod will automatically swap behaviors; from gaining weight (bulking) to gaining muscle definition (cutting). Now you can start thin and flaccid and become muscular and ripped by training... or being muscular and flaccid, whatever floats your boat.
 	* Added options for getting ripped in a more straight forward way. These options can be used with weight gaining behaviors. What makes these options different than the Bruce Lee behavior is that behavior has complex rules to getting ripped and you can also lose muscle definition.
-	* Sexlab integration. 
+	* Sexlab integration.
 		Nothing too fancy, it just considers sex scenes as physical activity so you won't lose your gains by inactivity.
 		Having sex won't make you muscular or ripped, since it's not physical training.
 	* This mod has gotten so big (thank you all for your suggestions!) it now needs a proper User Manual, so I made a PDF file just for that.
@@ -32,6 +32,7 @@ Minor changes:
 Minor fixes:
 	* Adjusted Diminishing Returns formula. It's mostly the same, but prettier.
 	* Reduced the step for adjusting the scale on the reporting Widget, from 10 to 1, for better fine tunning.
+	* Did you know sedentary juicers gain more weight than hard training naturals? Weight gain multipliers were adjusted to show that fact.
 
 
 V3.1

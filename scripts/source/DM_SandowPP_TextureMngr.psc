@@ -56,8 +56,8 @@ DM_SandowPP_RippedPlayer Property PlayerSettings Auto
 
 ;TODO: Delete
 Function Debug(Actor akTarget)
-    PlayerSettings.method = 1
-    PlayerSettings.constAlpha = 0.4
+    ; PlayerSettings.method = 1
+    ; PlayerSettings.constAlpha = 0.4
     ; AllNPCs.method = 1
     ; AllNPCs.constAlpha = 1.0
     ; ApplyGlobalSettings()
@@ -79,7 +79,7 @@ Function InitData()
     InitRacialSettings()
     InitPlayerTexture()
     ; Ripped textures need to be reapplied each game reload.
-    InitializeActor(Player)
+    InitPlayer()
 EndFunction
 
 ; Sets a suitable texture set and a suitable alpha.
@@ -91,11 +91,19 @@ bool Function InitializeActor(Actor akTarget)
         SetTextureSetAndAlpha(akTarget, settings.texSetLo, 1.0, "Body [Ovl0]")
         ; Sets most ripped texture as a blend.
         SetTextureSetAndAlpha(akTarget, settings.texSet, settings.GetAlpha(akTarget))
-        ; SetTextureSet(akTarget, settings.texSet)
-        ; SetTexAlpha(akTarget, settings.GetAlpha(akTarget))
         return true
     EndIf
     return false
+EndFunction
+
+; Sets the behavior the player will use to calculate their muscle definition
+Function SetPlayerBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
+    Debug.MessageBox(bhv)
+    PlayerSettings.SetBehavior(bhv)
+EndFunction
+
+Function InitPlayer()
+    InitializeActor(Player)
 EndFunction
 
 Function Clear(Actor akTarget)

@@ -1,11 +1,11 @@
-Scriptname DM_SandowPP_State extends Quest 
+Scriptname DM_SandowPP_State extends Quest
 { Stores the state of the main script, DM_SandowPPMain }
 
 Import DM_Utils
 Import DM_SandowPP_Globals
 
 float Property HoursAwaken Auto         ; Real hours, not game hours.
-float Property HoursSlept Auto          ; Real hours, not game hours.    
+float Property HoursSlept Auto          ; Real hours, not game hours.
 float Property SkillFatigue             ; Fatigue accumulated due to skill level gains
     float Function get()
         Return _skillFatigue
@@ -41,7 +41,7 @@ float Property LastSkillGainTime        ; Game hours.
     float Function get()
         if _lastSkillGainTime < 0.0
             Return Now()
-        Else    
+        Else
             Return _lastSkillGainTime
         EndIf
     EndFunction
@@ -49,11 +49,14 @@ float Property LastSkillGainTime        ; Game hours.
         _lastSkillGainTime = x
     EndFunction
 EndProperty
-int Property WGPGainType = 0 Auto 
+int Property WGPGainType = 0 Auto
 {This is used to track if the player gained or lost WGP. Used for the reporting system}
 
+float Property WeightGainBase = 0.0 Auto
+{Used by anabolics to get the last extra pump. Used to simulate the fact that steroid
+users gain muscles even if they don't train.}
 float Property WeightGainMultiplier = 1.0 Auto
-{Used by anabolics to get the last extra pump}
+{Used by anabolics to get the last extra pump.}
 
 float _WGP
 float _skillFatigue

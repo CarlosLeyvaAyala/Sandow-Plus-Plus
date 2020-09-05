@@ -2,7 +2,7 @@
 ; If you want to change something, try to change only the things that are marked as
 ; safe to change. Otherwise, you are bound to break this mod balance.
 Scriptname DM_SandowPPMain extends DM_SandowPPMain_Interface
-{Sandow Plus Plus main script}
+{Sandow Plus Plus main script. This controls everything.}
 
 Import DM_Utils
 Import DM_SandowPP_Globals
@@ -48,6 +48,8 @@ DM_SandowPP_AlgoWCSandow Property AlgoWCSandow Auto
 {Sandow++ Behavior}
 DM_SandowPP_AlgoWCPumping Property AlgoWCPumping Auto
 {Pumping Iron Behavior}
+DM_SandowPP_AlgoWCPumping Property AlgoBFBruce Auto
+{Bruce Lee Behavior}
 
 DM_SandowPP_Algorithm Property Algorithm
     {Current Behavior}
@@ -278,7 +280,7 @@ Function ChangeAlgorithm()
     ElseIf Config.IsPaused()
         newAlgo = AlgoPause
     ElseIf Config.IsBruce()
-        ; code
+        newAlgo = AlgoBFBruce
     Else
         newAlgo = AlgoWCSandow
     EndIf
@@ -351,7 +353,7 @@ EndFunction
 
 Function SelectPresetManager()
     {Selection of the Strategy Pattern}
-    Trace("Main.SelectPresetManager(" + Config.PresetManager + ")")
+    ; Trace("Main.SelectPresetManager(" + Config.PresetManager + ")")
 
     If Config.PresetManager == Config.pmPapyrusUtil
         _presetManager = PresetMngrPapUtl
@@ -362,9 +364,9 @@ Function SelectPresetManager()
     EndIf
 EndFunction
 
+; Decides how much WGP and fatigue will be added.
 Function Train(string aSkill)
-    {Decides how much WGP and fatigue will be added}
-    Trace("Main.Train(" + aSkill + ")")
+    ; Trace("Main.Train(" + aSkill + ")")
 
     if aSkill == "TwoHanded"
         TrainAndFatigue(Config.skillRatio2H, Config.physFatigueRate)
@@ -395,13 +397,12 @@ Function Train(string aSkill)
     EndIf
 EndFunction
 
+; Apply fatigue, WGP and inactivity related things.
 Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
-    {Apply fatigue, WGP and inactivity related things}
-    Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
-    Trace("Old WGP = " + CurrentState.WGP)
-
+    ; Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
+    ; Trace("Old WGP = " + CurrentState.WGP)
     If !Algorithm.CanGainWGP()
-        Trace("Can't gain WGP. Returning.")
+        ; Trace("Can't gain WGP. Returning.")
         return
     EndIf
 
@@ -433,14 +434,9 @@ Function ResetVariables()
     CurrentState.LastSlept = -1
 EndFunction
 
+; Used by the MCM only.
 string Function GetMCMStatus()
-    {Used by the MCM only}
     Return Algorithm.GetMCMStatus(AlgorithmData)
-EndFunction
-
-string Function GetMCMWeight()
-    {Used by the MCM only}
-    Return FloatToStr(Player.GetActorBase().GetWeight())
 EndFunction
 
 string Function GetMCMWGP()

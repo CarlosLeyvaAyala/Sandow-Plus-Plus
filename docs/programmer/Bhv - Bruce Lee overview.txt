@@ -1,12 +1,13 @@
 ========================
 Overview for players
 ========================
-* You become ripped by doing excercise and sleeping (TODO: when
-eating properly; ie. not too much, not too few).
+* You become ripped by doing excercise and sleeping
+	;TODO: when eating properly; ie. not too much, not too few).
 * How fast you get ripped depends on how heavy you are; thinner players
 get ripped faster.
-* You lose muscle definition by inactivity and lack of sleep (TODO:
-by over/under eating). Inactivity is worse than lack of sleep.
+* You lose muscle definition by inactivity and lack of sleep.
+	Inactivity is worse than lack of sleep.
+	;TODO: by over/under eating.
 	The more you weight, the less harsh the penalty (because muscles give
 	you some room to caloric expenditure IRL)
 * You must workout every day.
@@ -50,7 +51,7 @@ gains cap at 10 hours.
 Algorithms
 ========================
 Behavior internal variables
-		WGP					// Used to restore to this benavior WGP
+		WGP					// Used to restore to this behavior WGP
 		currentAlpha		// Needed for properly calculating diminishing returns
 
 When entering this behavior
@@ -80,7 +81,7 @@ Calculate gains
 	training += training for today
 
 Calculate alpha
-	a = (max - min) / (e^(100b) - 1)
+	a = (cfg.maxDays - cfg.minDays) / (e^(100b) - 1)
 	b = 0.02
 	c = min - a
 	maxDays = a * e^(b * weight) + c. 			// Where 0 <= weight <= 100.
@@ -90,7 +91,7 @@ Calculate alpha
 Calculate loses
 	By inactivity
 	By sleep
-	TODO: not eating properly
+	;TODO: not eating properly
 	multiply loses by weight factor
 	training -= loses
 

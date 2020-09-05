@@ -78,8 +78,10 @@ bool Function LossesByInactivity(DM_SandowPP_AlgorithmData aData)
     If !aData.Config.CanLoseWeight
         Return False
     EndIf
-    float inactivityTime = HoursInactive(Result.LastSkillGainTime) - aData.CurrentState.HoursSlept
-    If inactivityTime < InactivityHoursToLoseMuscle()
+    ; WARNING: Value changed. Watch this if something fails.
+    float inactivityTime = HoursInactiveBeforeSleeping(aData)
+    ; float inactivityTime = HoursInactive(Result.LastSkillGainTime) - aData.CurrentState.HoursSlept
+    If inactivityTime < InactivityHoursToLoses()
         Return False
     EndIf
     Result.WGP -= Result.WGP * LossesRateByInactivity
@@ -127,7 +129,8 @@ EndFunction
 float Function Grow(float aFatigue, DM_SandowPP_AlgorithmData aData)
     {Grow based on hours slept and fatigue}
     float f = MinF(aFatigue, FatigueClamp) / FatigueClamp
-    float t = MinF(aData.CurrentState.HoursSlept, SleepFullRestHours()) / SleepFullRestHours()
+    ; float t = MinF(aData.CurrentState.HoursSlept, SleepFullRestHours()) / SleepFullRestHours()
+    float t = CappedSleepingTime(aData) / SleepFullRestHours()
     float takeWGP = MinF(f * t, Result.WGP)
     ChangeWeight( CalculateWeightGain(takeWGP, aData.Config), aData )
     _maxWeight = GetPlayerWeight()
@@ -390,8 +393,9 @@ EndFunction
 ; ########################################################################
 ; Protected overridable functions. NEEDED to be implemented by descendants
 ; ########################################################################
-float Function InactivityHoursToLoseMuscle()
-    {Hours allowed before considering being inactive and starting to lose muscle because of that}
+;@Override:
+; Hours allowed before considering being inactive and starting to lose muscle because of that.
+float Function InactivityHoursToLoses()
     Return 72.0
 EndFunction
 

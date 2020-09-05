@@ -1,5 +1,5 @@
-Scriptname DM_SandowPP_AlgorithmWeightChange extends DM_SandowPP_Algorithm Hidden 
-{ Family of all algorithms that change the player's weight in some way }
+Scriptname DM_SandowPP_AlgorithmWeightChange extends DM_SandowPP_Algorithm Hidden
+{Family of all algorithms that change the player's weight in some way.}
 
 Import DM_Utils
 Import Math
@@ -8,9 +8,9 @@ Import DM_SandowPP_Globals
 int property minW = 0 AutoReadOnly
 int property maxW = 100 AutoReadOnly
 
-float Function GetPlayerWeight()
-    return Player.GetActorBase().GetWeight()
-EndFunction
+; float Function GetPlayerWeight()
+;     return Player.GetActorBase().GetWeight()
+; EndFunction
 
 ; ########################################################################
 ; Protected functions. These are designed to be used only within
@@ -24,36 +24,22 @@ EndFunction
 Function ChangeWeight(float aIncrement, DM_SandowPP_AlgorithmData aData)
     Trace("AlgorithmWeightChange.ChangeWeight(" + aIncrement + ")")
     aData.CurrentState.TraceAll()
-    
+
     aIncrement *= aData.Config.weightGainRate
-    aIncrement *= aData.CurrentState.WeightGainMultiplier
+    aIncrement = UseSteroids(aIncrement, aData)
+    ; aIncrement *= aData.CurrentState.WeightGainMultiplier
     float w = GetPlayerWeight()
     float newW = ConstrainF(w + aIncrement, minW, maxW)
-    Player.GetActorBase().SetWeight(newW)  
-    Player.QueueNiNodeUpdate() 
+    Player.GetActorBase().SetWeight(newW)
+    Player.QueueNiNodeUpdate()
     SendModEvent("ChangeWeight", "", aIncrement)
     ReportWeightChange(aData, w, newW)
-    aData.CurrentState.WeightGainMultiplier = 1.0
+    ; aData.CurrentState.WeightGainMultiplier = 1.0
 EndFunction
 
-float Function HoursInactive(float aLastActive)
-    Return ToRealHours(Now() - aLastActive)
-EndFunction
-
-float Function InactivityHoursLeft(DM_SandowPP_AlgorithmData aData)
-    float inactivityTime = HoursInactive(aData.CurrentState.LastSkillGainTime)
-    Return InactivityHoursToLoseMuscle() - inactivityTime
-EndFunction
 
 ; ########################################################################
-; Protected overridable functions. NEED to be implemented by descendants
-; ########################################################################
-float Function InactivityHoursToLoseMuscle()
-    Return 12.0
-EndFunction
-
-; ########################################################################
-; Report functions. 
+; Report functions.
 ; ########################################################################
 
 Function ReportWeight(DM_SandowPP_AlgorithmData aData)
@@ -69,7 +55,7 @@ Function ReportWGP(DM_SandowPP_AlgorithmData aData)
     aData.Report.Notification(RArg)
     aData.CurrentState.WGPGainType = aData.Report.mtDefault     ; Done reporting. Stop flashing
 EndFunction
-    
+
 Function ReportWeightChange(DM_SandowPP_AlgorithmData aData, float oldW, float newW)
     {Tells the player weight has changed}
     float dw = newW - oldW
@@ -82,10 +68,10 @@ Function ReportWeightChange(DM_SandowPP_AlgorithmData aData, float oldW, float n
     if aData.Config.VerboseMod
         ReportWeight(aData)
     EndIf
-    
-    Trace("AlgorithmWeightChange.ReportWeightChange()")
-    Trace("Old weight = " + oldW)
-    Trace("New weight = " + newW)
+
+    ; Trace("AlgorithmWeightChange.ReportWeightChange()")
+    ; Trace("Old weight = " + oldW)
+    ; Trace("New weight = " + newW)
 EndFunction
 
 Function DoReportWC(DM_SandowPP_AlgorithmData aData, string aTxt, int aType, int aCat, float aWc)
@@ -94,7 +80,7 @@ Function DoReportWC(DM_SandowPP_AlgorithmData aData, string aTxt, int aType, int
     RArg.CatVal(aCat, PercentToFloat( GetPlayerWeight() ))
     aData.Report.Notification(RArg)
 EndFunction
-        
+
 ; ========================
 Function ReportInactivity(DM_SandowPP_AlgorithmData aData)
     RArg.Set(GetInactivityStatus(aData), GetInactivityMsgLvl(aData))
@@ -129,10 +115,12 @@ int Function GetInactivityMsgLvl(DM_SandowPP_AlgorithmData aData)
     Return aData.Report.mtDefault
 EndFunction
 
-float Function ReportInactivityPercentThreshold()
-    Return InactivityHoursToLoseMuscle() * 0.3
+; Gets the label for the name of the stat this algorithm changes.
+string Function GetMcmMainStatLabel()
+    return "$Weight:"
 EndFunction
 
-float Function InactivityAsPercent(DM_SandowPP_AlgorithmData aData)
-    Return HoursInactive(aData.CurrentState.LastSkillGainTime) / InactivityHoursToLoseMuscle()
+; Gets the value of the stat this algorithm changes.
+string Function GetMcmMainStat()
+    return FloatToStr(GetPlayerWeight())
 EndFunction
