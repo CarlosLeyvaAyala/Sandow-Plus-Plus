@@ -63,7 +63,15 @@ Function Grow(DM_SandowPP_AlgorithmData aData)
     float weightGain = GetGains()
     Result.WGP -= weightGain
     weightGain = CalculateHunger(weightGain, aData.Config.HungerAffectsGains)
+    weightGain = DiminishingReturns(weightGain, aData)
     ChangeWeight(weightGain, aData)
+EndFunction
+
+float Function DiminishingReturns(float gain, DM_SandowPP_AlgorithmData aData)
+    If aData.Config.DiminishingReturns
+        return DiminishingRatio(GetPlayerWeight()) * gain
+    EndIf
+    return gain
 EndFunction
 
 float Function GetGains()
@@ -128,8 +136,8 @@ Function ReportWGP(DM_SandowPP_AlgorithmData aData)
     Parent.ReportWGP(aData)
 EndFunction
 
+; Report how many hours left before you can sleep again.
 Function ReportNextSleep(DM_SandowPP_AlgorithmData aData)
-    {Report how many hours left before you can sleep again}
     string status = GetNextSleepStatus(aData)
     int msgType
     If status == "$ReportPICanSleep"

@@ -34,7 +34,6 @@ Function ChangeWeight(float aIncrement, DM_SandowPP_AlgorithmData aData)
     Player.QueueNiNodeUpdate()
     SendModEvent("ChangeWeight", "", aIncrement)
     ReportWeightChange(aData, w, newW)
-    ; aData.CurrentState.WeightGainMultiplier = 1.0
 EndFunction
 
 
@@ -51,6 +50,7 @@ EndFunction
 
 Function ReportWGP(DM_SandowPP_AlgorithmData aData)
     RArg.Set("$ReportWGP{" + FloatToStr(aData.CurrentState.WGP, 2) + "}", aData.CurrentState.WGPGainType)
+    ; TODO: Configurable
     RArg.CatVal(aData.Report.mcWGP, PercentToFloat(aData.CurrentState.WGP))
     aData.Report.Notification(RArg)
     aData.CurrentState.WGPGainType = aData.Report.mtDefault     ; Done reporting. Stop flashing
@@ -68,14 +68,10 @@ Function ReportWeightChange(DM_SandowPP_AlgorithmData aData, float oldW, float n
     if aData.Config.VerboseMod
         ReportWeight(aData)
     EndIf
-
-    ; Trace("AlgorithmWeightChange.ReportWeightChange()")
-    ; Trace("Old weight = " + oldW)
-    ; Trace("New weight = " + newW)
 EndFunction
 
+; Shortcut to report weight changes.
 Function DoReportWC(DM_SandowPP_AlgorithmData aData, string aTxt, int aType, int aCat, float aWc)
-    {Shortcut to report weight changes}
     RArg.Set(aTxt, aType)
     RArg.CatVal(aCat, PercentToFloat( GetPlayerWeight() ))
     aData.Report.Notification(RArg)
@@ -123,4 +119,32 @@ EndFunction
 ; Gets the value of the stat this algorithm changes.
 string Function GetMcmMainStat()
     return FloatToStr(GetPlayerWeight())
+EndFunction
+
+; Gets the description about value of the stat this algorithm changes.
+string Function GetMcmMainStatInfo()
+    return "$Your current body Weight."
+EndFunction
+
+;@Override:
+; Gets the label used for the "training" stat.
+string Function GetMcmTrainingLabel()
+    return "$Weight Gain Potential:"
+EndFunction
+
+;@Override:
+; Gets the description used for the "training" stat.
+string Function GetMcmTrainingInfo()
+    return "$MCM_WGPInfo"
+EndFunction
+
+;@Override:
+; Gets the header used for adjusting skill contributions to "training".
+string Function GetMcmTrainingSkillHeader()
+    return "$MCM_WGPHeader"
+EndFunction
+
+;@Virtual:
+bool Function IsWeightGaining()
+    return true
 EndFunction

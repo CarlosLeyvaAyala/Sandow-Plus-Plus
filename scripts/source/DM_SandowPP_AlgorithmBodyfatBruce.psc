@@ -34,8 +34,10 @@ DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)
 
     CalculateGainsOrLosses(aData)
     txMgr.InitPlayer()
+    Result.LastSlept = Now()
 
     Result.TraceAll()
+    Trace(_training)
     Trace("===== Ending Bruce.OnSleep() =====")
     return Result
 EndFunction
@@ -49,6 +51,7 @@ Function CalculateGainsOrLosses(DM_SandowPP_AlgorithmData aData)
 EndFunction
 
 Function CalculateGains(DM_SandowPP_AlgorithmData aData)
+    Trace("CalculateGains(DM_SandowPP_AlgorithmData aData)")
     aData.CurrentState.WGP = MinF(1.0, aData.CurrentState.WGP)
     _todaysTraining = aData.CurrentState.WGP * CappedSleepingTime(aData) * _sleepToTrainingRatio
     If aData.Config.DiminishingReturns
@@ -71,6 +74,7 @@ float Function InactivityHoursToLoses()
 EndFunction
 
 Function CalculateLosses(DM_SandowPP_AlgorithmData aData)
+    Trace("CalculateLosses(DM_SandowPP_AlgorithmData aData)")
     float losses = LossesByInactivity(aData)
     losses += LossesBySleep(aData)
     ; ;TODO: not eating properly
@@ -97,21 +101,32 @@ EndFunction
 
 ; Loses are capped at a max of 16 points of training.
 float Function LossesBySleep(DM_SandowPP_AlgorithmData aData)
+    int lvl = SleepLevels(aData)
     float h = aData.CurrentState.HoursAwaken
-    If h >= _maxAwakenHours
-        If (h < _maxAwakenHours + 8)
-            return h / 120.0        ; Light penalty
+    If lvl != lvlNormal
+        If lvl == lvlDanger
+            return h / 120.0            ; Light penalty
         Else
-            return MinF(h / 100, 1.2)
+            return MinF(h / 100.0, 1.2)   ; Max penalty
         EndIf
     EndIf
-    return 0
+    return 0.0
+    ; If h >= _maxAwakenHours
+    ;     If (h < _maxAwakenHours + 8)
+    ;         return h / 120.0        ; Light penalty
+    ;     Else
+    ;         return MinF(h / 100, 1.2)
+    ;     EndIf
+    ; EndIf
+    ; return 0
 EndFunction
 
-; Loses if sleeping to few or doing too little.
+; Loses if sleeping too few or doing too little.
 bool Function CanLose(DM_SandowPP_AlgorithmData aData)
     ; TODO: Lose for bad eating
-    return (HoursInactiveBeforeSleeping(aData) >= InactivityHoursToLoses()) || (aData.CurrentState.HoursAwaken >= _maxAwakenHours)
+    bool inactive = HoursInactiveBeforeSleeping(aData) >= InactivityHoursToLoses()
+    bool insomniac = aData.CurrentState.HoursAwaken >= _maxAwakenHours
+    return aData.Config.CanLoseWeight && (inactive || insomniac)
 EndFunction
 
 ;>=========================================================
@@ -127,6 +142,20 @@ float Function GetBodyFat()
     Trace("training = " + _training)
     Trace("trainingToGoal = " + trainingToGoal)
     return _training / trainingToGoal
+EndFunction
+
+; Returns one of the known levels of danger: lvlNormal, lvlDanger, lvlLosses...
+int Function SleepLevels(DM_SandowPP_AlgorithmData aData)
+    float h = aData.CurrentState.HoursAwaken
+    If h >= _maxAwakenHours
+        If (h < _maxAwakenHours + 8)
+            return lvlDanger
+        Else
+            return lvlCritical
+        EndIf
+    Else
+        return lvlNormal
+    EndIf
 EndFunction
 
 ;>=========================================================
@@ -163,32 +192,49 @@ EndFunction
 ;>=========================================================
 ;>===                     REPORTS                       ===
 ;>=========================================================
+
 ;@Override:
 ; Needed to be overrided by descendants if they want to support widget reporting.
 Function SetupWidget(DM_SandowPP_AlgorithmData aData)
+    SetupCommonWidget(aData, aData.Report.mcSleepHours)
 EndFunction
 
 ;@Override:
 ; Bare minimum data useful for the player. Used for widgets and such.
 Function ReportEssentials(DM_SandowPP_AlgorithmData aData)
-    ; To be compatible, a Report.Notification() must send whole data.
+    ;TODO: Finish
+    ReportRippedness(aData)
+    ReportWGP(aData)
+    ; ReportNextSleep(aData)
+    ; ReportInactivity(aData)
 EndFunction
 
-;@Override:
-; Reports things on demand.
-Function ReportOnHotkey(DM_SandowPP_AlgorithmData aData)
-    aData.Report.OnHotkeyReport(Self)
+; Sends current muscle definition to the widget
+Function ReportRippedness(DM_SandowPP_AlgorithmData aData)
+    RArg.Set("", aData.Report.mtDefault)
+    ; Reusing mcWeight, eve though is not conceptually correct.
+    RArg.CatVal(aData.Report.mcWeight, GetBodyFat())
+    aData.Report.Notification(RArg)
 EndFunction
 
-;@Override:
-; Reports things after done sleeping.
-Function ReportSleep(DM_SandowPP_AlgorithmData aData)
+Function ReportWGP(DM_SandowPP_AlgorithmData aData)
+    RArg.Set("", aData.Report.mtDefault)
+    ; The maximum WGP usable per day is 1.0
+    RArg.CatVal(aData.Report.mcWGP, aData.CurrentState.WGP)
+    aData.Report.Notification(RArg)
 EndFunction
 
-;@Override:
-; Reports things at skill level up.
-Function ReportSkillLvlUp(DM_SandowPP_AlgorithmData aData)
+; Reports in strings how urgent is to sleep
+string Function NextSleepMsg(int level)
+    return ""
 EndFunction
+
+;>=========================================================
+;>===                       MCM                         ===
+;>=========================================================
+
+;>=========================================================
+;>Main stat changed by this behavior
 
 ;@Override:
 ; Gets the label for the name of the stat this algorithm changes.
@@ -201,6 +247,14 @@ EndFunction
 string Function GetMcmMainStat()
     return FloatToStr(_muscleDef)
 EndFunction
+
+;@Override:
+; Gets the description about value of the stat this algorithm changes.
+string Function GetMcmMainStatInfo()
+    return "$MCM_AlgoMuscleDefInfo"
+EndFunction
+
+;>=========================================================
 
 ;@Override:
 ; Shows your current state in the MCM.
@@ -226,5 +280,25 @@ EndFunction
 
 ;@Override:
 string Function MCMInfo()
-    Return "***ERROR***"
+    Return "$MCM_BehaviorBruce"
+EndFunction
+
+
+
+;@Override:
+; Gets the label used for the "training" stat.
+string Function GetMcmTrainingLabel()
+    return "$Training:"
+EndFunction
+
+;@Override:
+; Gets the description used for the "training" stat.
+string Function GetMcmTrainingInfo()
+    return "$MCM_TrainingInfo"
+EndFunction
+
+;@Override:
+; Gets the header used for adjusting skill contributions to "training".
+string Function GetMcmTrainingSkillHeader()
+    return "$MCM_TrainingHeader"
 EndFunction

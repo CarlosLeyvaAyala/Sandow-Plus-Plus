@@ -10,6 +10,9 @@ DM_SandowPPMain property SandowPP auto
 DM_SandowPPMain SPP
 DM_SandowPP_Config Cfg
 
+Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
+      Trace("******************* Player just equipped a weapon!")
+endEvent
 
 ;>=========================================================
 ;>===               PRIVATE VARIABLES                   ===
@@ -48,14 +51,11 @@ string Property slFmt2r = "{2}" AutoReadOnly
 
 string _ppMain = "$Main"
 string _ppSkills = "$Skills"
-; string _ppRipped = "$Ripped"
 string _ppWidget = "$Widget"
-; string _ppProfiles = "$Presets"
 string _ppCompat = "$Compat"
 
-string[] _reports
+; string[] _reports
 string[] _behaviors
-; string[] _presetManagers
 string[] _vAlign
 string[] _hAlign
 string[] _rippedPlayerMethods
@@ -78,8 +78,8 @@ Event OnConfigInit()
 
     Pages = new string[4]
     Pages[0] = _ppMain
-    Pages[1] = _ppSkills
-    Pages[2] = _ppWidget
+    Pages[1] = _ppWidget
+    Pages[2] = _ppSkills
     Pages[3] = _ppCompat
 
     _hAlign = new string[3]
@@ -92,10 +92,10 @@ Event OnConfigInit()
     _vAlign[1] = "center"
     _vAlign[2] = "bottom"
 
-    _reports = new string[3]
-    _reports[Cfg.rtDebug] = "$Simple message"
-    _reports[Cfg.rtSkyUiLib] = "$Color notifications"
-    _reports[Cfg.rtWidget] = "$Widget"
+    ; _reports = new string[3]
+    ; _reports[Cfg.rtDebug] = "$Simple message"
+    ; _reports[Cfg.rtSkyUiLib] = "$Color notifications"
+    ; _reports[Cfg.rtWidget] = "$Widget"
 
     _behaviors = new string[4]
     _behaviors[Cfg.bhPause] = "$MCM_PausedBehavior"
@@ -103,18 +103,12 @@ Event OnConfigInit()
     _behaviors[Cfg.bhPumpingIron] = "Pumping Iron"
     _behaviors[Cfg.bhBruce] = "Bruce Lee"
 
-    ; _presetManagers = new string[3]
-    ; _presetManagers[Cfg.pmNone] = "$None"
-    ; _presetManagers[Cfg.pmPapyrusUtil] = "Papyrus Util"
-    ; _presetManagers[Cfg.pmFISS] = "FISS -deprecated-"
-
-    _rippedPlayerMethods = new string[6]
+    _rippedPlayerMethods = new string[5]
     _rippedPlayerMethods[Cfg.rpmNone] = "$None"
     _rippedPlayerMethods[Cfg.rpmConst] = "$Constant"
     _rippedPlayerMethods[Cfg.rpmWeight] = "$By weight"
     _rippedPlayerMethods[Cfg.rpmWInv] = "$By weight inv"
     _rippedPlayerMethods[Cfg.rpmSkill] = "$By skills"
-    _rippedPlayerMethods[Cfg.rpmBhv] = "$By behavior"   ;FIXME: Delete this
 
     _rippedPlayerBulkBhvMenu = new string[2]
     _rippedPlayerBulkBhvMenu[Cfg.bulkSPP] = "Sandow Plus Plus"
@@ -202,23 +196,25 @@ EndFunction
 ;>=========================================================
 
 int Function PageMainConfiguration(int pos)
-    int count = 3
+    int count = 2
     SetCursorPosition(pos)
-    ;AddEmptyOption()
     Header("$Configuration")
     If !_rippedPlayer.bulkCut
         Menu("MN_BEHAVIOR", "$Behavior", _behaviors[Cfg.Behavior])
     Else
         Label("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
     EndIf
-    AddToggleOptionST("TG_LOSEW", "$Can lose gains", Cfg.CanLoseWeight)
-    If !Cfg.IsPumpingIron()
+    If SPP.Algorithm.CouldLoseGains()
+        AddToggleOptionST("TG_LOSEW", "$Can lose gains", Cfg.CanLoseWeight)
+        count += 1
+    EndIf
+    If SPP.Algorithm.CouldDiminishReturns()
         AddToggleOptionST("TG_DR", "$Diminishing returns", Cfg.DiminishingReturns)
         count += 1
-        If Cfg.IsSandow()
-            AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Cfg.CanReboundWeight)
-            count += 1
-        EndIf
+    EndIf
+    If SPP.Algorithm.CouldReboundGains()
+        AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Cfg.CanReboundWeight)
+        count += 1
     EndIf
     ;AddToggleOptionST("TG_DISEASE", "$Disease affects Weight", false)
     ;AddToggleOptionST("TG_FOOD", "$Needs food to grow", false)
@@ -318,6 +314,11 @@ EndState
 int Function PageMainOtherOptions(int pos)
     SetCursorPosition(pos)
     Header("$Other options")
+    If !SPP.Algorithm.IsWeightGaining()
+        return 1
+    EndIf
+
+    ; TODO: Activate only when bulk&cut or weight gaining algortihm
     Slider("SL_WEIGHTMULT", "$Weight gain rate", FloatToPercent(Cfg.weightGainRate), slFmt0)
     ; Change head size
     int flags = GetSkelFlags(NINODE_HEAD())
@@ -510,11 +511,16 @@ int Function PageMainStats(int pos)
     SetCursorPosition(pos)
 
     Header("$Stats")
-    Label("TX_BW", SPP.Algorithm.GetMCMMainStatLabel(), SPP.Algorithm.GetMcmMainStat() + "%" )
-    Label("TX_TRAINING", "$Weight Gain Potential:", SPP.GetMCMWGP() + "%")
-    int count = 3
-    ; Posibly won't exist
-    If SPP.GetMCMCustomLabel1() && SPP.GetMCMCustomData1()
+    int count = 1
+    If  SPP.Algorithm.GetMCMMainStatLabel()
+        Label("Lbl_MainStat", SPP.Algorithm.GetMCMMainStatLabel(), SPP.Algorithm.GetMcmMainStat() + "%" )
+        count += 1
+    EndIf
+    If SPP.Algorithm.GetMcmTrainingLabel()
+        Label("Lbl_Training", SPP.Algorithm.GetMcmTrainingLabel(), SPP.GetMCMWGP() + "%")
+        count += 1
+    EndIf
+    If SPP.GetMCMCustomLabel1() || SPP.GetMCMCustomData1()
         Label("TX_CUSTOM1", SPP.GetMCMCustomLabel1(), SPP.GetMCMCustomData1() )
         count += 1
     EndIf
@@ -525,15 +531,15 @@ int Function PageMainStats(int pos)
     Return pos + ToNewPos(count)
 EndFunction
 
-State TX_BW
+State Lbl_MainStat
     Event OnHighlightST()
-        SetInfoText("$Your current body Weight.")
+        SetInfoText(SPP.Algorithm.GetMcmMainStatInfo())
     EndEvent
 EndState
 
-State TX_TRAINING
+State Lbl_Training
     Event OnHighlightST()
-        SetInfoText("$MCM_WGPInfo")
+        SetInfoText(SPP.Algorithm.GetMcmTrainingInfo())
     EndEvent
 EndState
 
@@ -769,7 +775,7 @@ Function PageSkills()
     int flag = DisableSkills()
     ;================================
     SetCursorPosition(0)
-    AddHeaderOption("<font color='#daa520'>$MCM_WGPHeader</font>")
+    Header(SPP.Algorithm.GetMcmTrainingSkillHeader())
     Slider("SL_AR", "$Archery", Cfg.skillRatioAr, slFmt, flag)
     Slider("SL_BL", "$Block", Cfg.skillRatioBl, slFmt, flag)
     Slider("SL_HA", "$Heavy Armor", Cfg.skillRatioHa, slFmt, flag)
@@ -780,7 +786,7 @@ Function PageSkills()
     Slider("SL_2H", "$Two Handed", Cfg.skillRatio2H, slFmt, flag)
 
     SetCursorPosition(1)
-    AddHeaderOption("")
+    Header("")
     Slider("SL_AL", "$Alteration", Cfg.skillRatioAl, slFmt, flag)
     Slider("SL_CO", "$Conjuration", Cfg.skillRatioCo, slFmt, flag)
     Slider("SL_DE", "$Destruction", Cfg.skillRatioDe, slFmt, flag)
@@ -792,7 +798,7 @@ Function PageSkills()
         Return
     EndIf
     SetCursorPosition(20)
-    AddHeaderOption("<font color='#daa520'>$Other options</font>")
+    Header("$Other options")
     Slider("SL_FP", "$MCM_SlFatiguePhys", ToPercent(Cfg.physFatigueRate), xslFmt)
 
     SetCursorPosition(21)
@@ -1058,9 +1064,6 @@ int Function PageRippedPlayer(int pos)
         If !(_rippedPlayer.bulkCut || Cfg.IsBruce())
             Menu("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[_rippedPlayer.Method])
             count += 1
-        Else
-            Label("TX_RippedPlayerHiddenMethod", "$Behavior", SPP.Algorithm.Signature(), FlagByBool(false))
-            count += 1
         EndIf
         ; Hide bulk & cut when it doesn't make sense
         If _rippedPlayerA.MethodIsBehavior() || Cfg.IsBruce()
@@ -1091,12 +1094,6 @@ int Function PageRippedPlayer(int pos)
     EndIf
     return pos + ToNewPos(count)
 EndFunction
-
-State TX_RippedPlayerHiddenMethod
-    Event OnHighlightST()
-        SetInfoText("$MCM_RippedPlayerHiddenMethod")
-    EndEvent
-EndState
 
 State SL_RippedPlayerLB
     Event OnSliderOpenST()
@@ -1202,14 +1199,9 @@ State MN_RippedPlayerOpt
         EndIf
         _rippedPlayer.Method = index
         SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
-
-        If _rippedPlayerA.MethodIsBehavior()
-            ; Bruce Lee behavior was actually selected from here
-            ;FIXME: Delete this
-            Cfg.Behavior = Cfg.bhBruce
-        Else
-            SPP.texMngr.InitializeActor(SPP.Player)
-        EndIf
+        SPP.texMngr.InitializeActor(SPP.Player)
+        ; No need to change option to Behavior from here, since the
+        ; behavior itself sets it when entering.
         ForcePageReset()
     EndEvent
 
@@ -1234,18 +1226,20 @@ State MN_RippedBulkBhv
     EndEvent
 
     Event OnMenuAcceptST(int index)
+        ; TODO: Implement well
         _rippedPlayer.bulkCutBhv = index
         SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
     EndEvent
 
     Event OnDefaultST()
+        ; TODO: Implement well
         _rippedPlayer.bulkCutBhv = 0
         SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
         ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
-        SetInfoText("$MCM_SwitchBulkCutDaysInfo")
+        SetInfoText("$MCM_BulkBhvInfo")
     EndEvent
 EndState
 

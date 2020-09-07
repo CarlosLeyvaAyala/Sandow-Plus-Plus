@@ -14,6 +14,10 @@ int Property minDaysToMax = 30 Auto
 int Property maxDaysToMax = 120 Auto
 {How many days does it takes the player to get max definition at 100% weight. [90,420]. Default = 120.}
 
+;@Public:
+Function SetBulkBhv(int bhv)
+    ; TODO: Finish
+EndFunction
 
 ;@override:
 bool Function IsMe(Actor akTarget)

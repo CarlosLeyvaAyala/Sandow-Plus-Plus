@@ -1,3 +1,4 @@
+;TODO: Delete
 Scriptname DM_SandowPP_PresetMngrFISSES extends DM_SandowPP_PresetManager
 { Preset manager for FISSES }
 import FISSFactory
@@ -6,7 +7,7 @@ string Function FProfileFilePre()
     Return "FISS"
 EndFunction
 
-string Function FProfileFileExt() 
+string Function FProfileFileExt()
     Return ".xml"
 EndFunction
 
@@ -19,7 +20,7 @@ bool Function Exists()
     Return getFISS() != None
 EndFunction
 
-bool Function ProfileExists(int profileNum) 
+bool Function ProfileExists(int profileNum)
     FISSInterface fiss = getFISS()
     fiss.beginLoad(GenerateFileName(profileNum))
     string loadResult = fiss.endLoad()
@@ -38,7 +39,7 @@ Function VirtualSave(int presetNum, DM_SandowPP_Config config)
     SaveOtherConfig(fiss, config)
     SaveSkills(fiss, config)
     SaveWidget(fiss, config)
-    fiss.endSave()    
+    fiss.endSave()
 EndFunction
 
 DM_SandowPP_Config Function VirtualLoad(int presetNum)
@@ -64,7 +65,7 @@ Function SaveSkills(FISSInterface fiss, DM_SandowPP_Config config)
     fiss.saveFloat("skillRatioSm", config.skillRatioSm)
     fiss.saveFloat("skillRatioSn", config.skillRatioSn)
     fiss.saveFloat("skillRatio2H", config.skillRatio2H)
-    
+
     fiss.saveFloat("skillRatioAl", config.skillRatioAl)
     fiss.saveFloat("skillRatioCo", config.skillRatioCo)
     fiss.saveFloat("skillRatioDe", config.skillRatioDe)
@@ -83,7 +84,7 @@ Function LoadSkills(FISSInterface fiss)
     ConfigResults.skillRatioSm = fiss.loadFloat("skillRatioSm")
     ConfigResults.skillRatioSn = fiss.loadFloat("skillRatioSn")
     ConfigResults.skillRatio2H = fiss.loadFloat("skillRatio2H")
-    
+
     ConfigResults.skillRatioAl = fiss.loadFloat("skillRatioAl")
     ConfigResults.skillRatioCo = fiss.loadFloat("skillRatioCo")
     ConfigResults.skillRatioDe = fiss.loadFloat("skillRatioDe")

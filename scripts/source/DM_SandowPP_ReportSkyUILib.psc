@@ -1,3 +1,4 @@
+;TODO: Delete
 Scriptname DM_SandowPP_ReportSkyUILib extends DM_SandowPP_Report
 {Report colored things using SkyUILib}
 
@@ -22,7 +23,7 @@ string Function SelectColor(int aType)
         Return "#ff6d01"
     ElseIf aType == mtCritical
         Return "#ff0000"
-    Else    
+    Else
         Return "#ffffff"
     EndIf
 EndFunction

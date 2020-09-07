@@ -279,8 +279,8 @@ bool Function SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body [
     ; WARNING: NiOverride.AddNodeOverrideTextureSet only works for [Body Ovl5], but
     ; WARNING: NetImmerse.SetNodeTextureSet works for [Body Ovl0..5]. But it always needs to be reapplied at game reload.
     ;
-    ;~~NiOverride.AddNodeOverrideTextureSet(akTarget, isFemale, node, 6, irrelevant, tx, true)
-    NetImmerse.SetNodeTextureSet(akTarget, node, tx, false)
+    NiOverride.AddNodeOverrideTextureSet(akTarget, isFemale, node, 6, irrelevant, tx, true)
+    ; NetImmerse.SetNodeTextureSet(akTarget, node, tx, false)
     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, irrelevant, 0.0, true)
     ; Last operation resets the skin tint color to white, making the character's body pale. Restore the color we got earlier.
     NiOverride.AddNodeOverrideInt(akTarget, isFemale, node, 7, irrelevant, skinColor, true)

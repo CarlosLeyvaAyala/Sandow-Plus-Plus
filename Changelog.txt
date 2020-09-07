@@ -28,6 +28,7 @@ New features:
 Minor changes:
 	* Reworked and (hopefully) less cluttered MCM.
 	* Weight gain rate can now be set up to 300% (formerly 200%), because of the new option to Bulk & Cut.
+	* Diminishing Returns can now be set for Pumping Iron.
 
 Minor fixes:
 	* Adjusted Diminishing Returns formula. It's mostly the same, but prettier.

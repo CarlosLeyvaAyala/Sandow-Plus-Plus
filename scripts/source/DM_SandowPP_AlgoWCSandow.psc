@@ -217,25 +217,18 @@ EndFunction
 ; but using 2, will give you accurate data.
 float Function Fatigue(float aHoursAwaken, float aSkillFatigue)
     {Calculate fatigue acording to hours awaken and fatigue accumulated by training}
-    Trace("Sandow.Fatigue()")
-
     aHoursAwaken = MaxF(aHoursAwaken, 0)
     float fatigue = (aHoursAwaken * FatigueHourlyRate) + aSkillFatigue
     fatigue = AdjustIfCatabolic(fatigue, aHoursAwaken)
-
-    Trace("result fatigue = " + fatigue)
     return fatigue
 EndFunction
 
 float Function AdjustIfCatabolic(float fatigue, float aHoursAwaken)
     {Adjust fatigue if catabolic threshold has been reached}
-    Trace("Sandow.AdjustIfCatabolic()")
-    Trace("fatigue = " + fatigue)
-
     if fatigue > CatabolicThreshold
         float t = EnsurePositiveF(aHoursAwaken - FatigueCatabolicHours)
-        ; BETA: Ensure this never goes over 1000%
-        Return MinF(10, CatabolicThreshold * Pow(FatigueCatabolicRate, t))
+        ;@BETA: Ensure you never lose over 10% weight
+        Return MinF(1000, CatabolicThreshold * Pow(FatigueCatabolicRate, t))
     endif
     Return fatigue
 EndFunction
@@ -392,6 +385,7 @@ EndFunction
 ; ########################################################################
 ; Protected overridable functions. NEEDED to be implemented by descendants
 ; ########################################################################
+
 ;@Override:
 ; Hours allowed before considering being inactive and starting to lose muscle because of that.
 float Function InactivityHoursToLoses()
@@ -402,4 +396,10 @@ Function SetupWidget(DM_SandowPP_AlgorithmData aData)
     {Needed to be overrided by descendants if they want to support widget reporting}
     Trace("Sandow.SetupWidget()")
     SetupCommonWidget(aData, aData.Report.mcFatigue)
+EndFunction
+
+;@Override:
+; Is gains rebound enabled for this behavior?
+bool Function CouldReboundGains()
+    return true
 EndFunction

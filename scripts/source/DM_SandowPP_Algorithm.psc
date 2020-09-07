@@ -8,6 +8,16 @@ Actor property Player auto
 DM_SandowPP_ReportArgs property RArg auto
 DM_SandowPP_State property Result Auto
 
+int property lvlNormal = 100 AutoReadOnly Hidden
+{Everything is alright.}
+int Property lvlWarning = 200 AutoReadOnly Hidden
+{Warning, inminent losses.}
+int Property lvlDanger = 300 AutoReadOnly Hidden
+{Danger, losses ongoing.}
+int Property lvlCritical = 400 AutoReadOnly Hidden
+{Terrble losses.}
+
+
 ;@abstract:
 ; WARNING: REQUIRED. Used to differentiate between algorithms.
 string Function Signature()
@@ -71,19 +81,72 @@ EndFunction
 Function ReportSkillLvlUp(DM_SandowPP_AlgorithmData aData)
 EndFunction
 
+;>=========================================================
+;>Main stat changed by this behavior
+
 ; Gets the label for the name of the stat this algorithm changes.
 ;
 ; Example:
 ; Weight changing algorithm will return "Weight:".
 ; Bodyfat may return "Muscle definition:".
 string Function GetMcmMainStatLabel()
-    return ""
+    return "***ERROR**"
 EndFunction
 
 ; Gets the value of the stat this algorithm changes.
 string Function GetMcmMainStat()
     return ""
 EndFunction
+
+; Gets the description about value of the stat this algorithm changes.
+string Function GetMcmMainStatInfo()
+    return ""
+EndFunction
+
+;>=========================================================
+;>Training
+
+; Gets the label used for the "training" stat.
+string Function GetMcmTrainingLabel()
+    return "***ERROR***"
+EndFunction
+
+; Gets the description used for the "training" stat.
+string Function GetMcmTrainingInfo()
+    return ""
+EndFunction
+
+; Gets the header used for adjusting skill contributions to "training".
+string Function GetMcmTrainingSkillHeader()
+    return ""
+EndFunction
+
+;>=========================================================
+
+;@Virtual:
+; Is weight loss enabled for this behavior?
+bool Function CouldLoseGains()
+    return true
+EndFunction
+
+;@Virtual:
+; Is diminishing returns enabled for this behavior?
+bool Function CouldDiminishReturns()
+    return true
+EndFunction
+
+;@Virtual:
+; Is gains rebound enabled for this behavior?
+bool Function CouldReboundGains()
+    return false
+EndFunction
+
+;@Virtual:
+; Is  enabled for this behavior?
+bool Function Could()
+EndFunction
+
+;>=========================================================
 
 ; Shows your current state in the MCM.
 string Function GetMCMStatus(DM_SandowPP_AlgorithmData aData)
@@ -103,6 +166,7 @@ string Function GetMCMCustomInfo1(DM_SandowPP_AlgorithmData aData)
     Return ""
 EndFunction
 
+; Overview of what the algorithm does.
 string Function MCMInfo()
     Return "***ERROR***"
 EndFunction
@@ -133,7 +197,8 @@ EndFunction
 
 ;> Utiliy functions used by descendants.
 
-; Formula to calculate Diminishing Returns. [0.0, 1.0]. <x> can be Weight or muscle definition.
+; Formula to calculate Diminishing Returns.
+; x => [0.0, 1.0]. Can be Weight or muscle definition.
 float Function DiminishingRatio(float x)
     ; Trace("DiminishingRatio(" + x + ")")
     Return 2.7786 * DM_Utils.Exp(-2.3 * x) + 0.2214
@@ -144,8 +209,7 @@ float Function UseSteroids(float baseGain, DM_SandowPP_AlgorithmData aData)
     baseGain += aData.CurrentState.WeightGainBase           ; Gains even if sedentary
     baseGain *= aData.CurrentState.WeightGainMultiplier     ; Gains are multiplied
     ; Drops effect after use
-    aData.CurrentState.WeightGainBase = 0.0
-    aData.CurrentState.WeightGainMultiplier = 1.0
+    aData.CurrentState.ResetSteroids()
     return baseGain
 EndFunction
 
@@ -167,4 +231,9 @@ EndFunction
 ; Returns how many hours of inactivity have passed at the time of calling this function.
 float Function HoursInactive(float aLastActive)
     Return ToRealHours(Now() - aLastActive)
+EndFunction
+
+;@Virtual:
+bool Function IsWeightGaining()
+    return false
 EndFunction

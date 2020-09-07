@@ -19,6 +19,7 @@ bool property CanLoseWeight
     EndFunction
 EndProperty
 bool property CanReboundWeight auto
+; TODO: Delete
 bool property VerboseMod auto
 
 bool property HungerAffectsGains
@@ -125,10 +126,11 @@ EndFunction
 
 
 ; ==============================
-string Property operationResult Auto        ; Used to get file manipulation information
+string Property operationResult Auto        ;TODO: Delete
 bool Property skillsLocked = False Auto     ; Can player change skill rates in the MCM?
 
 ; ==============================
+;TODO: Delete
 int property PresetManager
     int Function get()
         Return _presetManager
@@ -324,6 +326,7 @@ Function Assign(DM_SandowPP_Config other)
     Configure()
 EndFunction
 
+;TODO: Delete
 bool Function IsSkyUiLib()
     Return ReportType == rtSkyUiLib
 EndFunction

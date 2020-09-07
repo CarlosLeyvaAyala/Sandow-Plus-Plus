@@ -5,7 +5,8 @@ Import DM_Utils
 
 float _restoredInactivity
 float _restoredSleeptime
-float _anabolics
+float _anabolicsMult
+float _anabolicsBase
 
 string Function Signature()
     return "$MCM_PausedBehavior"
@@ -18,7 +19,8 @@ Function OnEnterAlgorithm(DM_SandowPP_AlgorithmData aData)
     ; Store current lack of training and last slept time, so it can be restored later
     _restoredInactivity = Now() - aData.CurrentState.LastSkillGainTime
     _restoredSleeptime = Now() - aData.CurrentState.LastSlept
-    _anabolics = aData.CurrentState.WeightGainMultiplier
+    _anabolicsBase = aData.CurrentState.WeightGainBase
+    _anabolicsMult = aData.CurrentState.WeightGainMultiplier
 
     ; TODO: Store hunger state
 EndFunction
@@ -29,7 +31,8 @@ Function OnExitAlgorithm(DM_SandowPP_AlgorithmData aData)
     ; Restore things
     aData.CurrentState.LastSkillGainTime = Now() - _restoredInactivity
     aData.CurrentState.LastSlept = Now() - _restoredSleeptime
-    aData.CurrentState.WeightGainMultiplier = _anabolics
+    aData.CurrentState.WeightGainBase = _anabolicsBase
+    aData.CurrentState.WeightGainMultiplier = _anabolicsMult
 EndFunction
 
 bool Function CanGainWGP()
@@ -41,8 +44,8 @@ Function SetupWidget(DM_SandowPP_AlgorithmData aData)
     SetupCommonWidget(aData, aData.Report.mcFatigue)
 EndFunction
 
+; Bare minimum data useful for the player. Used for widgets and such.
 Function ReportEssentials(DM_SandowPP_AlgorithmData aData)
-    {Bare minimum data useful for the player. Used for widgets and such.}
     ; To be compatible, a Report.Notification() must send whole data.
     DM_SandowPP_Report r = aData.Report
     ReportBlank(r.mcWeight, aData)
@@ -91,10 +94,14 @@ string Function MCMInfo()
     Return "$MCM_BehaviorInfoPaused"
 EndFunction
 
-string Function GetMcmMainStatLabel()
-    return "$Weight:"
+;@Override:
+; Is weight loss enabled for this behavior?
+bool Function CouldLoseGains()
+    return false
 EndFunction
 
-string Function GetMcmMainStat()
-    return FloatToStr(GetPlayerWeight())
+;@Override:
+; Is diminishing returns enabled for this behavior?
+bool Function CouldDiminishReturns()
+    return false
 EndFunction

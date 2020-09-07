@@ -40,9 +40,10 @@ bool _visible = False
 int invalid = -1
 int[] _messageDispatcher        ; Dispatches messages to the correct meter
 bool[] _permaHide               ; Tells which meters are always hidden
+DM_SandowPP_ReportMeterBase[] _meters
+;TODO: Expose to MCM
 float _baseMeterH = 17.5
 float _baseMeterW = 150.0
-DM_SandowPP_ReportMeterBase[] _meters
 
 
 ;##########################################################################
@@ -120,8 +121,8 @@ State Hidden
     EndFunction
 EndState
 
+; Data polling.
 Function Refresh()
-    {Data polling}
     Owner.Algorithm.ReportEssentials(Owner.AlgorithmData)
     RegisterForSingleUpdate(UpdateTime)
 EndFunction
@@ -133,7 +134,6 @@ EndEvent
 Function Notification(DM_SandowPP_ReportArgs args)
     {Notify what happened}
     ; Trace("ReportWidget.Notification()")
-
     NotifyWithText(args)
     Dispatch(args)
 EndFunction
@@ -200,15 +200,15 @@ Function TweenAllToNewPos()
     EndWhile
 EndFunction
 
+; Player may want to know how much his stats have changed.
 Function NotifyWithText(DM_SandowPP_ReportArgs args)
-    {Player may want to know how much his stats have changed}
     If args.aType == mtDown || args.aType == mtUp
         Debug.Notification(args.aText)
     EndIf
 EndFunction
 
+; Enables a meter to catch report messages.
 Function RegisterMessageCategory(int aCat, int id = -1)
-    {Enables a meter to catch report messages}
     ; Trace("ReportWidget.RegisterMessageCategory()")
     ; Trace("aCat = " + aCat)
     ; Trace("id = " + id)
@@ -258,6 +258,7 @@ Function Hide()
     UnregisterForUpdate()
 EndFunction
 
+; This is the function that kickstarts the polling of data.
 Function Show()
     Trace("ReportWidget.Show()")
     int i = 0
@@ -344,8 +345,9 @@ Function SetMeterAppearance(int i, int pos)
     _meters[i].VAnchor = VAlign
 EndFunction
 
+; Calculate Y for meter at position pos.
 float Function MeterPosY(int pos)
-    {Calculate Y for meter at position <pos>}
+    ;TODO: Expose to MCM
     float vSeparation = 0.025
     ; Asuming all meters are the same size
     Return (pos * _meters[0].Height) + (_meters[0].Height * vSeparation) + Y + GetYOffset()

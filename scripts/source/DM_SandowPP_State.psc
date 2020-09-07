@@ -4,6 +4,10 @@ Scriptname DM_SandowPP_State extends Quest
 Import DM_Utils
 Import DM_SandowPP_Globals
 
+;>=========================================================
+;>===                     SLEEPING                      ===
+;>=========================================================
+
 float Property HoursAwaken Auto         ; Real hours, not game hours.
 float Property HoursSlept Auto          ; Real hours, not game hours.
 float Property SkillFatigue             ; Fatigue accumulated due to skill level gains
@@ -52,16 +56,19 @@ EndProperty
 int Property WGPGainType = 0 Auto
 {This is used to track if the player gained or lost WGP. Used for the reporting system}
 
-float Property WeightGainBase = 0.0 Auto
-{Used by anabolics to get the last extra pump. Used to simulate the fact that steroid
-users gain muscles even if they don't train.}
-float Property WeightGainMultiplier = 1.0 Auto
-{Used by anabolics to get the last extra pump.}
-
 float _WGP
 float _skillFatigue
 float _lastSkillGainTime
 float _lastSlept
+
+float Function HoursAwakenRT()
+    {Report hours awaken in real time. Used to report real time status.}
+    Return ToRealHours(Now() - LastSlept)
+EndFunction
+
+;>=========================================================
+;>===                      SETUP                        ===
+;>=========================================================
 
 Function Assign(DM_SandowPP_State other)
     HoursAwaken = other.HoursAwaken
@@ -72,11 +79,7 @@ Function Assign(DM_SandowPP_State other)
     LastSkillGainTime = other.LastSkillGainTime
     WGPGainType = other.WGPGainType
     WeightGainMultiplier = other.WeightGainMultiplier
-EndFunction
-
-float Function HoursAwakenRT()
-    {Report hours awaken in real time. Used to report real time status.}
-    Return ToRealHours(Now() - LastSlept)
+    WeightGainBase = other.WeightGainBase
 EndFunction
 
 Function TraceAll()
@@ -88,4 +91,19 @@ Function TraceAll()
     Trace("HoursAwaken = " + HoursAwaken)
     Trace("LastSlept = " + HoursSlept)
     Trace("WeightGainMultiplier = " + WeightGainMultiplier)
+EndFunction
+
+;>=========================================================
+;>===                    STEROIDS                       ===
+;>=========================================================
+
+float Property WeightGainBase = 0.0 Auto
+{Used by anabolics to get the last extra pump. Used to simulate the fact that steroid
+users gain muscles even if they don't train. Use this for addition.}
+float Property WeightGainMultiplier = 1.0 Auto
+{Used by anabolics to get the last extra pump. Use this for multiplication.}
+
+Function ResetSteroids()
+    WeightGainBase = 0.0
+    WeightGainMultiplier = 1.0
 EndFunction

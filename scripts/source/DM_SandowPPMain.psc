@@ -24,6 +24,7 @@ DM_SandowPP_State Property CurrentState Auto
 DM_SandowPP_HeightChanger Property HeightChanger Auto
 
 ; Design patterns
+; TODO: Delete
 DM_SandowPP_PresetMngrNone Property PresetMngrNone Auto
 DM_SandowPP_PresetMngrPapUtl Property PresetMngrPapUtl Auto
 DM_SandowPP_PresetMngrFISSES Property PresetMngrFISSES Auto
@@ -33,6 +34,7 @@ DM_SandowPP_PresetManager property PresetManager
     EndFunction
 EndProperty
 
+; TODO: Delete
 DM_SandowPP_ReportDebug Property ReportDebug Auto
 DM_SandowPP_ReportSkyUILib Property ReportSkyUILib Auto
 DM_SandowPP_ReportWidget Property ReportWidget Auto
@@ -59,7 +61,7 @@ DM_SandowPP_Algorithm Property Algorithm
 EndProperty
 
 DM_SandowPP_AlgorithmData Property AlgorithmData Auto
-{Composite object that carries all data needed for this mod to work}
+{Composite object that carries all data needed for this mod to work.}
 
 
 ; ########################################################################
@@ -161,12 +163,9 @@ Event OnSleepStop(bool aInterrupted)
         Return      ; Do nothing if didn't really slept
     EndIf
     CurrentState.Assign( Algorithm.OnSleep(AlgorithmData) )             ; Main calculation. Yep; that's all.
-    CurrentState.WeightGainMultiplier = 1.0                             ; Weight gain from anabolics expires on sleep
+    CurrentState.ResetSteroids()
     ChangeHeadSize()
     CalcPlayerRippedness()
-    If Config.VerboseMod
-        Algorithm.ReportSleep(AlgorithmData)
-    EndIf
 endEvent
 
 int _bulkCutDays = 0
@@ -181,7 +180,8 @@ Function CalcPlayerRippedness()
         Trace("Simple muscle def")
         If !(_rippedPlayerAlpha.MethodIsNone() || _rippedPlayerAlpha.MethodIsBehavior())
             ; Reapply texture because some actions can clean it
-            texMngr.InitializeActor(Player)
+            texMngr.InitPlayer()
+            ; Player.QueueNiNodeUpdate()
         EndIf
     EndIf
 EndFunction
@@ -282,7 +282,6 @@ Function ChangeAlgorithm()
     ElseIf Config.IsPaused()
         newAlgo = AlgoPause
     ElseIf Config.IsBruce()
-        Trace("Is Bruce " + Config.bhBruce)
         newAlgo = AlgoBFBruce
     Else
         newAlgo = AlgoWCSandow
@@ -300,7 +299,6 @@ Function ChangeAlgorithm()
 EndFunction
 
 Function ConfigureWidget()
-    {}
     Trace("Main.ConfigureWidget()")
     ReportWidget.UpdateTime = Config.rwUpdateTime
     ReportWidget.Opacity = Config.rwOpacity
@@ -338,6 +336,7 @@ Function RegisterAgainHotkey(int oldKey)
     EndIf
 EndFunction
 
+; TODO: Delete
 int Function DefaultPresetManager()
     {Returns a default preset manager}
     Trace("Main.DefaultPresetManager()")
@@ -355,6 +354,7 @@ int Function DefaultPresetManager()
     Return i
 EndFunction
 
+; TODO: Delete
 Function SelectPresetManager()
     {Selection of the Strategy Pattern}
     ; Trace("Main.SelectPresetManager(" + Config.PresetManager + ")")
@@ -370,8 +370,6 @@ EndFunction
 
 ; Decides how much WGP and fatigue will be added.
 Function Train(string aSkill)
-    ; Trace("Main.Train(" + aSkill + ")")
-
     if aSkill == "TwoHanded"
         TrainAndFatigue(Config.skillRatio2H, Config.physFatigueRate)
     elseif aSkill == "OneHanded"
@@ -403,10 +401,7 @@ EndFunction
 
 ; Apply fatigue, WGP and inactivity related things.
 Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
-    ; Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
-    ; Trace("Old WGP = " + CurrentState.WGP)
     If !Algorithm.CanGainWGP()
-        ; Trace("Can't gain WGP. Returning.")
         return
     EndIf
 
@@ -419,9 +414,6 @@ Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
             Algorithm.ReportSkillLvlUp(AlgorithmData)
         EndIf
     EndIf
-
-    Trace("New SkillFatigue = " + CurrentState.SkillFatigue)
-    Trace("New WGP = " + CurrentState.WGP)
 EndFunction
 
 ; ########################################################################
