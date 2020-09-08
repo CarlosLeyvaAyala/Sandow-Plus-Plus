@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Communication Interaction" version="4">
+  <OBJECT>
+    <ID name="Communication Interaction" mc="Standard.CommunicationInteraction" uid="43cd204d-b920-44ca-9f8e-85198635dcc3"/>
+    <PID name="sandow plus plus" mc="Standard.Package" uid="9c13a71f-7c90-4ec3-b33d-50b43946ac35"/>
+    <ATTRIBUTES>
+      <ATT name="IsReentrant">false</ATT>
+      <ATT name="Name"><![CDATA[Communication Interaction]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="Owned">
+        <OBJECT>
+          <ID name="Main" mc="Standard.CommunicationNode" uid="6ee29181-13a8-49d5-84d0-55b602d9e84b"/>
+          <ATTRIBUTES>
+            <ATT name="Selector"></ATT>
+            <ATT name="Name"><![CDATA[Main]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="Started">
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="289a7f38-c04b-4eb5-8067-212c1172e75c"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="Addon manager" mc="Standard.CommunicationNode" uid="cb83cd5c-e82e-48f4-bafb-bfe67852c1b6"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+              <OBJECT>
+                <ID name="" mc="Standard.CommunicationChannel" uid="1cb5baa8-ae34-48b1-87c0-71bdcfeb3a48"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="Behavior" mc="Standard.CommunicationNode" uid="dfb7c09e-2112-4182-a059-ea8fc80cce9c"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="15644325-0b28-45f1-b055-dce62d8b98fb"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="Report" mc="Standard.CommunicationNode" uid="3bc0505f-5e20-45fa-ba0d-c882300ca38c"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Behavior" mc="Standard.CommunicationNode" uid="dfb7c09e-2112-4182-a059-ea8fc80cce9c"/>
+          <ATTRIBUTES>
+            <ATT name="Selector"></ATT>
+            <ATT name="Name"><![CDATA[Behavior]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="Started">
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="bd0fea17-86b0-422a-94df-d526b271a159"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="MCM" mc="Standard.CommunicationNode" uid="6bd8ab7f-462f-423d-9ae6-87f689b5c6d9"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="a32df67c-df9e-44e0-988a-9346eb4bd123"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="Addon manager" mc="Standard.CommunicationNode" uid="cb83cd5c-e82e-48f4-bafb-bfe67852c1b6"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Addon manager" mc="Standard.CommunicationNode" uid="cb83cd5c-e82e-48f4-bafb-bfe67852c1b6"/>
+          <ATTRIBUTES>
+            <ATT name="Selector"></ATT>
+            <ATT name="Name"><![CDATA[Addon manager]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="Started">
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="c0fc9028-9234-4f5f-847b-b1ddd45d506b"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="Report" mc="Standard.CommunicationNode" uid="3bc0505f-5e20-45fa-ba0d-c882300ca38c"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="df59cf37-3d2f-4939-a0b4-0b038dbf8e28"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="MCM" mc="Standard.CommunicationNode" uid="6bd8ab7f-462f-423d-9ae6-87f689b5c6d9"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Report" mc="Standard.CommunicationNode" uid="3bc0505f-5e20-45fa-ba0d-c882300ca38c"/>
+          <ATTRIBUTES>
+            <ATT name="Selector"></ATT>
+            <ATT name="Name"><![CDATA[Report]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="Started">
+              <OBJECT>
+                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="7308d3db-592a-4abb-9e1d-dc637d22452d"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="MCM" mc="Standard.CommunicationNode" uid="6bd8ab7f-462f-423d-9ae6-87f689b5c6d9"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="MCM" mc="Standard.CommunicationNode" uid="6bd8ab7f-462f-423d-9ae6-87f689b5c6d9"/>
+          <ATTRIBUTES>
+            <ATT name="Selector"></ATT>
+            <ATT name="Name"><![CDATA[MCM]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="OwnedCollaboration">
+        <OBJECT>
+          <ID name="locals" mc="Standard.Collaboration" uid="7e18a56d-b058-4029-8840-a066da2770d9"/>
+          <ATTRIBUTES>
+            <ATT name="IsConcurrent">false</ATT>
+            <ATT name="IsAbstract">false</ATT>
+            <ATT name="IsLeaf">false</ATT>
+            <ATT name="IsRoot">false</ATT>
+            <ATT name="Visibility">Public</ATT>
+            <ATT name="Name"><![CDATA[locals]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="Overview" mc="Standard.CommunicationDiagram" uid="ac804a5d-0250-4b08-b9b8-6f3d2f2d4f8a"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

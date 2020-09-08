@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Sandow Plus Plus" version="4">
+  <OBJECT>
+    <ID name="Sandow Plus Plus" mc="Infrastructure.DiagramSet" uid="7bbab266-e864-434f-a286-3a53ebd88969"/>
+    <PID name="Sandow Plus Plus" mc="Standard.Project" uid="c01beae7-5bd1-4148-8035-1bdb2de30b1e"/>
+    <ATTRIBUTES>
+      <ATT name="Name"><![CDATA[Sandow Plus Plus]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES></DEPENDENCIES>
+  </OBJECT>
+</EXT>
