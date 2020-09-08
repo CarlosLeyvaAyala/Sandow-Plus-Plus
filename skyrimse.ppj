@@ -26,10 +26,10 @@
         <Import>@Skyrim\Data\Scripts\Source</Import>
         <Import>@MO\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
         <Import>@MO\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
+        <Import>@MO\\JContainers SE\scripts\source</Import>
         <Import>@MO\RaceMenu\scripts\source</Import>
         <Import>@MO\SkyUI\scripts\source</Import>
         <Import>@MO\SkyUI_5.1_SDK\Scripts\source</Import>
-        <Import>@MO\SkyUI_5.1_SDK\Scripts</Import>
         <Import>@MO\SexLabFrameworkSE v163 BETA8\scripts\</Import>
         <Import>@lib\Source</Import>
     </Imports>
