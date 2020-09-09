@@ -43,15 +43,20 @@ function processFile(processing)
     f:close()
     print(content)
 
-      print("==========================================")
-      print("After")
-      print("==========================================")
+    print("==========================================")
+    print("After")
+    print("==========================================")
 
     -- Edit the string
     content = processing(content)
     -- content = string.gsub(content, "package.path = ", "-- package.path = ")
     -- content = string.gsub(content, " = require ", " = jrequire ")
     print(content)
+    -- Write it out
+    --
+    local f = io.open("example.txt", "w")
+    f:write(content)
+    f:close()
   end
 end
 
