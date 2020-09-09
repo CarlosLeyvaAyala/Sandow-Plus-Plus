@@ -218,8 +218,10 @@ Function OnGameReload()
     ;RegisterForKey(200)
     texMngr.InitData()
     texMngr.Debug(Player)
-    Trace("diminish 0 = " + JValue.evalLuaFlt(0, "return dmlib.diminishingRatio(0)"))
-    Trace("diminish 1 = " + JValue.evalLuaFlt(0, "return dmlib.diminishingRatio(1)"))
+    Trace("diminish SPP 0 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(0)"))
+    Trace("diminish SPP 1 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(1)"))
+    ; Trace("diminish bhv 0 = " + JValue.evalLuaFlt(0, "return sandowpp.bhv_all.diminishingRatio(0)"))
+    ; Trace("diminish bhv 1 = " + JValue.evalLuaFlt(0, "return sandowpp.bhv_all.diminishingRatio(1)"))
 EndFunction
 
 Function InitVars()

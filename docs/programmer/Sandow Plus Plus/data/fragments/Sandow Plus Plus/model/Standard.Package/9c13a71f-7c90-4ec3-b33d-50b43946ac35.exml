@@ -15,6 +15,9 @@
     <DEPENDENCIES>
       <COMP relation="OwnedBehavior">
         <COMPID name="Communication Interaction" mc="Standard.CommunicationInteraction" uid="43cd204d-b920-44ca-9f8e-85198635dcc3"/>
+        <COMPID name="Collaboration" mc="Standard.BpmnCollaboration" uid="45963e60-a944-4deb-977d-4f504d55a052"/>
+        <COMPID name="OnNewGame" mc="Standard.BpmnProcess" uid="d170ca4c-58be-4a3b-8407-9b5686341e52"/>
+        <COMPID name="Process" mc="Standard.BpmnProcess" uid="c1441954-bb90-4bb8-b8be-d3eac558590d"/>
       </COMP>
     </DEPENDENCIES>
   </OBJECT>

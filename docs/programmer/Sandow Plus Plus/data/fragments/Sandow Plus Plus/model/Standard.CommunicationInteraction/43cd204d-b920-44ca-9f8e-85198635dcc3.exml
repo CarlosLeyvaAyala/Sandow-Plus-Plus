@@ -20,9 +20,9 @@
           <DEPENDENCIES>
             <COMP relation="Started">
               <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="289a7f38-c04b-4eb5-8067-212c1172e75c"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="289a7f38-c04b-4eb5-8067-212c1172e75c"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -34,9 +34,9 @@
                 </DEPENDENCIES>
               </OBJECT>
               <OBJECT>
-                <ID name="" mc="Standard.CommunicationChannel" uid="1cb5baa8-ae34-48b1-87c0-71bdcfeb3a48"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="1cb5baa8-ae34-48b1-87c0-71bdcfeb3a48"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -48,9 +48,9 @@
                 </DEPENDENCIES>
               </OBJECT>
               <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="15644325-0b28-45f1-b055-dce62d8b98fb"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="15644325-0b28-45f1-b055-dce62d8b98fb"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -74,9 +74,9 @@
           <DEPENDENCIES>
             <COMP relation="Started">
               <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="bd0fea17-86b0-422a-94df-d526b271a159"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="bd0fea17-86b0-422a-94df-d526b271a159"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -88,9 +88,9 @@
                 </DEPENDENCIES>
               </OBJECT>
               <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="a32df67c-df9e-44e0-988a-9346eb4bd123"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="a32df67c-df9e-44e0-988a-9346eb4bd123"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -114,23 +114,9 @@
           <DEPENDENCIES>
             <COMP relation="Started">
               <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="c0fc9028-9234-4f5f-847b-b1ddd45d506b"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="df59cf37-3d2f-4939-a0b4-0b038dbf8e28"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
-                  <ATT name="status">1970354901745664</ATT>
-                </ATTRIBUTES>
-                <DEPENDENCIES>
-                  <LINK relation="End">
-                    <REFOBJ>
-                      <ID name="Report" mc="Standard.CommunicationNode" uid="3bc0505f-5e20-45fa-ba0d-c882300ca38c"/>
-                    </REFOBJ>
-                  </LINK>
-                </DEPENDENCIES>
-              </OBJECT>
-              <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="df59cf37-3d2f-4939-a0b4-0b038dbf8e28"/>
-                <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -154,9 +140,9 @@
           <DEPENDENCIES>
             <COMP relation="Started">
               <OBJECT>
-                <ID name="CommunicationChannel" mc="Standard.CommunicationChannel" uid="7308d3db-592a-4abb-9e1d-dc637d22452d"/>
+                <ID name="Restricted data" mc="Standard.CommunicationChannel" uid="7308d3db-592a-4abb-9e1d-dc637d22452d"/>
                 <ATTRIBUTES>
-                  <ATT name="Name"><![CDATA[CommunicationChannel]]></ATT>
+                  <ATT name="Name"><![CDATA[Restricted data]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
@@ -178,6 +164,32 @@
             <ATT name="status">1970354901745664</ATT>
           </ATTRIBUTES>
           <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Global data tree" mc="Standard.CommunicationNode" uid="d1d027bb-ffba-47ca-b0c6-a79e322870a2"/>
+          <ATTRIBUTES>
+            <ATT name="Selector"></ATT>
+            <ATT name="Name"><![CDATA[Global data tree]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="Started">
+              <OBJECT>
+                <ID name="Unrestricted access" mc="Standard.CommunicationChannel" uid="d3656bed-c5c9-44d2-bef8-c0b82fdabc37"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[Unrestricted access]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="End">
+                    <REFOBJ>
+                      <ID name="Main" mc="Standard.CommunicationNode" uid="6ee29181-13a8-49d5-84d0-55b602d9e84b"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
         </OBJECT>
       </COMP>
       <COMP relation="OwnedCollaboration">

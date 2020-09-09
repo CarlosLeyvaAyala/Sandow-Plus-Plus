@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Collaboration" version="4">
+  <OBJECT>
+    <ID name="Collaboration" mc="Standard.BpmnCollaboration" uid="45963e60-a944-4deb-977d-4f504d55a052"/>
+    <PID name="sandow plus plus" mc="Standard.Package" uid="9c13a71f-7c90-4ec3-b33d-50b43946ac35"/>
+    <ATTRIBUTES>
+      <ATT name="IsClosed">false</ATT>
+      <ATT name="IsReentrant">false</ATT>
+      <ATT name="Name"><![CDATA[Collaboration]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="MessageFlow">
+        <OBJECT>
+          <ID name="Addon manager" mc="Standard.BpmnMessageFlow" uid="52711d4f-e341-4439-a7c1-9247be059c0d"/>
+          <ATTRIBUTES>
+            <ATT name="Name"><![CDATA[Addon manager]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="Load addons" mc="Standard.BpmnTask" uid="95ed6f0b-5f5a-49b6-aff4-d8149a7da557"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Start" mc="Standard.BpmnStartEvent" uid="7635e433-ba08-48be-9cff-a0741f88673a"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="" mc="Standard.BpmnMessageFlow" uid="9dc5ca16-1342-4a55-be53-e9cef517be19"/>
+          <ATTRIBUTES>
+            <ATT name="Name"></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="End" mc="Standard.BpmnEndEvent" uid="dc265d36-4277-478c-b252-934a413a5307"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Load addons" mc="Standard.BpmnTask" uid="95ed6f0b-5f5a-49b6-aff4-d8149a7da557"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Participants">
+        <OBJECT>
+          <ID name="Load addons" mc="Standard.BpmnParticipant" uid="ad7e3d8e-6dfe-4504-8d7e-3e129aace1de"/>
+          <ATTRIBUTES>
+            <ATT name="MultiplicityMin">0</ATT>
+            <ATT name="MultiplicityMax">0</ATT>
+            <ATT name="Name"><![CDATA[Load addons]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="Process">
+              <ID name="Load addons" mc="Standard.BpmnProcess" uid="c1441954-bb90-4bb8-b8be-d3eac558590d"/>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="OnNewGame" mc="Standard.BpmnParticipant" uid="5d06d0f0-3a52-4ba9-a6d0-c39fc5d6f22d"/>
+          <ATTRIBUTES>
+            <ATT name="MultiplicityMin">0</ATT>
+            <ATT name="MultiplicityMax">0</ATT>
+            <ATT name="Name"><![CDATA[OnNewGame]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="Process">
+              <ID name="OnNewGame" mc="Standard.BpmnProcess" uid="d170ca4c-58be-4a3b-8407-9b5686341e52"/>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="On new game" mc="Standard.BpmnCollaborationDiagram" uid="e73852a0-6c26-478b-9ccd-b91bf959884c"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>
