@@ -1,25 +1,45 @@
 data = {
-    cfg = {
+    -- Addon internal data
+    addons = {
+        diminishingReturns = {
+            showInMCM = true,
+            execute = {
+                onSleepGains = 1
+            }
+        },
+        ripped = {
+            showInMCM = true,
+        }
+    },
+    -- Serializable info. Player configurations via MCM and such.
+    preset = {
+        -- Addon configurations
         addons = {
             diminishingReturns = {
-                enabled = true,
-                showInMCM = true,
-                execute = {
-                    onSleepGains = 1
-                }
+                enabled = true
             },
             ripped = {
                 enabled = true,
-                showInMCM = true,
                 player = {
                     daysFromMin = 30,
                     daysFromMax = 120
                 }
             }
-        },
-        mcm = {},
-        bhv = {}
+        }
+        -- Behavior
+        bhv = {
+            -- Shared by all behaviors
+            all = {},
+            -- Exclusive features
+            sandow = {},
+            bruce = {}
+        }
     },
+    -- Behavior internal variables and such
+    bhv = {
+
+    },
+    -- Calculations on player
     state = {
         -- supplied by payrus behavior
         training = 0,

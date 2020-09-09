@@ -1,6 +1,6 @@
--- package.path = package.path .. ";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
+package.path = package.path .. ";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
 
-local dmlib = jrequire 'dmlib'
+local dmlib = require 'dmlib'
 local bhv_all = {}
 
 -- Ratio for diminishing returns.

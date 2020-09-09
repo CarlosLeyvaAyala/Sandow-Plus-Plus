@@ -1,0 +1,17 @@
+{
+  "addons": {},
+  "bhv": {},
+  "preset": {
+    "addons": {},
+    "bhv": {
+      "all": {}
+    },
+    "report": {
+      "widget": {}
+    }
+  },
+  "report": {
+    "widget": {}
+  },
+  "state": {}
+}

@@ -218,11 +218,48 @@ Function OnGameReload()
     ;RegisterForKey(200)
     texMngr.InitData()
     texMngr.Debug(Player)
-    Trace("diminish SPP 0 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(0)"))
-    Trace("diminish SPP 1 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(1)"))
-    ; Trace("diminish bhv 0 = " + JValue.evalLuaFlt(0, "return sandowpp.bhv_all.diminishingRatio(0)"))
-    ; Trace("diminish bhv 1 = " + JValue.evalLuaFlt(0, "return sandowpp.bhv_all.diminishingRatio(1)"))
+    ; ; Trace("diminish SPP 0 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(0)"))
+    ; Trace("diminish SPP 1 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(1)"))
+    ; JValue.writeToFile(array, JContainers.userDirectory() + "playerInfo.txt")
+    InitVars40()
+    InitDataTree()
 EndFunction
+
+;>=========================================================
+;>===                       v4.0                        ===
+;>=========================================================
+
+string Property mainDir =   "Data/SKSE/Plugins/Sandow Plus Plus/" AutoReadOnly Hidden
+string Property cfgDir  =   "config/" Auto
+string Property jDBRoot =   "sandow++" AutoReadOnly Hidden
+
+Function InitVars40()
+    ; Init paths
+    cfgDir = mainDir + cfgDir
+EndFunction
+
+; Loads a premade data tree so it's easier to fill it in Lua.
+; The file is "Data/SKSE/Plugins/Sandow Plus Plus/config/bare tree.json".
+;
+; That premade file contains the overall data structure for this mod.
+Function InitDataTree()
+    JDB.setObj(jDBRoot, JValue.readFromFile(cfgDir + "bare tree.json"))
+    ; int data = JValue.readFromFile(cfgDir + "bare tree.json")
+    ; JDB.setObj(jDBRoot, data)
+EndFunction
+
+; Gets the handle for the whole data tree.
+; Look at "bare tree.json" to see which structure this function will return.
+;
+; This data tree is passed around by this scipt to make the mod work.
+; Whenever you see a variable named "data" in Lua, it refers to this tree.
+int Function GetDataTree()
+    return JDB.solveObj("." + jDBRoot)
+EndFunction
+
+;>=========================================================
+;>===                       END                         ===
+;>=========================================================
 
 Function InitVars()
     Config.Owner = Self         ; For some reason, Config.Owner refuses to stay as configured in the CK

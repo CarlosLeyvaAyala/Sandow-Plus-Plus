@@ -1,3 +1,4 @@
+-- Quick dirty script to make necessary substitutions before developing/releasing
 function get_script_path()
   local info = debug.getinfo(1,'S');
   local script_path = info.source:match[[^@?(.*[\/])[^\/]-$]]
@@ -49,27 +50,32 @@ function processFile(processing)
 
     -- Edit the string
     content = processing(content)
-    -- content = string.gsub(content, "package.path = ", "-- package.path = ")
-    -- content = string.gsub(content, " = require ", " = jrequire ")
     print(content)
     -- Write it out
     --
-    local f = io.open("example.txt", "w")
+    local f = io.open(ff, "w")
     f:write(content)
     f:close()
   end
 end
 
+-- ;TODO: Modify these
 function makeRelease(content)
   content = string.gsub(content, "package.path = ", "-- package.path = ")
   content = string.gsub(content, " = require ", " = jrequire ")
+  content = string.gsub(content, "require '", "require 'sandowpp.")
+  -- Revert back libraries that need to stay as is
+  content = string.gsub(content, "require 'sandowpp.jc'", "require 'jc'")
+  content = string.gsub(content, "require 'sandowpp.dmlib'", "require 'dmlib'")
   return content
 end
 
 function makeDebug(content)
   content = string.gsub(content, "-- package.path = ", "package.path = ")
   content = string.gsub(content, " = jrequire ", " = require ")
+  content = string.gsub(content, "require 'sandowpp.", "require '")
   return content
 end
 
 operate(processFile(makeDebug))
+-- operate(processFile(makeRelease))
