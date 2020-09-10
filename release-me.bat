@@ -24,8 +24,7 @@ ECHO OFF
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Mod variables
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: This needs to be changed with each new version released
-SET ModVersion=4.0
+SET /p ModVersion="Input the mod version you are about to release: "
 
 :: DON'T CHANGE THESE
 SET modName="Sandow Plus Plus"

@@ -59,13 +59,16 @@ These aren't mandatory per se, but highly suggested. This project has configurat
 * [Tokyo Night](https://marketplace.visualstudio.com/items?itemName=enkia.tokyo-night). I love this theme and I don't want to lose it if something goes wrong, so I leave a link here.
 
 ## Distributing
+Easiest way to do it is to update the paths in [`release-me.bat`](release-me.bat) and run it.\
+It compresses all needed files and moves and deletes all unneeded files inside the [*.7z file](https://www.7-zip.org/) that will be published.\
+It also creates a backup with the version number you entered when prompted.
 
 ### On extra files
 These files come from [SkyUI](https://github.com/schlangster/skyui.git) and they are here only to easily build the project. ***Don't distribute this mod with them***:
 - SKI_WidgetBase
 - SKI_WidgetManager
 
-These were directly added because using the whole repo as a submodule for only two scripts that were last updated in 2015 is overkill.
+These were directly added because using that whole repo as a submodule for only two scripts that were last updated in 2015 is overkill.
 
 
 ## Useful links

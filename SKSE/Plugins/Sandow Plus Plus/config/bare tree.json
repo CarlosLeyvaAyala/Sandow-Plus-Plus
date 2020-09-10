@@ -1,14 +1,5 @@
 {
-  "addons": {
-    "eventArgs": {
-      "onGainBase": 0,
-      "onGainMult": 0,
-      "onLossBase": 0,
-      "onLossMult": 0,
-      "onBeforeSleep": 0,
-      "onAfterSleep": 0
-    }
-  },
+  "addons": {},
   "bhv": {},
   "preset": {
     "addons": {},
