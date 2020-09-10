@@ -58,6 +58,7 @@ These aren't mandatory per se, but highly suggested. This project has configurat
     Either way, remember to update all your paths on both `skyrimse.ppj` and/or `.vscode\tasks.json` or you will get errors.
 * [Hightlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight). This extension is **highly suggested**. There are comments and remarks all over the place that get highlighted when you install this.
 * [Fold Plus](https://marketplace.visualstudio.com/items?itemName=dakara.dakara-foldplus)
+* [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).
 * [Numbered Bookmarks](https://marketplace.visualstudio.com/items?itemName=alefragnani.numbered-bookmarks)
 * [Clipboard Manager](https://marketplace.visualstudio.com/items?itemName=EdgardMessias.clipboard-manager)
 * [Tokyo Night](https://marketplace.visualstudio.com/items?itemName=enkia.tokyo-night). I love this theme and I don't want to lose it if something goes wrong, so I leave a link here.
