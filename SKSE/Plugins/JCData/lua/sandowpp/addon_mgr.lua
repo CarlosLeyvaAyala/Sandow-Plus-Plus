@@ -1,3 +1,38 @@
+-- This module serves as an interface to comunicate with the addons.
+
+-- ;@Responsibilities:
+    -- Loads addons.
+    -- Sets and gets values for the addons.
+    -- Dispatches events to addons.
+
+-- ;@About events:
+    -- Each addon has "events", which are functions that will be executed by each addon
+    -- when an event comes. "eventArgs", both from manager and plugin level will be
+    -- supplied by the manager to each addon, so they can do their job.
+
+    -- Each event has one entry at "eventArgs" at manager level, so that value will piped
+    -- to each addon.
+    -- A client (most likely a Behavior) needs to set these "eventArgs" at manager level.
+
+    -- There's also "eventArgs" at plugin level. These arguments are not piped because they
+    -- are exclusive to each plugin. That value needs to be supplied by a client, as well.
+
+    -- "Pipe" means that the argument will be transformed by some function in an addon,
+    -- then that result will be transformed by the next adonn and so on...
+
+-- ;@Available events:
+    -- onGainBase
+        -- Expects a number that will be added in a pipe.
+    -- onGainBMult
+        -- Expects a number that will be multiplied in a pipe.
+    -- onLossBase
+        -- Expects a number that will be added in a pipe.
+    -- onLossMult
+        -- Expects a number that will be multiplied in a pipe.
+    -- onBeforeSleep
+        -- Won't be piped. Will most likely be a pre processing operation.
+    -- onAfterSleep
+        -- Won't be piped. Will most likely be a post rocessing operation.
 data = {
     -- Addon internal data
     addons = {
@@ -10,30 +45,53 @@ local serpent = require("serpent")
 local jc = require 'jc'
 local l = require 'dmlib'
 local const = require 'const'
+
+--;>=========================================================
+-- Addons
+    -- ;@readme:
+    -- Add new addons here. Then register them below.
+local diminish = require 'addonDiminish'
+local ripped = {}
+
+-- ;@readme:
+    -- You NEED to register addons here.
+    -- The names you use here will be used for the rest of the mod to access them.
+local addOnTable = {
+    [const.addon.name.diminish] = diminish
+    -- [const.addon.name.ripped] = ripped
+}
+
+--;>=========================================================
 local addon_mgr = {}
 
--- Events and execute are the main thing the addon does.
---
--- When a client calls the addon manager with an event, the addon manager
---
-local function loadAddon(data, addonName)
-    data.addons[addonName] = {}
-    data.addons[addonName].events = {}
-    data.addons[addonName].execute = {}
+local function installAddon(data, addonName)
+    if(not data.addons[addonName]) then
+        data.addons[addonName] = {}
+        data.addons[addonName].events = {}
+        data.addons[addonName].eventArgs = {}
+    else
+        print("================================")
+        print("Addon '".. addonName .."' was already installed")
+    end
 end
 
--- Loads all addons into <memList>
--- memList is a submap from JDB that carries all addon info.
-function addon_mgr.loadAll(data)
-    print(serpent.block(data))
-    -- Since Lua code can be modified on the fly, we don't need to load them from a file
-    loadAddon(data, "diminishingReturns")
-    loadAddon(data, "ripped")
-    print(serpent.block(data))
+function addon_mgr.installAll(data)
+    for name, _ in pairs(addOnTable) do
+        installAddon(data, name)
+    end
     return data
 end
 
-addon_mgr.loadAll(data)
--- print(addons)
+print("================================")
+print("Before")
+print("================================")
+print(serpent.block(data))
+addon_mgr.installAll(data)
+addon_mgr.installAll(data)
+print("================================")
+print("After")
+print("================================")
+print(serpent.block(data))
+-- addon_mgr.installAll(data)
 
 return addon_mgr

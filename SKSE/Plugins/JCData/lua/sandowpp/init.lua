@@ -12,6 +12,6 @@ local addon_mgr = require 'addon_mgr'
 
 local sandowpp = {}
 
-sandowpp.loadAddons = addon_mgr.loadAll
+sandowpp.loadAddons = addon_mgr.installAll
 
 return sandowpp

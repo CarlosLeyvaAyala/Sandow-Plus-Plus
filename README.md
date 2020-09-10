@@ -1,50 +1,70 @@
 # Sandow Plus Plus
-A mod for Skyrim SE. 
-Gain weight (muscles) as you play.
+A mod for **Skyrim SE**. Gain weight (muscles) as you play.
 
 You can find this mod at the [Nexus](https://www.nexusmods.com/skyrimspecialedition/mods/32579) (***WARNING: NFSW-ish pics***)
 
-## Dependencies
-If you are building this mod you also need to use:
+## For non-programmers
+This git page is meant to be used by programmers, not the general public.
+
+For everything game related, please see the mod page above.
+
+## Building
+The easiest way to test and develop the Lua code here is using [ZeroBrane Studio](https://studio.zerobrane.com/).
+
+To be able to test or release this project, run `SKSE\Plugins\JCData\lua\_debug.lua`.\
+You need to change the last line of that file depending on if you are releasing or developing.
+
+***Beware***: that's a quick and dirty file. You need to adhere to all conventions used by the Lua files in this mod for it to work:
+- Lines pointing to my lib (see hard dependencies) and other Lua libraries must be `package.path = package.path`, verbatim. Easiest way is to just copy them for one of my old files.\
+Remember to update their paths.
+
+[Serpent: Lua serializer and pretty printer](http://notebook.kulchenko.com/programming/serpent-lua-serializer-pretty-printer) is highly suggested to be able to print tables to see what values they carry while developing code.
+
+
+### Visual Studio Code
+This project was made in [Visual Studio Code](https://code.visualstudio.com/) and it shows.\
+Did you notice some "weird" indentations? Those were made because VSCode can fold code based on indentation; you can fold large regions of code thanks to it.
+
+#### Plugins
+These aren't mandatory per se, but highly suggested. This project has configuration files for many of them, anyway.
+* [Papyrus for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=joelday.papyrus-lang-vscode). Well, this plugin is so good is mostly mandatory.\
+    That extension provides a Task to build the project using the `skyrimse.ppj` file. Notice you will need to download a more recent version of [Pyro](https://wiki.fireundubh.com/pyro) and extract it to this plugin's folder (usually `%user%\.vscode\extensions\joelday.papyrus-lang-vscode-x.xx.x\pyro`), or you will get many errors while trying to build the project.
+
+    This project includes a task that builds this project using Pyro, should you can't/want to use this extension.\
+    Said task is found in `.vscode\tasks.json`.
+
+    Either way, remember to update all your paths on both `skyrimse.ppj` and/or `.vscode\tasks.json` or you will get errors.
+* [Hightlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight). This extension is **highly suggested**. There are comments and remarks all over the place that get highlighted when you install this.
+* [Fold Plus](https://marketplace.visualstudio.com/items?itemName=dakara.dakara-foldplus)
+* [Numbered Bookmarks](https://marketplace.visualstudio.com/items?itemName=alefragnani.numbered-bookmarks)
+* [Clipboard Manager](https://marketplace.visualstudio.com/items?itemName=EdgardMessias.clipboard-manager)
+* [Tokyo Night](https://marketplace.visualstudio.com/items?itemName=enkia.tokyo-night). I love this theme and I don't want to lose it if something goes wrong, so I leave a link here.
+
+### Hard dependencies
+***THESE FILES ARE NOT OPTIONAL***. This mod will simply fail to compile without them.\
+Remember to update path for all of them in the `skyrimse.ppj` file.
+
 - My [library](https://github.com/CarlosLeyvaAyala/DM-SkyrimSE-Library.git).
+- [JContainers SE](https://www.nexusmods.com/skyrimspecialedition/mods/16495).
+- [SkyUI SDK](https://github.com/schlangster/skyui/wiki).
+- [SkyUI](https://www.nexusmods.com/skyrimspecialedition/mods/12604). You will need to extract its BSA to be able to compile this project.
+- [Racemenu](https://www.nexusmods.com/skyrimspecialedition/mods/19080). Same as above, even if you don't plan to use the muscle definition features.
 
-***THAT LIBRARY IS NOT OPTIONAL***. This mod will simply fail without it.
+### Soft dependencies
+These aren't integral for this mod. They are mostly integrations that can be commented because they take only a few lines.
+- [Sexlab framework](https://www.loverslab.com/topic/91861-sexlab-framework-se-163-beta-8-november-22nd-2019/).
 
-Also, these files come from [SkyUI](https://github.com/schlangster/skyui.git) and they are here only to build the project. ***Don't distribute this mod with them***:
+## Distributing
+
+### On extra files
+These files come from [SkyUI](https://github.com/schlangster/skyui.git) and they are here only to easily build the project. ***Don't distribute this mod with them***:
 - SKI_WidgetBase
 - SKI_WidgetManager
 
-These were directly added because using the whole repo as a submodule for only two scripts that were last updated in 2015 is overkill. 
+These were directly added because using the whole repo as a submodule for only two scripts that were last updated in 2015 is overkill.
 
-## Features
-- Train and sleep to gain weight.
-- Every time a certain skill goes up, you get `Weight Gain Potential (WGP)`, which transforms to weight when you sleep.
-- Gaining and losing weight is controlled by your fatigue. If you go to sleep with little fatigue, you'll only grow a little. Get too much fatigue and you'll start to lose WGP and maybe even weight!
-- Your gains can be affected by the law of diminishing returns: the more muscular you are, the harder is to get even more muscular (just like in real life). The opposite holds true. You can enable or disable this feature at will.
-- Sleep however you want; just get enough of it. No penalties for badly timed or short sleeping sessions.
-- Know your status without needing to open the MCM.
-- Right off the bat, Alteration and Restoration give you some WGP, but you can make other schools of magic give you some if that's what you want.
-- **Highly** configurable via MCM.
-- Save and load up to three different presets with your own configuration settings.
-- ESP flagged as ESL, so it only uses 1 slot out of 4096 instead of 1 out of 255. Save that precious space for bigger mods :)
-- From version 2.0 and on, you can play with all the rules of [Pumping Iron](https://www.nexusmods.com/skyrimspecialedition/mods/13434) but with all the QOL mechanics introduced by Sandow Plus Plus.
 
-## How to play
-Go around doing your own business to earn `WGP` and just go to sleep when you are fatigued. That `WGP` gets converted to weight if conditions are right.
-
-This mod is all about **fatigue managing**.
-You'll only lose `WGP` if you go to sleep when your fatigue is above 90%. If your fatigue is 100% or above you'll also lose weight instead of gaining it (can be disabled in the MCM menu).
-
-Weight gain is controlled by how much hours you sleep a day, but it's also controlled by fatigue. For best results, go to sleep 10 hours when you are somewhat fatigued (around 70% - 89.99%).
-Sleeping more than 10 hours won't do anything for weight gaining, since your weight gain capabilities cap at 10 hours.
-Of course, nothing stops you from sleeping 15 hours a day if it's more convenient to you. As I said, fatigue controls your gains, not time.
-
-Always remember that **weight gaining depends on your WGP, how much you sleep and your fatigue**. You can certainly try to get cute and sleep 10 hours, wait 1 hour and then sleep again 10 hours, but you'll notice you won't gain as much as sleeping 10 straight hours when you are actually fatigued.
-
-Fatigue builds two ways: over time and by leveling up skills.
-Every single second awaken (in game time) you are getting fatigued. Also, each time you level up a skill that gives you WGP you get fatigued.
-That means you'll get fatigued faster after a hard workout day compared to a shopping spree day.
-
-And don't worry about performance. This mod only runs when you ask it to do it, and when it does, it's by performing simple mathematical formulas.
-
-To get more detailed info on all the features, please go read the wiki.
+## Useful links
+Some other external programs or pages that were used to make this mod.
+* [Number cruncher](https://docs.google.com/spreadsheets/d/1r10g-b73KjagmzT5Rm1SrWUY7ROhxtawBxy-vV4Yyms/edit?usp=sharing). Calculations made to balance this mod.
+* [Interactive LaTeX Editor](https://arachnoid.com/latex/). Images for the formulas were made in this.

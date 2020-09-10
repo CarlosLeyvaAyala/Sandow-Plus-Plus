@@ -59,14 +59,21 @@ function processFile(processing)
   end
 end
 
+-- Reverts back libraries that need to stay as is
+function revertLibRequire(content, libName)
+  return string.gsub(content, "require 'sandowpp."+ libName +"'", "require '" + libName + "'")
+end
+
 -- ;TODO: Modify these
 function makeRelease(content)
   content = string.gsub(content, "package.path = ", "-- package.path = ")
   content = string.gsub(content, " = require ", " = jrequire ")
   content = string.gsub(content, "require '", "require 'sandowpp.")
-  -- Revert back libraries that need to stay as is
-  content = string.gsub(content, "require 'sandowpp.jc'", "require 'jc'")
-  content = string.gsub(content, "require 'sandowpp.dmlib'", "require 'dmlib'")
+
+  content = revertLibRequire(content, "jc")
+  content = revertLibRequire(content, "dmlib")
+  -- content = string.gsub(content, "require 'sandowpp.jc'", "require 'jc'")
+  -- content = string.gsub(content, "require 'sandowpp.dmlib'", "require 'dmlib'")
   return content
 end
 

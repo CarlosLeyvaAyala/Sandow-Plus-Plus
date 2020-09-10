@@ -3,7 +3,7 @@ data = {
     addons = {
         diminishingReturns = {
             showInMCM = true,
-            execute = {
+            events = {
                 onSleepGains = 1
             }
         },

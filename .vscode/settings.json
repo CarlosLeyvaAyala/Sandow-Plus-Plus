@@ -157,8 +157,6 @@
         "**/.ionide": true,
         "**/*_temp.tex": true
     },
-    // Use highlight
-    //  https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight
     "highlight.regexes": {
         "(; ?TODO:?)(.*)": [
             {
