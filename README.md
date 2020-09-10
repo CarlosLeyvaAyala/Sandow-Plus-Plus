@@ -43,6 +43,10 @@ If you add new libraries, remember to add their folders to `package.path` at the
 This project was made in [Visual Studio Code](https://code.visualstudio.com/) and it shows.\
 Did you notice some "weird" indentations? Those were made because VSCode can fold code based on indentation; you can fold large regions of code thanks to it.
 
+Before starting, do yourself a favor and download:
+- [Fira code](https://github.com/tonsky/FiraCode).\
+Many comments make more sense when seen in ligatures.
+
 #### Plugins
 These aren't mandatory per se, but highly suggested. This project has configuration files for many of them, anyway.
 * [Papyrus for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=joelday.papyrus-lang-vscode). Well, this plugin is so good is mostly mandatory.\

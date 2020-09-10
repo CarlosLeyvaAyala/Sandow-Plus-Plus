@@ -223,6 +223,7 @@ Function OnGameReload()
     ; JValue.writeToFile(array, JContainers.userDirectory() + "playerInfo.txt")
     InitVars40()
     InitDataTree()
+    LoadAddons()
 EndFunction
 
 ;>=========================================================
@@ -233,20 +234,31 @@ EndFunction
     string Property cfgDir  =   "config/" Auto
     string Property jDBRoot =   "sandow++" AutoReadOnly Hidden
 
-    Function InitVars40()
-        ; Init paths
-        cfgDir = mainDir + cfgDir
-    EndFunction
+    ;region: Initialization
 
-    ; Loads a premade data tree so it's easier to fill it in Lua.
-        ; The file is "Data/SKSE/Plugins/Sandow Plus Plus/config/bare tree.json".
-        ;
-        ; That premade file contains the overall data structure for this mod.
-    Function InitDataTree()
-        JDB.setObj(jDBRoot, JValue.readFromFile(cfgDir + "bare tree.json"))
-        ; int data = JValue.readFromFile(cfgDir + "bare tree.json")
-        ; JDB.setObj(jDBRoot, data)
-    EndFunction
+        Function InitVars40()
+            ; Init paths
+            cfgDir = mainDir + cfgDir
+        EndFunction
+
+        ; Loads a premade data tree so it's easier to fill it in Lua.
+            ; The file is "Data/SKSE/Plugins/Sandow Plus Plus/config/bare tree.json".
+            ;
+            ; That premade file contains the overall data structure for this mod.
+        Function InitDataTree()
+            JDB.setObj(jDBRoot, JValue.readFromFile(cfgDir + "bare tree.json"))
+            ; int data = JValue.readFromFile(cfgDir + "bare tree.json")
+            ; JDB.setObj(jDBRoot, data)
+        EndFunction
+
+        ; Creates the addon data tree in memory, so this mod can be used.
+        Function LoadAddons()
+            int tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.addon_mgr.installAll(jobject)")
+            JValue.writeToFile(tree, JContainers.userDirectory() + "installAll.json")
+            tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)")
+            JValue.writeToFile(tree, JContainers.userDirectory() + "installAddons.json")
+
+        EndFunction
 
     ; Gets the handle for the whole data tree.
         ; Look at "bare tree.json" to see which structure this function will return.

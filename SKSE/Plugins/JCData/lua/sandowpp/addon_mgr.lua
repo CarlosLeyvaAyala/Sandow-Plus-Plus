@@ -29,17 +29,11 @@
         -- onAfterSleep
             -- Won't be piped. Will most likely be a post rocessing operation.
 
-data = {
-    -- Addon internal data
-    addons = {
-    }
-}
-local serpent = require("serpent")
 
-local jc = require 'jc'
+-- local jc = require 'jc'
 local l = require 'dmlib'
 local const = require 'const'
--- local addonAll = require 'addon_all'
+-- local serpent = require("serpent")
 
 --;Region: Addon registering
 
@@ -59,14 +53,15 @@ local const = require 'const'
 --;Region: Functionality
     local addon_mgr = {}
 
-    local function traverse(x, func)
+    -- Iterates through all registered addons
+    local function traverse(func, x)
         for name, addon in pairs(addOnTable) do
-            func(x.data, name, addon, x.extra)
+            func(addon, name, x.data, x.extra)
         end
     end
 
     --;Region: Setup
-        local function installAddon(data, addonName, addon)
+        local function installAddon(addon, addonName, data)
             if(not data.addons[addonName]) then
                 print("Installing '"..addonName.."'")
                 data.addons[addonName] = {}
@@ -78,7 +73,7 @@ local const = require 'const'
 
         function addon_mgr.installAll(data)
             print("Installing addons\n=================")
-            traverse({data = data}, installAddon)
+            traverse(installAddon, {data = data})
             print("Finished installing addons\n")
             return data
         end
@@ -88,15 +83,21 @@ local const = require 'const'
 
         -- If an addon has an event, adds the event to a function table.
             -- Said table may be piped, executed sequentially... whatever.
-        local function gatherEvents(_, __, addon, eventName)
+        local function gatherEvents(addon, _, __, eventName)
             local evt = addon[eventName]
             if evt then table.insert(eventTbl, evt) end
         end
 
-        -- Executes an event pipe
-        function eventPipe(eventName, x)
+        -- Fills the event table with the events found named <eventName>.
+        local function fillEvtTbl(eventName)
             eventTbl = {}
-            traverse({data = data, extra = eventName}, gatherEvents)
+            traverse(gatherEvents, {extra = eventName})
+        end
+
+        -- Creates and executes an event pipe.
+            -- <x> will be sent as the parameter for the pipe.
+        local function eventPipe(eventName, x)
+            fillEvtTbl(eventName)
             local p = l.pipeTbl(eventTbl)
             return p(x).val
         end
@@ -105,11 +106,6 @@ local const = require 'const'
         function addon_mgr.onGainMult(data, val, diminishBy)
             return eventPipe("onGainMult", {data = data, val = val, diminishBy = diminishBy})
         end
-
--- ;TODO: Delete this
-addon_mgr.installAll(data)
 -- print(serpent.block(data))
--- print(addon_mgr.onGainMult(data, 1, 1.00))
-
 
 return addon_mgr
