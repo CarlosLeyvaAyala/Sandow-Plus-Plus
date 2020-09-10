@@ -44,7 +44,6 @@ SET lib=%baseLib%"scripts\"
 :: This points towards a dir github will ignore. It saves backups
 :: for newly released versions
 SET backupDir="_ignore\_backups"
-SET skse="SKSE"
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: External libraries required by this mod
@@ -62,6 +61,11 @@ SET req3=%baseLib%"SKSE\"
 SET exc1="SKI_WidgetManager.pex"
 SET exc2="SKI_WidgetBase.pex"
 
+:: Unneeded Lua files
+SET exc3="_debug.Lua"
+SET exc4="serpent.Lua"
+SET exc5="README.md"
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Create release zip (*.7z) file
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -74,6 +78,7 @@ SET exc2="SKI_WidgetBase.pex"
 
 :: Delete undesired files from zip
 %zipExe% d %modName%.7z scripts\source %exc1% %exc2% -r
+%zipExe% d %modName%.7z %exc3% %exc4% %exc5% -r
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Copy backup
