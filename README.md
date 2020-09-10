@@ -27,7 +27,7 @@ These aren't integral for this mod. They are mostly integrations that can be com
 ### Lua
 The easiest way to test and develop the Lua code here is using [ZeroBrane Studio](https://studio.zerobrane.com/).
 
-To be able to test or release this project, run [`SKSE\Plugins\JCData\lua\sandowpp\_debug.lua`](SKSE\Plugins\JCData\lua\sandowpp\_debug.lua).\
+To be able to test or release this project, run [`SKSE\Plugins\JCData\lua\sandowpp\_debug.lua`](SKSE/Plugins/JCData/lua/sandowpp/_debug.lua).\
 You need to change the last line of that file depending on if you are releasing or developing.
 
 ***Beware***: that's a quick and dirty file. You need to adhere to all conventions used by the Lua files in this mod for it to work:

@@ -1,97 +1,115 @@
 -- This module serves as an interface to comunicate with the addons.
+    -- ;@Actions:
+        -- Loads addons.
+        -- Dispatches events to addons.
+        -- ;TODO: Sets and gets values for the addons.
 
--- ;@Responsibilities:
-    -- Loads addons.
-    -- Sets and gets values for the addons.
-    -- Dispatches events to addons.
+    -- ;@About events:
+        -- Each addon has "events", which are functions that will be executed by each addon
+        -- when an event comes.
 
--- ;@About events:
-    -- Each addon has "events", which are functions that will be executed by each addon
-    -- when an event comes. "eventArgs", both from manager and plugin level will be
-    -- supplied by the manager to each addon, so they can do their job.
+        -- All events recieve a an argument supplied by the client. These argument is a table
+        -- which contents will vary depending on the event.
+        -- Some events will pipe that argument.
 
-    -- Each event has one entry at "eventArgs" at manager level, so that value will piped
-    -- to each addon.
-    -- A client (most likely a Behavior) needs to set these "eventArgs" at manager level.
+        -- "Pipe" means that the argument will be transformed by an addon, then that result
+        -- will be transformed by the next adonn and so on...
 
-    -- There's also "eventArgs" at plugin level. These arguments are not piped because they
-    -- are exclusive to each plugin. That value needs to be supplied by a client, as well.
+    -- ;@Available events:
+        -- onGainBase
+            -- Expects a number that will be added in a pipe.
+        -- onGainBMult
+            -- Expects a number that will be multiplied in a pipe.
+        -- onLossBase
+            -- Expects a number that will be added in a pipe.
+        -- onLossMult
+            -- Expects a number that will be multiplied in a pipe.
+        -- onBeforeSleep
+            -- Won't be piped. Will most likely be a pre processing operation.
+        -- onAfterSleep
+            -- Won't be piped. Will most likely be a post rocessing operation.
 
-    -- "Pipe" means that the argument will be transformed by some function in an addon,
-    -- then that result will be transformed by the next adonn and so on...
-
--- ;@Available events:
-    -- onGainBase
-        -- Expects a number that will be added in a pipe.
-    -- onGainBMult
-        -- Expects a number that will be multiplied in a pipe.
-    -- onLossBase
-        -- Expects a number that will be added in a pipe.
-    -- onLossMult
-        -- Expects a number that will be multiplied in a pipe.
-    -- onBeforeSleep
-        -- Won't be piped. Will most likely be a pre processing operation.
-    -- onAfterSleep
-        -- Won't be piped. Will most likely be a post rocessing operation.
 data = {
     -- Addon internal data
     addons = {
     }
 }
-package.path = package.path .. ";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
-package.path = package.path .. ";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
 local serpent = require("serpent")
 
 local jc = require 'jc'
 local l = require 'dmlib'
 local const = require 'const'
+-- local addonAll = require 'addon_all'
 
---;>=========================================================
--- Addons
+--;Region: Addon registering
+
     -- ;@readme:
-    -- Add new addons here. Then register them below.
-local diminish = require 'addonDiminish'
-local ripped = {}
+        -- Add new addons here. Then register them below.
+    local diminish = require 'addonDiminish'
+    local anabolics = require 'addonAnabolics'
 
--- ;@readme:
-    -- You NEED to register addons here.
-    -- The names you use here will be used for the rest of the mod to access them.
-local addOnTable = {
-    [const.addon.name.diminish] = diminish
-    -- [const.addon.name.ripped] = ripped
-}
+    -- ;@readme:
+        -- You NEED to register addons here.
+        -- The names you use here will be used for the rest of the mod to access them.
+    local addOnTable = {
+        [const.addon.name.diminish] = diminish,
+        [const.addon.name.anabolics] = anabolics
+    }
 
---;>=========================================================
-local addon_mgr = {}
+--;Region: Functionality
+    local addon_mgr = {}
 
-local function installAddon(data, addonName)
-    if(not data.addons[addonName]) then
-        data.addons[addonName] = {}
-        data.addons[addonName].events = {}
-        data.addons[addonName].eventArgs = {}
-    else
-        print("================================")
-        print("Addon '".. addonName .."' was already installed")
+    local function traverse(x, func)
+        for name, addon in pairs(addOnTable) do
+            func(x.data, name, addon, x.extra)
+        end
     end
-end
 
-function addon_mgr.installAll(data)
-    for name, _ in pairs(addOnTable) do
-        installAddon(data, name)
-    end
-    return data
-end
+    --;Region: Setup
+        local function installAddon(data, addonName, addon)
+            if(not data.addons[addonName]) then
+                print("Installing '"..addonName.."'")
+                data.addons[addonName] = {}
+                addon.install(data)
+            else
+                print("'".. addonName .."' was already installed")
+            end
+        end
 
-print("================================")
-print("Before")
-print("================================")
-print(serpent.block(data))
+        function addon_mgr.installAll(data)
+            print("Installing addons\n=================")
+            traverse({data = data}, installAddon)
+            print("Finished installing addons\n")
+            return data
+        end
+
+    --;Region: Events
+        local eventTbl
+
+        -- If an addon has an event, adds the event to a function table.
+            -- Said table may be piped, executed sequentially... whatever.
+        local function gatherEvents(_, __, addon, eventName)
+            local evt = addon[eventName]
+            if evt then table.insert(eventTbl, evt) end
+        end
+
+        -- Executes an event pipe
+        function eventPipe(eventName, x)
+            eventTbl = {}
+            traverse({data = data, extra = eventName}, gatherEvents)
+            local p = l.pipeTbl(eventTbl)
+            return p(x).val
+        end
+
+        -- Starts the pipe that calculates gain multipliers
+        function addon_mgr.onGainMult(data, val, diminishBy)
+            return eventPipe("onGainMult", {data = data, val = val, diminishBy = diminishBy})
+        end
+
+-- ;TODO: Delete this
 addon_mgr.installAll(data)
-addon_mgr.installAll(data)
-print("================================")
-print("After")
-print("================================")
-print(serpent.block(data))
--- addon_mgr.installAll(data)
+-- print(serpent.block(data))
+-- print(addon_mgr.onGainMult(data, 1, 1.00))
+
 
 return addon_mgr

@@ -171,6 +171,17 @@
                 "color": "#1f1f1f"
             }
         ],
+        "(; ?Region:?)(.*)": [
+            {
+                "backgroundColor": "#117700",
+                "color": "#1b1b1b",
+                "fontWeight": "bold",
+            },
+            {
+                "backgroundColor": "#228800",
+                "color": "#1b1b1b",
+            }
+        ],
         "(;>)(.*)": [
             {
                 "overviewRulerLane": "7",
