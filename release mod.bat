@@ -1,5 +1,5 @@
 :: This file compresses all mod files for a release version.
-:: It also compress a backup copy for a particular version of
+:: It also compresses a backup copy for a particular version of
 :: the mod.
 :: Read all comments before using this.
 ::
