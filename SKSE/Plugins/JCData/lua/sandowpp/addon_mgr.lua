@@ -30,17 +30,17 @@
         -- Won't be piped. Will most likely be a post rocessing operation.
 
 
--- local jc = require 'jc'
-local l = require 'dmlib'
-local const = require 'const'
+-- local jc = jrequire 'jc'
+local l = jrequire 'dmlib'
+local const = jrequire 'sandowpp.const'
 -- local serpent = require("serpent")
 
 --;Region: Addon registering
 
 -- ;@readme:
 -- Add new addons here. Then register them below.
-local diminish = require 'addonDiminish'
-local anabolics = require 'addonAnabolics'
+local diminish = jrequire 'sandowpp.addonDiminish'
+local anabolics = jrequire 'sandowpp.addonAnabolics'
 
 -- ;@readme:
 -- You NEED to register addons here.
@@ -100,7 +100,7 @@ function addon_mgr.generateDataTree(data)
 end
 
 --;Region: Events
-local eventTbl
+local eventTbl = {}
 
 --- If an addon has an event, adds the event to a function table that will be executed later.
 --- Said table may be piped, executed sequentially... whatever.
@@ -122,8 +122,12 @@ end
 ---@param x table
 local function eventPipe(eventName, x)
     fillEvtTbl(eventName)
-    local p = l.pipeTbl(eventTbl)
-    return p(x).val
+    if #eventTbl > 0 then
+        local p = l.pipeTbl(eventTbl)
+        return p(x).val
+    else
+        return x.val
+    end
 end
 
 --- Starts the pipe that calculates gain multipliers.
@@ -131,6 +135,9 @@ end
 ---@param val number
 ---@param diminishBy number
 function addon_mgr.onGainMult(data, val, diminishBy)
+    -- local k = {x = {y=12}, 23}
+    -- assert(k.x.y == 22, "22")
+    -- return k.x.y
     return eventPipe("onGainMult", {data = data, val = val, diminishBy = diminishBy})
 end
 -- print(serpent.block(data))

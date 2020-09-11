@@ -255,7 +255,8 @@ EndFunction
         Function LoadAddons()
             int tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)")
             JValue.writeToFile(tree, JContainers.userDirectory() + "installAddons.json")
-
+            Trace("Diminish LUA " + JValue.evalLuaFlt(tree, "return sandowpp.test(jobject, 1, 0.00)"))
+            Trace("Diminish LUA " + JValue.evalLuaFlt(tree, "return sandowpp.test(jobject, 1, 1.00)"))
         EndFunction
 
     ; Gets the handle for the whole data tree.
