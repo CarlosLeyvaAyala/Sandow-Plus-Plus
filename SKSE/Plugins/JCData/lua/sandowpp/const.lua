@@ -6,6 +6,14 @@ const.addon.name = {
     anabolics = "anabolics",
     ripped = "ripped"
 }
+const.bhv = {}
+const.bhv.name = {
+    paused = "$MCM_PausedBehavior",
+    sandow = "Sandow Plus Plus",
+    pump = "Pumping Iron",
+    bruce = "Bruce Lee",
+    bulk = "Bulk & Cut"
+}
 -- const.addon.events = {
 --     onGainBase = "onGainBase",
 --     onGainMult = "onGainMult",

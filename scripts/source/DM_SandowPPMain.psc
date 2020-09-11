@@ -253,9 +253,7 @@ EndFunction
 
         ; Creates the addon data tree in memory, so this mod can be used.
         Function LoadAddons()
-            int tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.addon_mgr.installAll(jobject)")
-            JValue.writeToFile(tree, JContainers.userDirectory() + "installAll.json")
-            tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)")
+            int tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)")
             JValue.writeToFile(tree, JContainers.userDirectory() + "installAddons.json")
 
         EndFunction

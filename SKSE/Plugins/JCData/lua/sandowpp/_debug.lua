@@ -61,7 +61,7 @@ end
 
 -- Reverts back libraries that need to stay as is
 function revertLibRequire(content, libName)
-  return string.gsub(content, "require 'sandowpp."+ libName +"'", "require '" + libName + "'")
+  return string.gsub(content, "require 'sandowpp.".. libName .."'", "require '" .. libName .. "'")
 end
 
 -- ;TODO: Modify these
@@ -85,4 +85,4 @@ function makeDebug(content)
 end
 
 operate(processFile(makeDebug))
--- operate(processFile(makeRelease))
+--operate(processFile(makeRelease))

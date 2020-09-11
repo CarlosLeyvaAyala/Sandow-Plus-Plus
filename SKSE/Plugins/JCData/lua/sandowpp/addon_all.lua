@@ -25,7 +25,7 @@ function addon_all.val(data, addon, key, value)
 end
 
 function addon_all.showInMCM(data, addon, show)
-    if show then modVal(data, addon, "showInMCM", show)
+    if show ~= nil then modVal(data, addon, "showInMCM", show)
     else return getVal(data, addon, "showInMCM")
     end
 end

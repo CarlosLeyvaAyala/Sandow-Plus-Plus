@@ -68,22 +68,34 @@ end
 --;Region: Setup
 
 --- Loads an individual addon to memory.
-local function installAddon(addon, addonName, data)
-    if(not data.addons[addonName]) then
-        print("Installing '"..addonName.."'")
-        data.addons[addonName] = {}
-        addon.install(data)
-    else
-        print("'".. addonName .."' was already installed")
-    end
+local function installAddon(addon, _, data)
+    -- data.addons[addonName] = {}
+    addon.install(data)
 end
 
 --- Loads addon basic data to the data tree.
 --- @param data table
 function addon_mgr.installAll(data)
-    print("Installing addons\n=================")
+    -- debug.getinfo(1)
     traverse(installAddon, {data = data})
-    print("Finished installing addons\n")
+    return data
+end
+
+--;>=========================================================
+--;>===                 TREE GENERATION                   ===
+--;>=========================================================
+
+local function genAddonTrees(_, addonName, data)
+    print("Generating '"..addonName.."'")
+    data.addons[addonName] = {}
+    data.preset.addons[addonName] = {}
+end
+
+function addon_mgr.generateDataTree(data)
+    print("Generating addons\n=================")
+    data.preset.addons = {}
+    traverse(genAddonTrees, {data = data})
+    print("Finished generating addons\n")
     return data
 end
 

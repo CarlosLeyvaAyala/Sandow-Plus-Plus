@@ -1,17 +1,30 @@
 {
-  "addons": {},
-  "bhv": {},
   "preset": {
-    "addons": {},
     "bhv": {
+      "Bruce Lee": {},
+      "Sandow Plus Plus": {},
+      "Bulk & Cut": {},
+      "$MCM_PausedBehavior": {},
+      "Pumping Iron": {},
       "all": {}
     },
-    "report": {
-      "widget": {}
-    }
-  },
-  "report": {
+    "addons": {
+      "anabolics": {},
+      "diminishingReturns": {}
+    },
     "widget": {}
   },
-  "state": {}
+  "widget": {},
+  "state": {},
+  "addons": {
+    "anabolics": {},
+    "diminishingReturns": {}
+  },
+  "bhv": {
+    "$MCM_PausedBehavior": {},
+    "Bulk & Cut": {},
+    "Bruce Lee": {},
+    "Pumping Iron": {},
+    "Sandow Plus Plus": {}
+  }
 }
