@@ -1,7 +1,7 @@
 -- Functions and structures shared by all addons.
 -- Notice this isn't true inheritance. No need for that.
 
-local l = jrequire 'dmlib'
+local l = require 'dmlib'
 
 local addon_all = {}
 

@@ -30,17 +30,17 @@
         -- Won't be piped. Will most likely be a post rocessing operation.
 
 
--- local jc = jrequire 'jc'
-local l = jrequire 'dmlib'
-local const = jrequire 'sandowpp.const'
+-- local jc = require 'jc'
+local l = require 'dmlib'
+local const = require 'const'
 -- local serpent = require("serpent")
 
 --;Region: Addon registering
 
 -- ;@readme:
 -- Add new addons here. Then register them below.
-local diminish = jrequire 'sandowpp.addonDiminish'
-local anabolics = jrequire 'sandowpp.addonAnabolics'
+local diminish = require 'addonDiminish'
+local anabolics = require 'addonAnabolics'
 
 -- ;@readme:
 -- You NEED to register addons here.
@@ -65,12 +65,16 @@ local function traverse(func, x)
     end
 end
 
---;Region: Setup
-
+--;>=========================================================
+--;>===                      SETUP                        ===
+--;>=========================================================
 --- Loads an individual addon to memory.
-local function installAddon(addon, _, data)
+local function installAddon(addon, addonName, data)
     -- data.addons[addonName] = {}
-    addon.install(data)
+    if not data.preset.addons[addonName].installed then
+        addon.install(data)
+        data.preset.addons[addonName].installed = true
+    end
 end
 
 --- Loads addon basic data to the data tree.

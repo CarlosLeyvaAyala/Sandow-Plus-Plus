@@ -1,12 +1,11 @@
 {
   "preset": {
     "bhv": {
-      "Bruce Lee": {},
-      "Sandow Plus Plus": {},
-      "Bulk & Cut": {},
       "$MCM_PausedBehavior": {},
+      "Bulk & Cut": {},
+      "Bruce Lee": {},
       "Pumping Iron": {},
-      "all": {}
+      "Sandow Plus Plus": {}
     },
     "addons": {
       "anabolics": {},
@@ -14,7 +13,12 @@
     },
     "widget": {}
   },
-  "widget": {},
+  "widget": {
+    "meter4": {},
+    "meter2": {},
+    "meter3": {},
+    "meter1": {}
+  },
   "state": {},
   "addons": {
     "anabolics": {},

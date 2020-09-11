@@ -84,5 +84,5 @@ function makeDebug(content)
   return content
 end
 
---operate(processFile(makeDebug))
-operate(processFile(makeRelease))
+operate(processFile(makeDebug))
+--operate(processFile(makeRelease))

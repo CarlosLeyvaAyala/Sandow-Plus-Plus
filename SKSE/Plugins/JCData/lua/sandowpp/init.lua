@@ -20,14 +20,14 @@ local data = {
     addons={}, bhv={}, preset={}, widget={}, state={}
 }
 
--- package.path = package.path..";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
--- package.path = package.path..";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
+package.path = package.path..";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
+package.path = package.path..";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
 
-local l = jrequire 'dmlib'
--- local bhv_all = jrequire 'sandowpp.bhv_all'
-local addon_mgr = jrequire 'sandowpp.addon_mgr'
-local bhv_mgr = jrequire 'sandowpp.bhv_mgr'
-local reportWidget = jrequire 'sandowpp.reportWidget'
+local l = require 'dmlib'
+-- local bhv_all = require 'bhv_all'
+local addon_mgr = require 'addon_mgr'
+local bhv_mgr = require 'bhv_mgr'
+local reportWidget = require 'reportWidget'
 
 local sandowpp = {}
 
@@ -53,7 +53,10 @@ sandowpp.test = addon_mgr.onGainMult
 -- sandowpp.installAddons(data)
 -- print(addon_mgr.onGainMult(data, 1, 1.00))
 -- print(addon_mgr.onGainMult(data, 1, 0.00))
--- local luna = jrequire 'sandowpp.lunajson'
--- print( luna.encode(data) )
+-- reportWidget.createDefault(data)
+local luna = require 'lunajson'
+print( luna.encode(data) )
+local serpent = require("serpent")
+-- print(serpent.block(data))
 
 return sandowpp

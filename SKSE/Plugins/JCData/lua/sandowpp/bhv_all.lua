@@ -1,4 +1,4 @@
-local dmlib = jrequire 'dmlib'
+local dmlib = require 'dmlib'
 
 local bhv_all = {}
 

@@ -1,6 +1,6 @@
--- local dmlib = jrequire 'dmlib'
-local l = jrequire 'sandowpp.shared'
-local const = jrequire 'sandowpp.const'
+-- local dmlib = require 'dmlib'
+local l = require 'shared'
+local const = require 'const'
 
 local bhv_mgr = {}
 
@@ -28,7 +28,7 @@ end
 function bhv_mgr.generateDataTree(data)
     print("Generating behaviors\n=================")
     data.preset.bhv = {}
-    data.preset.bhv.all = {}
+    -- data.preset.bhv.all = {}
     traverse(genBhvTrees, {data = data})
     print("Finished generating behaviors\n")
     return data

@@ -5,9 +5,9 @@
     --  The main idea of this mod is series of functions that accept a global configuration
     -- and make calculations based on it.
 
-local l = jrequire 'dmlib'
-local addon = jrequire 'sandowpp.addon_all'
-local const = jrequire 'sandowpp.const'
+local l = require 'dmlib'
+local addon = require 'addon_all'
+local const = require 'const'
 
 local addonAnabolics = {}
 local name = const.addon.name.anabolics      -- This plugin name
