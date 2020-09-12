@@ -1,6 +1,6 @@
--- local dmlib = require 'dmlib'
-local l = require 'shared'
-local const = require 'const'
+-- local dmlib = jrequire 'dmlib'
+local l = jrequire 'sandowpp.shared'
+local const = jrequire 'sandowpp.const'
 
 local bhv_mgr = {}
 

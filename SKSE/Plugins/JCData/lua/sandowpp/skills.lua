@@ -1,6 +1,6 @@
--- local dmlib = require 'dmlib'
-local l = require 'shared'
-local c = require 'const'
+-- local dmlib = jrequire 'dmlib'
+local l = jrequire 'sandowpp.shared'
+local c = jrequire 'sandowpp.const'
 
 local skills = {}
 

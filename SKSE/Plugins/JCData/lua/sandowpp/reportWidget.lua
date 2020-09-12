@@ -1,8 +1,8 @@
--- local dmlib = require 'dmlib'
-local l = require 'shared'
-local const = require 'const'
--- local l = require 'sandowpp.shared'
--- local const = require 'sandowpp.const'
+local dmlib = jrequire 'dmlib'
+local l = jrequire 'sandowpp.shared'
+local const = jrequire 'sandowpp.const'
+-- local l = jrequire 'sandowpp.sandowpp.shared'
+-- local const = jrequire 'sandowpp.sandowpp.const'
 
 local reportWidget = {}
 
@@ -27,25 +27,41 @@ end
 
 --- Vertical anchor point of the widget. Default: `"top"`.
 reportWidget.vAlign = gralProp("vAlign")
+
 --- Horizontal anchor point of the widget. Default: `"left"`.
 reportWidget.hAlign = gralProp("hAlign")
---- Horizontal position of the widget in pixels at a resolution of 1280x720. `x ∈ [0.0, 1280.0]`. Default: `0.0`
+
+--- Horizontal position of the widget in pixels at a resolution of 1280x720.
+--- `x ∈ [0.0, 1280.0]`. Default: `0.0`
+--- Relative to hAlign.
 reportWidget.x = gralProp("x")
---- Vertical position of the widget in pixels at a resolution of 1280x720. `x ∈ [0.0, 720.0]`. Default: `0.0`
+
+--- Vertical position of the widget in pixels at a resolution of 1280x720. `
+--- x ∈ [0.0, 720.0]`. Default: `0.0`
+--- Relative to vAlign.
 reportWidget.y = gralProp("y")
+
 --- Opacity of the widget. `x ∈ [0.0, 100.0]`. Default: `100.0`
 reportWidget.opacity = gralProp("opacity")
+
 --- Individual meter height. Default `17.5`
 reportWidget.meterH = gralProp("meterH")
+
 --- Individual meter width. Default `150`
 reportWidget.meterW = gralProp("meterW")
---- Vertical gap between meters. It's a percentaje of meter height. x ∈ [0.0, 1.0]`. Default `0.025`
+
+--- Vertical gap between meters. It's a percentaje of meter height.
+--- x ∈ [-0.3, 2.3]`. Default `-0.1`
 reportWidget.vGap = gralProp("vGap")
 
 
 -- ;>========================================================
 -- ;>===                METER PROPERTIES                ===<;
 -- ;>========================================================
+reportWidget.flashColor = {
+    normal = 0xffffff, warning = 0xffd966,  danger = 0xff6d01, critical = 0xff0000,
+    down = 0xcc0000, up = 0x4f8a35
+}
 
 local function mProp(name)
     --- @param meterName string
@@ -59,12 +75,23 @@ end
 reportWidget.mVisible = mProp("visible")
 reportWidget.mX = mProp("x")
 reportWidget.mY = mProp("y")
+--- [0.0, 1.0]
+reportWidget.mPercent = mProp("percent")
+reportWidget.mFlash = mProp("flash")
 
 -- ;>========================================================
 -- ;>===                     METERS                     ===<;
 -- ;>========================================================
 
 local function mIterateAll(func, data) for i = 1, nMeters do func(data,  "meter"..i) end end
+
+-- Makes all meters visible.
+function reportWidget.setPorcentAll(data, val)
+    mIterateAll(
+        function (data, meterName) reportWidget.mPercent(data, meterName, val) end,
+        data
+    )
+end
 
 -- Makes all meters visible.
 function reportWidget.mShowAll(data)
@@ -75,35 +102,91 @@ function reportWidget.mShowAll(data)
 end
 
 local mShown
---- Adds a widget to the visible list if it is visible.
+--- Adds a widget to the visible list if it's visible.
 local function mFilterShown(data, meterName)
     if reportWidget.mVisible(data, meterName) then
         table.insert(mShown, meterName)
     end
 end
 
+--- Calculates an `x` based on aligments.
+local function mBaseX(data)
+    local mx = 1280
+    local align = reportWidget.hAlign(data)
+    if align == reportWidget.HAlign.right then return mx
+    elseif align == reportWidget.HAlign.center then return mx / 2
+    else return 0
+    end
+end
+
+--- Meter height + gap.
+local function wholeMeterH(data)
+    local h = reportWidget.meterH(data)
+    return h + (h * reportWidget.vGap(data))
+end
+
+--- Height of the whole widget
+local function wholeWidgetH(data)
+    local h = wholeMeterH(data) * (#mShown - 1) + reportWidget.meterH(data)
+    return dmlib.forcePositve(h)
+end
+
+--- Calculates `y` displacement based on vAlign.
+local function mCalcYDisplacement(data, align)
+    local wh = wholeWidgetH(data)
+    if #mShown <= 1 then return 0
+    else
+        if align == reportWidget.VAlign.bottom then
+            return reportWidget.meterH(data) - wh
+        else
+            return (reportWidget.meterH(data) / 2 ) - (wh / 2)
+        end
+    end
+end
+
+--- Calculates a `y` based on aligments.
+local function mBaseY(data)
+    local my, align = 720, reportWidget.vAlign(data)
+    local displacement = mCalcYDisplacement(data, align)
+
+    if align == reportWidget.VAlign.center then return (my / 2) + displacement
+    elseif align == reportWidget.VAlign.bottom then return my + displacement
+    else return 0
+    end
+end
+
 --- Sets the position (x,y) for a single meter based on its relative position in the widget.
 local function mCalcPosition(data, meterName, relPos)
     -- Setting x is easy
-    reportWidget.mX(data, meterName, reportWidget.x(data))
+    reportWidget.mX(data, meterName, reportWidget.x(data) + mBaseX(data))
 
     -- Total vertical space per meter
-    local h = reportWidget.meterH(data)
-    local y = (h + (h * reportWidget.vGap(data)))
+    local y = wholeMeterH(data)
     -- Relative position
-    y = (y * relPos) + reportWidget.y(data)
+    y = (y * relPos) + reportWidget.y(data) + mBaseY(data)
     reportWidget.mY(data, meterName, y)
 end
 
---- Calculates the positions of all ***visible*** meters in the widget.
-function reportWidget.mCalcPositions(data)
+--- Gets which meters are visible.
+local function mGetVisible(data)
     mShown = {}
     mIterateAll(mFilterShown, data)
+end
+
+--- Calculates positions of visible meters.
+---
+--- `mGetVisible()` should always be called before this.
+local function mCalcVisiblePos(data)
     local i = 0
     for _,v in pairs(mShown) do
         mCalcPosition(data, v, i)
         i = i + 1
     end
+end
+--- Calculates the positions of all ***visible*** meters in the widget.
+function reportWidget.mCalcPositions(data)
+    mGetVisible(data)
+    mCalcVisiblePos(data)
 end
 
 -- ;>========================================================
@@ -112,17 +195,18 @@ end
 
 --- Generates default settings for the widget.
 function reportWidget.default(data)
-    reportWidget.vAlign(data, reportWidget.VAlign.top)
-    reportWidget.hAlign(data, reportWidget.HAlign.left)
+    reportWidget.vAlign(data, reportWidget.VAlign.center)
+    reportWidget.hAlign(data, reportWidget.HAlign.right)
     reportWidget.x(data, 0)
     reportWidget.y(data, 0)
     reportWidget.opacity(data, 100)
     reportWidget.meterH(data, 17.5)
     reportWidget.meterW(data, 150)
-    reportWidget.vGap(data, 0.025)
+    reportWidget.vGap(data, -0.1)
     -- Meters
     reportWidget.mShowAll(data)
     reportWidget.mCalcPositions(data)
+    reportWidget.setPorcentAll(data, 0.5)
     return data
 end
 
@@ -133,10 +217,7 @@ end
 
 local function genColors(data)
     data.widget.colors = {}
-    data.widget.colors.flash = {
-        normal = 0xffffff, warning = 0xffd966,  danger = 0xff6d01, critical = 0xff0000,
-        down = 0xcc0000, up = 0x4f8a35
-    }
+    data.widget.colors.flash = reportWidget.flashColor
     data.preset.widget.colors = {}
     data.preset.widget.colors.meter = {
         meter1 = 0xc0c0c0,
