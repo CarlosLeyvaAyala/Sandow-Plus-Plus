@@ -29,8 +29,8 @@
     -- onAfterSleep
         -- Won't be piped. Will most likely be a post rocessing operation.
 
-local l = require 'dmlib'
-local const = require 'const'
+local l = jrequire 'dmlib'
+local const = jrequire 'sandowpp.const'
 
 -- ;>========================================================
 -- ;>===               ADDON REGISTERING                ===<;
@@ -38,8 +38,8 @@ local const = require 'const'
 
 -- ;@readme:
 -- Add new addons here. Then register them below.
-local diminish = require 'addonDiminish'
-local anabolics = require 'addonAnabolics'
+local diminish = jrequire 'sandowpp.addonDiminish'
+local anabolics = jrequire 'sandowpp.addonAnabolics'
 
 -- ;@readme:
 -- You NEED to register addons here.

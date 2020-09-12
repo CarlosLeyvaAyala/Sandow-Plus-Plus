@@ -49,26 +49,9 @@ DM_SandowPP_ReportMeterBase[] _meters
 ;###                        SETUP FUNCTIONS                             ###
 ;##########################################################################
 
-Function OnEnter()
-    {Code executed when selecting this report type}
-    Trace(Self + ".OnEnter()")
-
-    Owner.PrepareAlgorithmData()
-    Owner.ConfigureWidget()
-    Visible = True
-EndFunction
-
-Function OnExit()
-    {Code executed when selecting any other report type}
-    Trace(Self + ".OnExit()")
-
-    Visible = False
-    Clear()
-EndFunction
-
 Event OnInit()
     InitMeters()
-    UpdateConfig()
+    ; UpdateConfig()
     Visible = False
 EndEvent
 
@@ -78,8 +61,6 @@ Function Clear()
 EndFunction
 
 Function InitMeters()
-    ResetDispatcher()
-    ResetPermaHide()
     _meters = New DM_SandowPP_ReportMeterBase[4]
     _meters[0] = Meter01
     _meters[1] = Meter02
@@ -95,39 +76,63 @@ Function ResetDispatcher()
     _messageDispatcher = New int[10]
 EndFunction
 
-;##########################################################################
-;###                        REPORTING FUNCTIONS                         ###
-;##########################################################################
+;>========================================================
+;>===                   REPORTING                    ===<;
+;>========================================================
+
+; Updates all meters.
+Function Recieve(int data)
+    CacheMeters(data)
+    UpdateMeters(data)
+EndFunction
+
+; Caches the data for all meters before updating them, so they all get updated as
+; synchronically as possible.
+Function CacheMeters(int data)
+    int i = 0
+    While IterateMeters(i)
+        _meters[i].CacheData(data)
+        i += 1
+    EndWhile
+EndFunction
+
+Function UpdateMeters(int data)
+    int i = 0
+    While IterateMeters(i)
+        _meters[i].DoUpdate()
+        i += 1
+    EndWhile
+EndFunction
+
 
 ; Visible and running
-State Active
-    Event OnUpdate()
-        Refresh()
-    EndEvent
+; State Active
+;     Event OnUpdate()
+;         Refresh()
+;     EndEvent
 
-    Function OnHotkeyReport(DM_SandowPP_Algorithm aSender)
-        {Special handling when the player presses the report hotkey}
-        FadeOut()
-    EndFunction
-EndState
+;     Function OnHotkeyReport(DM_SandowPP_Algorithm aSender)
+;         {Special handling when the player presses the report hotkey}
+;         FadeOut()
+;     EndFunction
+; EndState
 
 ; Invisible and not running
-State Hidden
-    Function OnHotkeyReport(DM_SandowPP_Algorithm aSender)
-        {Special handling when the player presses the report hotkey}
-        FadeIn()
-        Refresh()
-    EndFunction
-EndState
+; State Hidden
+;     Function OnHotkeyReport(DM_SandowPP_Algorithm aSender)
+;         {Special handling when the player presses the report hotkey}
+;         FadeIn()
+;         Refresh()
+;     EndFunction
+; EndState
 
 Function Refresh()
-    {Data polling}
-    Owner.Algorithm.ReportEssentials(Owner.AlgorithmData)
-    RegisterForSingleUpdate(UpdateTime)
+    UnregisterForUpdate()
 EndFunction
 
 Event OnUpdate()
     {Unregister if not active}
+    UnregisterForUpdate()
 EndEvent
 
 Function Notification(DM_SandowPP_ReportArgs args)
@@ -315,24 +320,24 @@ float Function GetYOffset()
     EndIf
 EndFunction
 
-Function UpdateConfig()
-    {Updates appearance according to current configuration}
-    Trace("ReportWidget.UpdateConfig()")
-    If !Visible
-        Return
-    EndIf
-    int i = 0
-    int pos = 0
-    While IterateMeters(i)
-        If !_permaHide[i]
-            SetMeterAppearance(i, pos)
-            pos += 1
-        Else
-            _meters[i].Hide()
-        EndIf
-        i += 1
-    EndWhile
-EndFunction
+; Function UpdateConfig()
+;     {Updates appearance according to current configuration}
+;     Trace("ReportWidget.UpdateConfig()")
+;     If !Visible
+;         Return
+;     EndIf
+;     int i = 0
+;     int pos = 0
+;     While IterateMeters(i)
+;         If !_permaHide[i]
+;             SetMeterAppearance(i, pos)
+;             pos += 1
+;         Else
+;             _meters[i].Hide()
+;         EndIf
+;         i += 1
+;     EndWhile
+; EndFunction
 
 Function SetMeterAppearance(int i, int pos)
     _meters[i].Alpha = Opacity

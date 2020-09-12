@@ -221,9 +221,7 @@ Function OnGameReload()
     ; ; Trace("diminish SPP 0 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(0)"))
     ; Trace("diminish SPP 1 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(1)"))
     ; JValue.writeToFile(array, JContainers.userDirectory() + "playerInfo.txt")
-    InitVars40()
-    InitDataTree()
-    LoadAddons()
+    InitSequence()
 EndFunction
 
 ;>=========================================================
@@ -235,6 +233,14 @@ EndFunction
     string Property jDBRoot =   "sandow++" AutoReadOnly Hidden
 
     ;region: Initialization
+        Function InitSequence()
+            InitVars40()
+            InitDataTree()
+            LoadAddons()
+            LoadDefaults()
+            TestSaveJDB()
+            ReportWidget.Recieve(GetDataTree())
+        EndFunction
 
         Function InitVars40()
             ; Init paths
@@ -246,17 +252,16 @@ EndFunction
             ;
             ; That premade file contains the overall data structure for this mod.
         Function InitDataTree()
-            JDB.setObj(jDBRoot, JValue.readFromFile(cfgDir + "bare tree.json"))
-            ; int data = JValue.readFromFile(cfgDir + "bare tree.json")
-            ; JDB.setObj(jDBRoot, data)
+            UpdateJDB(JValue.readFromFile(cfgDir + "bare tree.json"))
         EndFunction
 
         ; Creates the addon data tree in memory, so this mod can be used.
         Function LoadAddons()
-            int tree = JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)")
-            JValue.writeToFile(tree, JContainers.userDirectory() + "installAddons.json")
-            Trace("Diminish LUA " + JValue.evalLuaFlt(tree, "return sandowpp.test(jobject, 1, 0.00)"))
-            Trace("Diminish LUA " + JValue.evalLuaFlt(tree, "return sandowpp.test(jobject, 1, 1.00)"))
+            UpdateJDB(JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)"))
+        EndFunction
+
+        Function LoadDefaults()
+            UpdateJDB(JValue.evalLuaObj(GetDataTree(), "return sandowpp.getDefaults(jobject)"))
         EndFunction
 
     ; Gets the handle for the whole data tree.
@@ -266,6 +271,14 @@ EndFunction
         ; Whenever you see a variable named "data" in Lua, it refers to this tree.
     int Function GetDataTree()
         return JDB.solveObj("." + jDBRoot)
+    EndFunction
+
+    Function UpdateJDB(int tree)
+        JDB.setObj(jDBRoot, tree)
+    EndFunction
+
+    Function TestSaveJDB()
+        JValue.writeToFile(GetDataTree(), JContainers.userDirectory() + "test tree.json")
     EndFunction
 
 ;>=========================================================

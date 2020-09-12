@@ -4,7 +4,7 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				206,
+				260,
 				-1,
 				-1,
 				-1,
@@ -143,8 +143,8 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_ReportWidget.psc",
 			"bookmarks": [
 				-1,
-				342,
-				152,
+				90,
+				260,
 				25,
 				-1,
 				-1,
@@ -173,9 +173,9 @@
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\reportWidget.lua",
 			"bookmarks": [
 				-1,
-				-1,
-				42,
-				-1,
+				53,
+				199,
+				31,
 				-1,
 				-1,
 				-1,
