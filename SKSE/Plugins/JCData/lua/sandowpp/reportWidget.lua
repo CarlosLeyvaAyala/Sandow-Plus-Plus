@@ -51,13 +51,17 @@ reportWidget.meterH = gralProp("meterH")
 reportWidget.meterW = gralProp("meterW")
 
 --- Vertical gap between meters. It's a percentaje of meter height.
---- x ∈ [-0.3, 2.3]`. Default `0.025`
+--- x ∈ [-0.3, 2.3]`. Default `-0.1`
 reportWidget.vGap = gralProp("vGap")
 
 
 -- ;>========================================================
 -- ;>===                METER PROPERTIES                ===<;
 -- ;>========================================================
+reportWidget.flashColor = {
+    normal = 0xffffff, warning = 0xffd966,  danger = 0xff6d01, critical = 0xff0000,
+    down = 0xcc0000, up = 0x4f8a35
+}
 
 local function mProp(name)
     --- @param meterName string
@@ -73,6 +77,7 @@ reportWidget.mX = mProp("x")
 reportWidget.mY = mProp("y")
 --- [0.0, 1.0]
 reportWidget.mPercent = mProp("percent")
+reportWidget.mFlash = mProp("flash")
 
 -- ;>========================================================
 -- ;>===                     METERS                     ===<;
@@ -212,10 +217,7 @@ end
 
 local function genColors(data)
     data.widget.colors = {}
-    data.widget.colors.flash = {
-        normal = 0xffffff, warning = 0xffd966,  danger = 0xff6d01, critical = 0xff0000,
-        down = 0xcc0000, up = 0x4f8a35
-    }
+    data.widget.colors.flash = reportWidget.flashColor
     data.preset.widget.colors = {}
     data.preset.widget.colors.meter = {
         meter1 = 0xc0c0c0,

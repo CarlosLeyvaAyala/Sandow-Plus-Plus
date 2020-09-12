@@ -3,6 +3,7 @@ Import DM_SandowPP_Globals
 Import JValue
 
 bool _willFade = false
+bool _willTween = false
 int _flashColor = -1
 float _percent
 bool _visible = false
@@ -12,55 +13,114 @@ int _primaryCol = 0xc0c0c0
 float _h = 1.75
 float _w = 150.0
 string _vAlign = "top"
-string _hAlign = "left"
+string _hAlign = "right"
 float _x = 0.0
 float _y = 0.0
+float _xOld = 0.0
+float _yOld = 0.0
 
 
 ;@Abstract:
-; This way, any individual meter can get its own data from the tree
+; This way, any individual meter can get its own data from the tree.
 int Function Id()
     return 0
 EndFunction
 
-; Caches the data before this gets updated, so all meters get updated as
-; synchronically as possible.
-Function CacheData(int data)
-    string mName = "meter" + Id()
-    string p = ".widget." + mName + "."
-    string mcm = ".preset.widget."
+;>========================================================
+;>===                     CACHE                      ===<;
+;>========================================================
 
-    _x = solveFlt(data, p + "x")
-    _y = solveFlt(data, p + "y")
-    _percent = solveFlt(data, p + "percent")
-    _visibleOld = _visible
-    _visible = solveInt(data, p + "visible")
-    If _visibleOld != _visible
-        _willFade = true
-    EndIf
+    ; Caches the data before this gets updated, so all meters get updated as
+    ; synchronically as possible.
+    Function CacheData(int data)
+        string mName = "meter" + Id()
+        string bp = ".widget."
+        string p = bp + mName + "."
 
-    _alpha = solveFlt(data, mcm + "opacity")
-    _primaryCol = solveInt(data, mcm + "colors.meter." + mName)
-    _h = solveFlt(data, mcm + "meterH")
-    _w = solveFlt(data, mcm + "meterW")
-    _vAlign = solveStr(data, mcm + "vAlign")
-    _hAlign = solveStr(data, mcm + "hAlign")
-EndFunction
+        CachePos(data, p)
+        CacheVisibility(data, p)
+        CacheFlash(data, p)
+        _percent = solveFlt(data, p + "percent")
+        CacheMCM(data, ".preset.widget.", mName)
+    EndFunction
 
-; Applies cached data
-Function DoUpdate()
-    Percent = _percent
-    TweenTo(_x, _y, 1.0)
-    TryFade()
+    ; Gets the flash and directly resets it in the data tree so this only flashes once.
+    Function CacheFlash(int data, string p)
+        _flashColor = solveInt(data, p + "flash", -1)
+        solveIntSetter(data, p + "flash", -1)
+    EndFunction
 
-    PrimaryColor = _primaryCol
-    SecondaryColor = GetSecondaryCol(_primaryCol)
-    Trace(SecondaryColor)
-    Height = _h
-    Width = _w
-    HAnchor = _hAlign
-    VAnchor = _vAlign
-EndFunction
+    Function CachePos(int data, string p)
+        _xOld = _x
+        _yOld = _y
+        _x = solveFlt(data, p + "x")
+        _y = solveFlt(data, p + "y")
+        _willTween = (_x != _xOld) || (_y != _yOld)
+    EndFunction
+
+    Function CacheVisibility(int data, string p)
+        _visibleOld = _visible
+        _visible = solveInt(data, p + "visible")
+        _willFade = _visibleOld != _visible
+    EndFunction
+
+    ; Caches data configurable via MCM
+    Function CacheMCM(int data, string mcm, string mName)
+        _alpha = solveFlt(data, mcm + "opacity")
+        _primaryCol = solveInt(data, mcm + "colors.meter." + mName)
+        _h = solveFlt(data, mcm + "meterH")
+        _w = solveFlt(data, mcm + "meterW")
+        _vAlign = solveStr(data, mcm + "vAlign")
+        _hAlign = solveStr(data, mcm + "hAlign")
+    EndFunction
+
+;>========================================================
+;>===                    UPDATING                    ===<;
+;>========================================================
+
+    ; Applies cached data
+    Function DoUpdate()
+        Percent = _percent
+        TryTween()
+        TryFade()
+
+        PrimaryColor = _primaryCol
+        SecondaryColor = GetSecondaryCol(_primaryCol)
+        Trace(SecondaryColor)
+        Height = _h
+        Width = _w
+        HAnchor = _hAlign
+        VAnchor = _vAlign
+        TryFlash()
+    EndFunction
+
+    Function TryTween()
+        If _willTween
+            TweenTo(_x, _y, 1.0)
+        ; Else
+        ;     X = _x
+        ;     Y = _y
+        EndIf
+    EndFunction
+
+    Function TryFade()
+        If _willFade
+            FadeTo(_alpha, 1.0)
+            _willFade = false
+        EndIf
+    EndFunction
+
+    Event OnUpdateDisplay(DM_SandowPP_Report sender, float aPercent,  int aType)
+    EndEvent
+
+    ; Flashes if there's a valid flash color in cache.
+    Function TryFlash()
+        If _flashColor != -1
+            FlashColor = _flashColor
+            Flash()
+            _flashColor = -1
+        EndIf
+    EndFunction
 
 ; Gets a slightly lighter color than primary.
 int Function GetSecondaryCol(int color)
@@ -77,23 +137,4 @@ EndFunction
 
 int Function LightenChannel(int c)
     return c + (0xFF - c) / 2
-EndFunction
-
-Function TryFade()
-    If _visible && _willFade
-        FadeTo(_alpha, 1.0)
-        _willFade = false
-    EndIf
-EndFunction
-
-Event OnUpdateDisplay(DM_SandowPP_Report sender, float aPercent,  int aType)
-EndEvent
-
-; Flashes if there's a valid flash color in cache.
-Function TryFlash()
-    If _flashColor != -1
-        FlashColor = _flashColor
-        Flash()
-        _flashColor = -1
-    EndIf
 EndFunction

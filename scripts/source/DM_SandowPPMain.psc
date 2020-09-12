@@ -83,42 +83,11 @@ Function ChangeHeadSize()
     EndIf
 EndFunction
 
-function txset()
-    ; You should use a property to get this texture set. This is just for testing.
-    TextureSet tx = Game.GetFormFromFile(0x01000800, "SandowPP - Ripped Bodies.esp") as TextureSet
-    ; Index is irrelevant for all these specific operations. It's **somewhat** documented in the NiOverride source code.
-    int irrelevant = -1
-    ; It NEEDS to be this override layer (is that called like that? No info anywhere). Don't ask me why it doesn't work with other nodes, like "Body [Ovl0]" et al.
-    string node = "Body [Ovl5]"
-    ; Get the skin tint color of the Actor to reapply it soon
-    int skinColor = NiOverride.GetSkinPropertyInt(player, false, 4, 7, -1)
-    ; Add the texture set we want to show
-    NiOverride.AddNodeOverrideTextureSet(Player, true, node, 6, irrelevant, tx, true)
-    NiOverride.AddNodeOverrideFloat(Player, true,  node, 8, irrelevant, _ta, true)
-    ; Last operation resets the skin tint color to white, making the character's body pale. Restore the color we got earlier.
-    NiOverride.AddNodeOverrideInt(Player, true,  node, 7, irrelevant, skinColor, true)
-    ; Profit! Have a nice day.
-EndFunction
-
-float _ta = 0.0
-function la()
-    int t = Math.floor(_ta * 100)
-    t = (t + 5) % 100
-    _ta = t / 100.0
-    Trace("@@@@@@@@@@@@@@@@ a = " + _ta)
-    NiOverride.AddNodeOverrideFloat(Player, true,  "Body [Ovl5]", 8, -1, _ta, true)
-    int sx = Player.GetLeveledActorBase().GetSex()
-    int sx2 = Player.GetActorBase().GetSex()
-    trace("sex " + sx)
-    trace("AlgoWCSandow " + AlgoWCSandow.GetPlayerWeight())
-    ; trace("isFemale " + DM_Utils.GetActorSex(Player) + " " + DM_Utils.isFemale(Player))
-    ; trace("isMale " + DM_Utils.GetActorSex(Player) + " " + DM_Utils.isMale(Player) + (GetActorSex(Player) == 0))
-    Debug.Notification(_ta)
-EndFunction
-
 Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
-        Algorithm.ReportOnHotkey(AlgorithmData)
+        LoadDefaults()
+        ReportWidget.Report(GetDataTree())
+    ; Algorithm.ReportOnHotkey(AlgorithmData)
     EndIf
     ; If KeyCode == 200
     ;     la()
@@ -132,12 +101,12 @@ Event OnInit()
     RegisterForSleep()
     RegisterEvents()
 
-    Config.PresetManager = DefaultPresetManager()
+    ; Config.PresetManager = DefaultPresetManager()
     ; Load preset #1 if it exists. This was done to save the player time.
-    If PresetManager.ProfileExists(1)
-        Config.Assign( PresetManager.LoadFile(1) )
-        RegisterAgainHotkeys()
-    EndIf
+    ; If PresetManager.ProfileExists(1)
+    ;     Config.Assign( PresetManager.LoadFile(1) )
+    ;     RegisterAgainHotkeys()
+    ; EndIf
 EndEvent
 
 Function PreparePlayerToSleep()
@@ -215,12 +184,8 @@ Function OnGameReload()
     RegisterEvents()
     PrepareAlgorithmData()
     HeightChanger.ReapplyHeight()
-    ;RegisterForKey(200)
     texMngr.InitData()
     texMngr.Debug(Player)
-    ; ; Trace("diminish SPP 0 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(0)"))
-    ; Trace("diminish SPP 1 = " + JValue.evalLuaFlt(0, "return sandowpp.diminishingRatio(1)"))
-    ; JValue.writeToFile(array, JContainers.userDirectory() + "playerInfo.txt")
     InitSequence()
 EndFunction
 
@@ -238,8 +203,8 @@ EndFunction
             InitDataTree()
             LoadAddons()
             LoadDefaults()
+            ReportWidget.Report(GetDataTree())
             TestSaveJDB()
-            ReportWidget.Recieve(GetDataTree())
         EndFunction
 
         Function InitVars40()
@@ -315,26 +280,7 @@ Function Configure()
     { Configure data after using the MCM or reloading a preset. This method is called by the Config script/object belonging to this script }
     Trace("Main.Configure()")
     PrepareAlgorithmData()
-    SelectReport()
-    SelectPresetManager()
     ChangeAlgorithm()
-    ConfigureWidget()
-EndFunction
-
-; TODO: Delete
-Function SelectReport()
-    {Selects report system}
-    Trace("Main.SelectReport(" + Config.ReportType + ")")
-
-    _report.OnExit()
-    If Config.IsSkyUiLib()
-        _report = ReportSkyUILib
-    ElseIf Config.IsWidget()
-        _report = ReportWidget
-    Else
-        _report = ReportDebug
-    EndIf
-    _report.OnEnter()
 EndFunction
 
 Function ChangeAlgorithm()
@@ -364,23 +310,6 @@ Function ChangeAlgorithm()
     Trace("Ending Main.ChangeAlgorithm()")
 EndFunction
 
-Function ConfigureWidget()
-    {}
-    Trace("Main.ConfigureWidget()")
-    ReportWidget.UpdateTime = Config.rwUpdateTime
-    ReportWidget.Opacity = Config.rwOpacity
-    ReportWidget.Scale = Config.rwScale
-    ReportWidget.HAlign = Config.rwHAlign
-    ReportWidget.VAlign = Config.rwVAlign
-    ReportWidget.X = Config.rwX
-    ReportWidget.Y = Config.rwY
-    If Report == ReportWidget
-        Algorithm.SetupWidget(AlgorithmData)
-        ReportWidget.UpdateConfig()
-        Algorithm.ReportEssentials(AlgorithmData)
-    EndIf
-EndFunction
-
 Function RegisterAgainHotkeys()
     { Registers again events for hotkeys that have already been set up }
     Trace("Main.RegisterAgainHotkeys(HkShowStatus = " + Config.HkShowStatus + ")")
@@ -403,40 +332,8 @@ Function RegisterAgainHotkey(int oldKey)
     EndIf
 EndFunction
 
-int Function DefaultPresetManager()
-    {Returns a default preset manager}
-    Trace("Main.DefaultPresetManager()")
-    int i
-
-    If PresetMngrPapUtl.Exists()        ; PapyrusUtils is the preferred file manager
-        i = Config.pmPapyrusUtil
-    ElseIf PresetMngrFISSES.Exists()
-        i = Config.pmFISS
-    Else
-        i = Config.pmNone
-    EndIf
-
-    Trace("Return " + i)
-    Return i
-EndFunction
-
-Function SelectPresetManager()
-    {Selection of the Strategy Pattern}
-    ; Trace("Main.SelectPresetManager(" + Config.PresetManager + ")")
-
-    If Config.PresetManager == Config.pmPapyrusUtil
-        _presetManager = PresetMngrPapUtl
-    ElseIf Config.PresetManager == Config.pmFISS
-        _presetManager = PresetMngrFISSES
-    Else
-        _presetManager = PresetMngrNone
-    EndIf
-EndFunction
-
 ; Decides how much WGP and fatigue will be added.
 Function Train(string aSkill)
-    ; Trace("Main.Train(" + aSkill + ")")
-
     if aSkill == "TwoHanded"
         TrainAndFatigue(Config.skillRatio2H, Config.physFatigueRate)
     elseif aSkill == "OneHanded"
@@ -468,10 +365,7 @@ EndFunction
 
 ; Apply fatigue, WGP and inactivity related things.
 Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
-    ; Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
-    ; Trace("Old WGP = " + CurrentState.WGP)
     If !Algorithm.CanGainWGP()
-        ; Trace("Can't gain WGP. Returning.")
         return
     EndIf
 
