@@ -1,34 +1,68 @@
 {
-  "preset": {
-    "bhv": {
-      "$MCM_PausedBehavior": {},
-      "Bulk & Cut": {},
-      "Bruce Lee": {},
-      "Pumping Iron": {},
-      "Sandow Plus Plus": {}
+    "preset": {
+        "bhv": {
+            "$MCM_PausedBehavior": {},
+            "skills": {
+                "Block": {},
+                "TwoHanded": {},
+                "LightArmor": {},
+                "Conjuration": {},
+                "Smithing": {},
+                "Destruction": {},
+                "Restoration": {},
+                "Illusion": {},
+                "Marksman": {},
+                "OneHanded": {},
+                "HeavyArmor": {},
+                "Alteration": {},
+                "Sneak": {}
+            },
+            "Bulk & Cut": {},
+            "Bruce Lee": {},
+            "Pumping Iron": {},
+            "Sandow Plus Plus": {}
+        },
+        "addons": {
+            "anabolics": {},
+            "diminishingReturns": {}
+        },
+        "widget": {
+            "colors": {
+                "meter": {
+                    "meter4": 15919496,
+                    "meter2": 7018444,
+                    "meter3": 10930498,
+                    "meter1": 12632256
+                }
+            }
+        }
     },
+    "widget": {
+        "meter4": {},
+        "meter3": {},
+        "meter2": {},
+        "colors": {
+            "flash": {
+                "normal": 16777215,
+                "danger": 16739585,
+                "up": 5212725,
+                "warning": 16767334,
+                "down": 13369344,
+                "critical": 16711680
+            }
+        },
+        "meter1": {}
+    },
+    "state": {},
     "addons": {
-      "anabolics": {},
-      "diminishingReturns": {}
+        "anabolics": {},
+        "diminishingReturns": {}
     },
-    "widget": {}
-  },
-  "widget": {
-    "meter4": {},
-    "meter2": {},
-    "meter3": {},
-    "meter1": {}
-  },
-  "state": {},
-  "addons": {
-    "anabolics": {},
-    "diminishingReturns": {}
-  },
-  "bhv": {
-    "$MCM_PausedBehavior": {},
-    "Bulk & Cut": {},
-    "Bruce Lee": {},
-    "Pumping Iron": {},
-    "Sandow Plus Plus": {}
-  }
+    "bhv": {
+        "$MCM_PausedBehavior": {},
+        "Bulk & Cut": {},
+        "Bruce Lee": {},
+        "Pumping Iron": {},
+        "Sandow Plus Plus": {}
+    }
 }

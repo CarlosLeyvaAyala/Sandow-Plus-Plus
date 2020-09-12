@@ -86,11 +86,11 @@ endProperty
 float property magFatigueRateMultiplier = 2.0 AutoReadOnly
 
 float property trainFatigueRate
+    {Fatigue rate for training with weights.}
     float function get()
     return physFatigueRate * 4.0
     endFunction
 endProperty
-
 ; ==============================
 int property Behavior
     int Function get()

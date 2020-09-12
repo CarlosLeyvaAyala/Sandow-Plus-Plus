@@ -4,11 +4,12 @@
 
 local shared = {}
 
---;>=========================================================
---;>===                    MANAGERS                       ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                    MANAGERS                    ===<;
+-- ;>========================================================
 
 --- Returns a function that traverses a table and executes a function on each member.
+---
 --- This function is meant to be used by managers to easily traverse whatever they are
 --- managing.
 --- @param tbl table

@@ -1,8 +1,8 @@
 -- local dmlib = require 'dmlib'
 local l = require 'shared'
 local const = require 'const'
--- local l = jrequire 'sandowpp.shared'
--- local const = jrequire 'sandowpp.const'
+-- local l = require 'sandowpp.shared'
+-- local const = require 'sandowpp.const'
 
 local reportWidget = {}
 
@@ -11,9 +11,10 @@ local nMeters = 4
 reportWidget.VAlign = {top = "top", center = "center", bottom = "bottom"}
 reportWidget.HAlign = {left = "left", center = "center", right = "right"}
 
---;>=========================================================
---;>===               WIDGET MCM PROPERTIES               ===
---;>=========================================================
+
+-- ;>========================================================
+-- ;>===             WIDGET MCM PROPERTIES              ===<;
+-- ;>========================================================
 
 --- Creates a general property. These are shown in the MCM and apply to all meters.
 local function gralProp(name)
@@ -42,9 +43,9 @@ reportWidget.meterW = gralProp("meterW")
 reportWidget.vGap = gralProp("vGap")
 
 
---;>=========================================================
---;>===                 METER PROPERTIES                  ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                METER PROPERTIES                ===<;
+-- ;>========================================================
 
 local function mProp(name)
     --- @param meterName string
@@ -59,9 +60,10 @@ reportWidget.mVisible = mProp("visible")
 reportWidget.mX = mProp("x")
 reportWidget.mY = mProp("y")
 
---;>=========================================================
---;>===                      METERS                       ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                     METERS                     ===<;
+-- ;>========================================================
+
 local function mIterateAll(func, data) for i = 1, nMeters do func(data,  "meter"..i) end end
 
 -- Makes all meters visible.
@@ -104,12 +106,12 @@ function reportWidget.mCalcPositions(data)
     end
 end
 
---;>=========================================================
---;>===                      SETUP                        ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                     SETUP                      ===<;
+-- ;>========================================================
 
 --- Generates default settings for the widget.
-function reportWidget.createDefault(data)
+function reportWidget.default(data)
     reportWidget.vAlign(data, reportWidget.VAlign.top)
     reportWidget.hAlign(data, reportWidget.HAlign.left)
     reportWidget.x(data, 0)
@@ -121,12 +123,28 @@ function reportWidget.createDefault(data)
     -- Meters
     reportWidget.mShowAll(data)
     reportWidget.mCalcPositions(data)
+    return data
 end
 
 
---;>=========================================================
---;>===                 TREE GENERATION                   ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                TREE GENERATION                 ===<;
+-- ;>========================================================
+
+local function genColors(data)
+    data.widget.colors = {}
+    data.widget.colors.flash = {
+        normal = 0xffffff, warning = 0xffd966,  danger = 0xff6d01, critical = 0xff0000,
+        down = 0xcc0000, up = 0x4f8a35
+    }
+    data.preset.widget.colors = {}
+    data.preset.widget.colors.meter = {
+        meter1 = 0xc0c0c0,
+        meter2 = 0x6b17cc,
+        meter3 = 0xa6c942,
+        meter4 = 0xf2e988
+    }
+end
 
 function reportWidget.generateDataTree(data)
     print("Generating widget\n=================")
@@ -138,6 +156,7 @@ function reportWidget.generateDataTree(data)
         end,
         data
     )
+    genColors(data)
     print("Finished generating widget\n")
     return data
 end

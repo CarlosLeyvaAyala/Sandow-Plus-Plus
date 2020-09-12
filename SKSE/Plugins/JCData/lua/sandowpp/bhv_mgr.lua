@@ -4,9 +4,10 @@ local const = require 'const'
 
 local bhv_mgr = {}
 
---;>=========================================================
---;>===                   REGISTERING                     ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                  REGISTERING                   ===<;
+-- ;>========================================================
+
 local bhvTbl = {
     [const.bhv.name.paused] = "nil",
     [const.bhv.name.sandow] = "nil",
@@ -16,9 +17,20 @@ local bhvTbl = {
 }
 local traverse = l.traverse(bhvTbl)
 
---;>=========================================================
---;>===                 TREE GENERATION                   ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                     SETUP                      ===<;
+-- ;>========================================================
+
+--- Generates default values for behaviors.
+function bhv_mgr.default(data)
+    data.preset.bhv.current = const.bhv.name.paused
+    return data
+end
+
+-- ;>========================================================
+-- ;>===                TREE GENERATION                 ===<;
+-- ;>========================================================
+
 local function genBhvTrees(_, bhvName, data)
     print("Generating '"..bhvName.."'")
     data.bhv[bhvName] = {}
@@ -28,8 +40,8 @@ end
 function bhv_mgr.generateDataTree(data)
     print("Generating behaviors\n=================")
     data.preset.bhv = {}
-    -- data.preset.bhv.all = {}
     traverse(genBhvTrees, {data = data})
+
     print("Finished generating behaviors\n")
     return data
 end

@@ -8,6 +8,7 @@ This git page is meant to be used by programmers, not the general public.
 
 For everything game related, please see the mod page above.
 
+
 ## Building
 Remember to update the path for all of these dependencies in the [`skyrimse.ppj`](skyrimse.ppj) file.
 
@@ -24,6 +25,9 @@ Remember to update the path for all of these dependencies in the [`skyrimse.ppj`
 These aren't integral for this mod. They are mostly integrations that can be commented out because they take only a few lines.
 - [Sexlab framework](https://www.loverslab.com/topic/91861-sexlab-framework-se-163-beta-8-november-22nd-2019/).
 
+
+
+
 ### Lua
 The easiest way to test and develop the Lua code here is using [ZeroBrane Studio](https://studio.zerobrane.com/).
 
@@ -31,12 +35,22 @@ To be able to test or release this project, run [`SKSE\Plugins\JCData\lua\sandow
 You need to change the last line of that file depending on if you are releasing or developing.
 
 ***Beware***: that's a quick and dirty file. You need to adhere to all conventions used by the Lua files in this mod for it to work:
+
 - Lines pointing to my lib (see [hard dependencies](#hard-dependencies)) and other Lua libraries must start with `package.path = package.path`, verbatim. Easiest way is to just copy them for one of my old files.\
 Remember to update their paths.
-- I tried not to use external libraries, but `jc` (bundled with JContainers) and [`dmlib`](#hard-dependencies) are a must most of the time.\
-If you add new libraries, remember to add their folders to `package.path` at the beginnig of each file (you will most likely test them individually) and their entries in `_debug.lua`.
+- I tried not to use external libraries, but [`dmlib`](#hard-dependencies) is a must most of the time.\
+If you add new libraries, remember to add their folders to `package.path` at the beginnig of each file (you will most likely test them individually) and their entries in the **TODO** section of [`_debug.lua`](SKSE/Plugins/JCData/lua/sandowpp/_debug.lua).
 
-[Serpent: Lua serializer and pretty printer](http://notebook.kulchenko.com/programming/serpent-lua-serializer-pretty-printer) is highly suggested to be able to print tables to see what values they carry while developing code.
+#### Libraries
+None of these are expected to be used at runtime, but they will tremendously help developing this mod.
+
+To install most of them, just add them to any Lua path (`\ZeroBraneStudio\lualibs\` if using it).
+
+- [Lunajson](https://github.com/grafi-tt/lunajson) is needed to generate the data tree for this mod to work (see [`_treeGen.lua`](SKSE/Plugins/JCData/lua/sandowpp/_treeGen.lua)). Just download and extract its [src folder](https://github.com/grafi-tt/lunajson/tree/master/src) inside some Lua path.
+- [Lua Functional](https://github.com/luafun/luafun). Needed for executing [`_debug.lua`](SKSE/Plugins/JCData/lua/sandowpp/_debug.lua).
+- [Serpent: Lua serializer and pretty printer](http://notebook.kulchenko.com/programming/serpent-lua-serializer-pretty-printer) is highly suggested to be able to print tables to see what values they carry while developing code.
+- [Clipboard](http://luaforge.net/projects/jaslatrix/) is a nice dll that lets you directly output from Lua to clipoard.
+
 
 
 ### Visual Studio Code
@@ -62,6 +76,8 @@ These aren't mandatory per se, but highly suggested. This project has configurat
 * [Numbered Bookmarks](https://marketplace.visualstudio.com/items?itemName=alefragnani.numbered-bookmarks)
 * [Clipboard Manager](https://marketplace.visualstudio.com/items?itemName=EdgardMessias.clipboard-manager)
 * [Tokyo Night](https://marketplace.visualstudio.com/items?itemName=enkia.tokyo-night). I love this theme and I don't want to lose it if something goes wrong, so I leave a link here.
+
+
 
 ## Distributing
 Easiest way to do it is to update the paths in [`release-me.bat`](release-me.bat) and run it.\

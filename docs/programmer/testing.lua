@@ -11,16 +11,6 @@ data = {
         weight = 0
     }
 }
--- ;>=====================================================
-function case(enumVal, results, elseVal)
-    for k,v in pairs(results) do if enumVal == k then return v end end
-    return elseVal
-end
-function enum(tbl)
-    for i = 1, #tbl do local v = tbl[i] tbl[v] = i end
-    return tbl
-end
-
 
 -- ;>=====================================================
 dangerLevels = enum {

@@ -12,13 +12,15 @@ local const = require 'const'
 local addonAnabolics = {}
 local name = const.addon.name.anabolics      -- This plugin name
 
+addonAnabolics.showInMCM = addon.internalProp(name, addon.names.showInMCM)
+
 -- function addonAnabolics.onGainMult(x)
 --     x.val = x.val * 10
 --     return x
 -- end
 
 function addonAnabolics.install(data)
-    addon.showInMCM(data, name, true)
+    addonAnabolics.showInMCM(data, true)
 end
 
 return addonAnabolics

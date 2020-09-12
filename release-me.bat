@@ -54,30 +54,28 @@ SET req3=%baseLib%"SKSE\"
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Files needed to compile, but not distributable.
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 :: These are included in this github repo, but they are
 :: already distributed by SkyUI.
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-SET exc1="SKI_WidgetManager.pex"
-SET exc2="SKI_WidgetBase.pex"
-
-:: Unneeded Lua files
-SET exc3="_debug.Lua"
-SET exc4="serpent.Lua"
-SET exc5="README.md"
+SET exc1="SKI_*"
+:: Unneeded developing helpers
+SET exc2="__*" "*.md"
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Create release zip (*.7z) file
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: See https://sevenzip.osdn.jp/chm/cmdline/index.htm
+SET comp=-mx9
 %zipExe% d %modName%.7z
-%zipExe% a -t7z %modName%.7z interface scripts %modEsp% %lib%\%req1% %lib%\%req2% %req3%
-%zipExe% a -t7z %modName%.7z SKSE -spf2
+%zipExe% a -t7z %modName%.7z interface scripts %modEsp% %lib%\%req1% %lib%\%req2% %req3% %comp%
+%zipExe% a -t7z %modName%.7z SKSE -spf2 %comp%
 
 :: Put libraries in the correct folder
-%zipExe% rn %modName%.7z %req1% scripts\%req1% %req2% scripts\%req2%
+%zipExe% rn %modName%.7z %req1% scripts\%req1% %req2% scripts\%req2% %comp%
 
 :: Delete undesired files from zip
-%zipExe% d %modName%.7z scripts\source %exc1% %exc2% -r
-%zipExe% d %modName%.7z %exc3% %exc4% %exc5% -r
+%zipExe% d %modName%.7z scripts\source %exc1% %exc2% -r -bb1 %comp%
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Copy backup

@@ -29,13 +29,12 @@
     -- onAfterSleep
         -- Won't be piped. Will most likely be a post rocessing operation.
 
-
--- local jc = require 'jc'
 local l = require 'dmlib'
 local const = require 'const'
--- local serpent = require("serpent")
 
---;Region: Addon registering
+-- ;>========================================================
+-- ;>===               ADDON REGISTERING                ===<;
+-- ;>========================================================
 
 -- ;@readme:
 -- Add new addons here. Then register them below.
@@ -53,7 +52,10 @@ local addOnTable = {
     [const.addon.name.anabolics] = anabolics
 }
 
---;Region: Functionality
+-- ;>========================================================
+-- ;>===                 FUNCTIONALITY                  ===<;
+-- ;>========================================================
+
 local addon_mgr = {}
 
 --- Iterates through all registered addons and executes `f(x)`.
@@ -65,15 +67,16 @@ local function traverse(func, x)
     end
 end
 
---;>=========================================================
---;>===                      SETUP                        ===
---;>=========================================================
+-- ;>========================================================
+-- ;>===                     SETUP                      ===<;
+-- ;>========================================================
+
 --- Loads an individual addon to memory.
 local function installAddon(addon, addonName, data)
     -- data.addons[addonName] = {}
-    if not data.preset.addons[addonName].installed then
+    if not data.addons[addonName].installed then
         addon.install(data)
-        data.preset.addons[addonName].installed = true
+        data.addons[addonName].installed = true
     end
 end
 
@@ -85,9 +88,10 @@ function addon_mgr.installAll(data)
     return data
 end
 
---;>=========================================================
---;>===                 TREE GENERATION                   ===
---;>=========================================================
+
+-- ;>========================================================
+-- ;>===                TREE GENERATION                 ===<;
+-- ;>========================================================
 
 local function genAddonTrees(_, addonName, data)
     print("Generating '"..addonName.."'")
@@ -103,7 +107,11 @@ function addon_mgr.generateDataTree(data)
     return data
 end
 
---;Region: Events
+
+-- ;>========================================================
+-- ;>===                     EVENTS                     ===<;
+-- ;>========================================================
+
 local eventTbl = {}
 
 --- If an addon has an event, adds the event to a function table that will be executed later.
@@ -144,6 +152,5 @@ function addon_mgr.onGainMult(data, val, diminishBy)
     -- return k.x.y
     return eventPipe("onGainMult", {data = data, val = val, diminishBy = diminishBy})
 end
--- print(serpent.block(data))
 
 return addon_mgr

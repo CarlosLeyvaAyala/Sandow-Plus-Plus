@@ -1,32 +1,36 @@
 -- Functions and structures shared by all addons.
 -- Notice this isn't true inheritance. No need for that.
 
-local l = require 'dmlib'
-
 local addon_all = {}
 
---;Region: Access
-local function getVal(data, addon, key)
-    return data.addons[addon][key]
-end
+-- ;>========================================================
+-- ;>===                     ACCESS                     ===<;
+-- ;>========================================================
 
-local function modVal(data, addon, key, value)
-    data.addons[addon][key] = value
-end
+addon_all.names = {
+    showInMCM = "showInMCM",
+    enabled = "enabled"
+}
 
---- @param data table
+--- Sets access to a MCM configurable property.
 ---@param addon string
 ---@param key string
----@param value any
-function addon_all.val(data, addon, key, value)
-    if value ~= nil then modVal(data, addon, key, value)
-    else return getVal(data, addon, key)
+function addon_all.MCMProp(addon, key)
+    return function (data, value)
+        if value ~= nil then data.preset.addons[addon][key] = value
+        else return data.preset.addons[addon][key]
+        end
     end
 end
 
-function addon_all.showInMCM(data, addon, show)
-    if show ~= nil then modVal(data, addon, "showInMCM", show)
-    else return getVal(data, addon, "showInMCM")
+--- Sets access to a ***non-MCM*** configurable property.
+---@param addon string
+---@param key string
+function addon_all.internalProp(addon, key)
+    return function (data, value)
+        if value ~= nil then data.addons[addon][key] = value
+        else return data.addons[addon][key]
+        end
     end
 end
 
