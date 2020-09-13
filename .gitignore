@@ -3,6 +3,7 @@
 # git remote add origin "https://github.com/CarlosLeyvaAyala/Sandow-Plus-Plus.git"
 # git pull origin master
 
+*VSCodeCounter*
 _ignore/*
 *.code-workspace
 *.pex
