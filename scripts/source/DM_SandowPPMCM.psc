@@ -349,7 +349,7 @@ Function EnsurePresetManager(string mgr)
         Return
     EndIf
     ShowMessage("$MCM_PresetMgrInexistent{" + mgr + "}")
-    Cfg.PresetManager = SandowPP.DefaultPresetManager()
+    ; Cfg.PresetManager = SandowPP.DefaultPresetManager()
 EndFunction
 
 State SL_WEIGHTMULT

@@ -4,7 +4,10 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				206,
+				234,
+				88,
+				-1,
+				-1,
 				-1,
 				-1,
 				-1,
@@ -140,21 +143,6 @@
 			]
 		},
 		{
-			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_ReportWidget.psc",
-			"bookmarks": [
-				-1,
-				342,
-				152,
-				25,
-				-1,
-				-1,
-				-1,
-				-1,
-				-1,
-				-1
-			]
-		},
-		{
 			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPP_Report.psc",
 			"bookmarks": [
 				-1,
@@ -173,9 +161,9 @@
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\reportWidget.lua",
 			"bookmarks": [
 				-1,
-				-1,
-				42,
-				-1,
+				165,
+				207,
+				104,
 				-1,
 				-1,
 				-1,
@@ -213,6 +201,21 @@
 				-1,
 				-1,
 				49
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPP_ReportMeterBase.psc",
+			"bookmarks": [
+				-1,
+				45,
+				9,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1
 			]
 		}
 	]

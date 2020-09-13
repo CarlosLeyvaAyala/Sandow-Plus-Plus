@@ -15,14 +15,14 @@
 -- for this (maybe we need to create a JObject instead of a table?).
 -- Fortunately, tables seem to be properly allocating inside Lua structrues themselves.
 
-package.path = package.path..";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
-package.path = package.path..";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
+-- package.path = package.path..";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
+-- package.path = package.path..";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
 
-local l = require 'dmlib'
-local addon_mgr = require 'addon_mgr'
-local bhv_mgr = require 'bhv_mgr'
-local reportWidget = require 'reportWidget'
-local skills = require 'skills'
+local l = jrequire 'dmlib'
+local addon_mgr = jrequire 'sandowpp.addon_mgr'
+local bhv_mgr = jrequire 'sandowpp.bhv_mgr'
+local reportWidget = jrequire 'sandowpp.reportWidget'
+local skills = jrequire 'sandowpp.skills'
 
 local sandowpp = {}
 
@@ -35,6 +35,7 @@ local data = {
 -- ;>===                   INTERFACES                   ===<;
 -- ;>========================================================
 sandowpp.installAddons = addon_mgr.installAll
+sandowpp.widgetChangeVAlign = reportWidget.changeVAlign
 
 function sandowpp.getDefaults(data)
     local p = l.pipe(

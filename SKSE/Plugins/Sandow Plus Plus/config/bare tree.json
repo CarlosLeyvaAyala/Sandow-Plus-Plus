@@ -28,29 +28,25 @@
         },
         "widget": {
             "colors": {
-                "meter": {
-                    "meter4": 15919496,
-                    "meter2": 7018444,
-                    "meter3": 10930498,
-                    "meter1": 12632256
-                }
+                "meter4": 15919496,
+                "meter2": 7018444,
+                "meter3": 10930498,
+                "meter1": 12632256
             }
         }
     },
     "widget": {
         "meter4": {},
+        "flash": {
+            "normal": 16777215,
+            "danger": 16739585,
+            "up": 5212725,
+            "warning": 16767334,
+            "down": 13369344,
+            "critical": 16711680
+        },
         "meter3": {},
         "meter2": {},
-        "colors": {
-            "flash": {
-                "normal": 16777215,
-                "danger": 16739585,
-                "up": 5212725,
-                "warning": 16767334,
-                "down": 13369344,
-                "critical": 16711680
-            }
-        },
         "meter1": {}
     },
     "state": {},

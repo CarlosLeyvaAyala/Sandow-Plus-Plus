@@ -99,4 +99,4 @@ local function makeDebug(content)
 end
 
 -- operate(processFile(makeDebug))
--- operate(processFile(makeRelease))
+ operate(processFile(makeRelease))
