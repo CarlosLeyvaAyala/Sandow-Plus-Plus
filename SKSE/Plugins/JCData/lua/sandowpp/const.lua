@@ -1,3 +1,4 @@
+local l = require 'dmlib'
 local const = {}
 
 const.addon = {
@@ -36,5 +37,10 @@ const.skills ={
     }
 }
 
-
+const.dangerLevels = l.enum {
+    "Normal",
+    "Warning",
+    "Danger",
+    "Critical"
+ }
 return const

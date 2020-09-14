@@ -98,8 +98,6 @@ EndFunction
 
     Function TryFlash()
         If FlashColor >= 0
-            Trace(Id() + " flash color " )
-            Trace(FlashColor)
             Flash()
         EndIf
     EndFunction

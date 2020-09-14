@@ -4,7 +4,7 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				218,
+				226,
 				-1,
 				-1,
 				-1,
@@ -161,7 +161,7 @@
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\addon_mgr.lua",
 			"bookmarks": [
 				-1,
-				79,
+				81,
 				-1,
 				-1,
 				-1,
@@ -186,6 +186,21 @@
 				-1,
 				-1,
 				49
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhvBruce.lua",
+			"bookmarks": [
+				-1,
+				126,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1
 			]
 		}
 	]

@@ -24,9 +24,12 @@ https://docs.google.com/spreadsheets/d/1r10g-b73KjagmzT5Rm1SrWUY7ROhxtawBxy-vV4Y
 total training points.
 * Player's definition percent (alpha for the ripped texture set) is:
 		alpha = training / ripped formula
-* Ripped formulas
+* Training is capped at 103% of ripped formula, so player won't perpetually gain
+	leanness and so it can be adjusted properly when gaining weight if Bulk&cut.
+* Ripped formulas go from
 		p1 = (0, min)		p2 = (100, max)		shape = 0.02
 		Where <min> and <max> are provided by the player (MCM).
+		See the google doc to understand this.
 * Player can only win a max of 1.0 training points when sleeping. Sleep
 gains cap at 10 hours.
 * Max Inactivity time = 24
@@ -36,11 +39,8 @@ gains cap at 10 hours.
 			awaken / 120
 		When been awaken => 26					Small penalty
 			awaken / 100		(caps at 1.2)
-;@Functional:
-* Penalties for inactivity
-		p1 = (24, 0.5)		p2 = (96, 12)		shape = 0.04
-* Weight penalty modifier
-		p1 = (0, 1)			p2 = (100, 0.2)		shape = 0.02
+* Penalties for inactivity: see code
+* Weight penalty modifier: see code
 * Widget bars
 	1: Ripped texture set alpha
 	2: WGP (caps at 1)

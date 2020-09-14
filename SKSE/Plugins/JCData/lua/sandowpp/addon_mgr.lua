@@ -29,8 +29,8 @@
     -- onAfterSleep
         -- Won't be piped. Will most likely be a post rocessing operation.
 
-local l = jrequire 'dmlib'
-local const = jrequire 'sandowpp.const'
+local l = require 'dmlib'
+local const = require 'const'
 
 -- ;>========================================================
 -- ;>===               ADDON REGISTERING                ===<;
@@ -38,8 +38,9 @@ local const = jrequire 'sandowpp.const'
 
 -- ;@readme:
 -- Add new addons here. Then register them below.
-local diminish = jrequire 'sandowpp.addonDiminish'
-local anabolics = jrequire 'sandowpp.addonAnabolics'
+local diminish = require 'addonDiminish'
+local anabolics = require 'addonAnabolics'
+local ripped = require 'addonRipped'
 
 -- ;@readme:
 -- You NEED to register addons here.
@@ -49,7 +50,8 @@ local anabolics = jrequire 'sandowpp.addonAnabolics'
 --- you can use them.
 local addOnTable = {
     [const.addon.name.diminish] = diminish,
-    [const.addon.name.anabolics] = anabolics
+    [const.addon.name.anabolics] = anabolics,
+    [const.addon.name.ripped] = ripped
 }
 
 -- ;>========================================================

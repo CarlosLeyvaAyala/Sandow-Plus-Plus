@@ -1,6 +1,6 @@
 -- Library for things exclusive to this mod.
 
--- local dmlib = jrequire 'dmlib'
+-- local dmlib = require 'dmlib'
 
 local shared = {}
 
@@ -17,8 +17,8 @@ function shared.traverse(tbl)
     --- @param func function(x) end
     ---@param x table
     return function (func, x)
-        for name, addon in pairs(tbl) do
-            func(addon, name, x.data, x.extra)
+        for name, member in pairs(tbl) do
+            func(member, name, x.data, x.extra)
         end
     end
 end

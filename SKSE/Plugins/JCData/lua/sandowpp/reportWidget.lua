@@ -1,8 +1,8 @@
-local dmlib = jrequire 'dmlib'
-local l = jrequire 'sandowpp.shared'
-local const = jrequire 'sandowpp.const'
--- local l = jrequire 'sandowpp.sandowpp.shared'
--- local const = jrequire 'sandowpp.sandowpp.const'
+local dmlib = require 'dmlib'
+local l = require 'shared'
+local const = require 'const'
+-- local l = require 'sandowpp.shared'
+-- local const = require 'sandowpp.const'
 
 local reportWidget = {}
 
