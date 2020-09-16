@@ -1,6 +1,8 @@
 local dml = require 'dmlib'
 local l = require 'shared'
 local const = require 'const'
+local bhv_all = require 'bhv_all'
+local reportWidget = require 'reportWidget'
 
 local bhv_mgr = {}
 
@@ -30,14 +32,43 @@ end
 --- Generates default values for behaviors.
 function bhv_mgr.default(data)
     traverse(initBhv, {data = data})
+    bhv_all.canLose(data, true)
     bhv_mgr.changeBhv(data, const.bhv.name.bruce)
     return data
 end
+
 
 -- ;>========================================================
 -- ;>===                      CORE                      ===<;
 -- ;>========================================================
 local function currBhv(data) return bhvTbl[data.preset.bhv.current] end
+
+--- Determines if meters should be visible if max/min.
+local function meterVisibility(data)
+    --- returns if a meter should be visible and if its visibility changed.
+    local function mVisible(data, meterName)
+        local oldVisible = reportWidget.mVisible(data, meterName)
+        if reportWidget.hideAtMin(data) and reportWidget.mPercent(data, meterName) <= 0 then
+            return false, oldVisible
+        elseif reportWidget.hideAtMax(data) and reportWidget.mPercent(data, meterName) >= 1 then
+            return false, oldVisible
+        end
+        return oldVisible, false
+    end
+
+    local function testM(data, meterName)
+        local visible, changed = mVisible(data, meterName)
+        reportWidget.mVisible(data, meterName, visible)
+        reportWidget.tweenToPos(data, changed or reportWidget.tweenToPos(data))
+    end
+
+    -- Meters 1 and 2 are the only ones that change visibility based on fullness
+    for i = 1, 2 do
+        testM(data, "meter"..i)
+    end
+
+    return data
+end
 
 function bhv_mgr.changeBhv(data, newBhv)
     if newBhv == data.preset.bhv.current then return end
@@ -51,7 +82,17 @@ function bhv_mgr.changeBhv(data, newBhv)
 end
 
 function bhv_mgr.onSleep(data)
-    currBhv(data).onSleep(data)
+    local flash
+    data, flash = currBhv(data).onSleep(data)
+    reportWidget.mFlash(data, "meter1", flash)
+    return bhv_mgr.onReport(data)
+end
+
+function bhv_mgr.onReport(data)
+    data = currBhv(data).report(data)
+    data = meterVisibility(data)
+    data = reportWidget.mCalcPositions(data)
+    return data
 end
 
 -- ;>========================================================
@@ -71,6 +112,14 @@ function bhv_mgr.generateDataTree(data)
 
     print("Finished generating behaviors\n")
     return data
+end
+
+-- ;>========================================================
+-- ;>===                   INTERFACE                    ===<;
+-- ;>========================================================
+
+function bhv_mgr.canGainWGP(data)
+    return currBhv(data).canGainWGP or true
 end
 
 return bhv_mgr

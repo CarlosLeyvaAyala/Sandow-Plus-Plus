@@ -185,15 +185,15 @@
 				-1,
 				-1,
 				-1,
-				49
+				61
 			]
 		},
 		{
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhvBruce.lua",
 			"bookmarks": [
 				-1,
-				126,
-				-1,
+				209,
+				39,
 				-1,
 				-1,
 				-1,
@@ -201,6 +201,22 @@
 				-1,
 				-1,
 				-1
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhv_mgr.lua",
+			"bookmarks": [
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				61
 			]
 		}
 	]

@@ -92,11 +92,13 @@ local function mProp(name)
     end
 end
 
+local mX = mProp("x")
+local mY = mProp("y")
 reportWidget.mVisible = mProp("visible")
-reportWidget.mX = mProp("x")
-reportWidget.mY = mProp("y")
 reportWidget.mFlash = mProp("flash")
 reportWidget.mPercent = mProp("percent")
+reportWidget.mName = mProp("name")
+reportWidget.mMsg = mProp("message")
 
 -- ;>========================================================
 -- ;>===                     METERS                     ===<;
@@ -171,11 +173,11 @@ end
 
 --- Sets the position (x,y) for a single meter based on its relative position in the widget.
 local function mCalcPosition(data, meterName, relPos)
-    reportWidget.mX(data, meterName, reportWidget.x(data) + mGetBaseX(data))
+    mX(data, meterName, reportWidget.x(data) + mGetBaseX(data))
 
     local y = mFullMeterH(data)
     y = (y * relPos) + reportWidget.y(data) + mGetBaseY(data)
-    reportWidget.mY(data, meterName, y)
+    mY(data, meterName, y)
 end
 
 local function mGetShown(data)
@@ -215,12 +217,13 @@ function reportWidget.default(data)
     reportWidget.transT(data, 1)
     reportWidget.hideAtMin(data, false)
     reportWidget.hideAtMax(data, true)
+    reportWidget.tweenToPos(data, false)
     -- Meters
     reportWidget.setVisibeAll(data, true)
     reportWidget.mCalcPositions(data)
     mPercentAll(data, 0.0)
-    reportWidget.mFlash(data, "meter1", reportWidget.flashCol.danger)
-    reportWidget.mFlash(data, "meter2", reportWidget.flashCol.critical)
+    -- reportWidget.mFlash(data, "meter1", reportWidget.flashCol.danger)
+    -- reportWidget.mFlash(data, "meter2", reportWidget.flashCol.critical)
     return data
 end
 

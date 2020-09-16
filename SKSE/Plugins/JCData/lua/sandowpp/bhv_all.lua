@@ -1,6 +1,7 @@
--- local dml = require 'dmlib'
+local dml = require 'dmlib'
 -- local l = require 'shared'
--- local const = require 'const'
+local reportWidget = require 'reportWidget'
+local c = require 'const'
 
 local bhv_all = {}
 
@@ -20,9 +21,34 @@ end
 function bhv_all.mcmGralProp(key)
     return function (data, value)
         if value ~= nil then data.preset.bhv[key] = value
-        else return data.bhv[key]
+        else return data.preset.bhv[key]
         end
     end
+end
+
+-- ;>========================================================
+-- ;>===                     SHARED                     ===<;
+-- ;>========================================================
+
+bhv_all.canLose = bhv_all.mcmGralProp("canLose")
+
+function bhv_all.flashByDanger(dangerLvl)
+    return dml.case(dangerLvl, {
+        [c.dangerLevels.Critical] = reportWidget.flashCol.critical,
+        [c.dangerLevels.Danger] = reportWidget.flashCol.danger,
+        [c.dangerLevels.Warning] = reportWidget.flashCol.warning
+    },
+    -1
+)
+end
+
+function bhv_all.flashByInactivity(inactivePercent)
+    local danger
+    if inactivePercent >= 1 then danger = c.dangerLevels.Critical
+    elseif inactivePercent >= 0.7 then danger = c.dangerLevels.Warning
+    else danger = c.dangerLevels.Normal
+    end
+    return bhv_all.flashByDanger(danger)
 end
 
 return bhv_all

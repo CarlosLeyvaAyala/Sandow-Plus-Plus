@@ -64,15 +64,15 @@ DM_SandowPP_ReportMeterBase[] _meters
     ; Meters are smart enough to know if they should hide. If one of
     ; them finds out it has to, it sends a signal to all other meters to
     ; tell them to tween for this update.
-    Function WillTween(int data, string p)
-        bool t = JValue.solveInt(data, p)
-        int i = 0
-        While IterateMeters(i)
-            _meters[i].tween = t
-            i += 1
-        EndWhile
-        JValue.solveIntSetter(data, t, 0)
-    EndFunction
+    ; Function WillTween(int data, string p)
+    ;     bool t = JValue.solveInt(data, p)
+    ;     int i = 0
+    ;     While IterateMeters(i)
+    ;         _meters[i].tween = t
+    ;         i += 1
+    ;     EndWhile
+    ;     JValue.solveIntSetter(data, t, 0)
+    ; EndFunction
 
 ;##########################################################################
 ;###                        REPORTING FUNCTIONS                         ###

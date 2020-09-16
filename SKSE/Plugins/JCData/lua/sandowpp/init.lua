@@ -47,6 +47,17 @@ function sandowpp.getDefaults(data)
     return p(data)
 end
 
+--- Registers a training point gained by the player.
+function sandowpp.train(data, skName, now)
+    local train, fatigue = skills.trainingAndFatigue(data, skName)
+    if train and bhv_mgr.canGainWGP(data) then
+        data.state.skillFatigue = (data.state.skillFatigue or 0) + (train * fatigue)
+        data.state.WGP = data.state.WGP + train
+        data.state.lastActive = now
+    end
+    return data
+end
+
 -- ;>========================================================
 -- ;>===                TREE GENERATION                 ===<;
 -- ;>========================================================
@@ -70,15 +81,37 @@ end
 
 local function genPlayerData(data)
     local s = data.state
-    s.WGP = 10
+    s.WGP = 0
     s.hoursSlept = 10
-    s.hoursInactive = 96
-    s.hoursAwaken = 0
-    s.weight = 0
+    s.hoursInactive = 14
+    s.hoursAwaken = 20
+    s.weight = 100
 
     return data
 end
 
+local function testTrain(data)
+    sandowpp.train(data, "TwoHanded", 1)
+    sandowpp.train(data, "Enchanting", 1)
+    sandowpp.train(data, "OneHanded", 1)
+    sandowpp.train(data, "Sneak", 1)
+    sandowpp.train(data, "Alteration", 1)
+    return data
+end
+
+local function simulateDays(data)
+    print("Simulating training days")
+    print("==================================")
+    for i = 1, 15 do
+        print("Day ".. i)
+        print("===============")
+        data = testTrain(data)
+        data = sandowpp.onSleep(data)
+        print("")
+    end
+
+    return data
+end
 --- See `_test.lua` at:
 --- https://github.com/CarlosLeyvaAyala/Sandow-Plus-Plus
 function sandowpp.runTest()
@@ -87,7 +120,7 @@ function sandowpp.runTest()
         sandowpp.installAddons,
         genPlayerData,
         sandowpp.getDefaults,
-        sandowpp.onSleep
+        simulateDays
     )
     data = p(data)
     -- print(addon_mgr.onGainMult(data, 1, 0))

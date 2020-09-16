@@ -346,8 +346,6 @@ EndFunction
 
 ; Decides how much WGP and fatigue will be added.
 Function Train(string aSkill)
-    ; Trace("Main.Train(" + aSkill + ")")
-
     if aSkill == "TwoHanded"
         TrainAndFatigue(Config.skillRatio2H, Config.physFatigueRate)
     elseif aSkill == "OneHanded"

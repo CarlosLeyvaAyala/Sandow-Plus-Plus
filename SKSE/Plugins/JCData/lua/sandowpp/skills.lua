@@ -15,6 +15,18 @@ function skills.skillTraining(data, skName, x)
     end
 end
 
+function skills.skillFatigue(data, skName)
+    return data.preset.bhv.skills[skName].fatigue
+end
+
+function skills.trainingAndFatigue(data, skName)
+    if not c.skills.physical[skName] and not c.skills.magical[skName] then
+        return nil, nil
+    else
+        return skills.skillTraining(data, skName), skills.skillFatigue(data, skName)
+    end
+end
+
 -- ;>========================================================
 -- ;>===                     SETUP                      ===<;
 -- ;>========================================================
@@ -65,7 +77,7 @@ end
 --- Generates default values and multipliers for all skills.
 --- @param data table
 function skills.default(data)
-    data.preset.bhv.skills.fatigueMul = 1
+    data.preset.bhv.skills.fatigueMul = 1 -- This value is used to configure mulitpliers in the mcm
     skills.defaultMult(data)
     skills.defaultTraining(data)
     return data
