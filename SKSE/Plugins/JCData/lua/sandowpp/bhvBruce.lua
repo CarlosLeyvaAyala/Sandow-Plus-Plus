@@ -1,8 +1,8 @@
-local l = require 'dmlib'
-local c = require 'const'
-local rip = require 'addonRipped'
-local bhv_all = require 'bhv_all'
-local reportWidget = require 'reportWidget'
+local l = jrequire 'dmlib'
+local c = jrequire 'sandowpp.const'
+local rip = jrequire 'sandowpp.addonRipped'
+local bhv_all = jrequire 'sandowpp.bhv_all'
+local reportWidget = jrequire 'sandowpp.reportWidget'
 
 local bhvBruce = {}
 
@@ -13,7 +13,7 @@ local bhvBruce = {}
 local trainRatio = 0.1
 local capSleep = l.forceMax(10)
 local allowedAwakenHrs = 30
-local allowedInactivity = 17
+local allowedInactivity = 30
 local name = c.bhv.name.bruce
 
 local _OldWGP = bhv_all.internalProp(name, "_oldWGP")
@@ -106,7 +106,7 @@ function bhvBruce.currLeanness(data)
     return l.forcePercent(training(data) / daysToMaxLeanness(data.state.weight))
 end
 
-local addons = require 'addon_mgr'
+local addons = jrequire 'sandowpp.addon_mgr'
 
 --- Applies gains modifiers.
 local function applyGainMod(data, gains)
@@ -137,18 +137,34 @@ local function gains(data)
     return training(data) + todayTrained, wgp
 end
 
---- Returns processed data and which color should the main bar flash.
-function bhvBruce.onSleep(data)
-    closeFuncs(data)
-    -- Cap before processing
-    local train, flash = capLeanness(training(data)), -1
-    training(data, train)
-    print("start ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
-    -- Core calculations
-    if canLose(data) then flash, train, data.state.WGP = reportWidget.flashCol.down, losses(data)
-    else flash, train, data.state.WGP = reportWidget.flashCol.up, gains(data)
+local function gainOrLose(data, train)
+    local flash = -1
+    if canLose(data) then
+        flash, train, data.state.WGP = reportWidget.flashCol.down, losses(data)
+    else
+        flash, train, data.state.WGP = reportWidget.flashCol.up, gains(data)
     end
     training(data, capLeanness(train))
+    data.state.lastSlept = -1
+    return data, flash
+end
+
+local function prepareBeforeSleep(data)
+    -- data.preset.addons.diminishingReturns.enabled= false
+    closeFuncs(data)
+
+    -- Cap before processing
+    local train = capLeanness(training(data))
+    training(data, train)
+    return train
+end
+
+--- Returns processed data and which color should the main bar flash.
+function bhvBruce.onSleep(data)
+    local train, flash = prepareBeforeSleep(data), -1
+    print("start ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
+    -- Core calculations
+    data, flash = gainOrLose(data, train)
     print("result ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
     return data, flash
 end
@@ -163,6 +179,7 @@ end
 
 local function storeOldWGP(data)
     local s = data.state
+    s.WGP = s.WGP or 0
     _OldWGP(data, s.WGP)
     s.WGP = l.forcePercent(s.WGP)
 end
@@ -192,6 +209,7 @@ local function log(msg, val)
 end
 
 function bhvBruce.report(data)
+    closeFuncs(data)
     reportWidget.mPercent(data, "meter1", bhvBruce.currLeanness(data))
     reportWidget.mPercent(data, "meter2", data.state.WGP)
     if not bhv_all.canLose(data) then
@@ -208,7 +226,6 @@ function bhvBruce.report(data)
         reportWidget.mPercent(data, "meter4", inactive)
         reportWidget.mFlash(data, "meter4", bhv_all.flashByInactivity(inactive))
     end
-    -- ;TODO: check if meter must be hidden
     return data
 end
 

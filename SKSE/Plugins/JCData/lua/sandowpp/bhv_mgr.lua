@@ -1,15 +1,15 @@
-local dml = require 'dmlib'
-local l = require 'shared'
-local const = require 'const'
-local bhv_all = require 'bhv_all'
-local reportWidget = require 'reportWidget'
+local dml = jrequire 'dmlib'
+local l = jrequire 'sandowpp.shared'
+local const = jrequire 'sandowpp.const'
+local bhv_all = jrequire 'sandowpp.bhv_all'
+local reportWidget = jrequire 'sandowpp.reportWidget'
 
 local bhv_mgr = {}
 
 -- ;>========================================================
 -- ;>===                  REGISTERING                   ===<;
 -- ;>========================================================
-local bhvBruce = require 'bhvBruce'
+local bhvBruce = jrequire 'sandowpp.bhvBruce'
 
 local bhvTbl = {
     [const.bhv.name.paused] = "nil",
@@ -48,10 +48,16 @@ local function meterVisibility(data)
     --- returns if a meter should be visible and if its visibility changed.
     local function mVisible(data, meterName)
         local oldVisible = reportWidget.mVisible(data, meterName)
-        if reportWidget.hideAtMin(data) and reportWidget.mPercent(data, meterName) <= 0 then
-            return false, oldVisible
-        elseif reportWidget.hideAtMax(data) and reportWidget.mPercent(data, meterName) >= 1 then
-            return false, oldVisible
+        local function shouldHide(condition)
+            if condition then return false, oldVisible
+            else return true, oldVisible ~= true
+            end
+        end
+
+        if reportWidget.hideAtMin(data) then
+            return shouldHide(reportWidget.mPercent(data, meterName) <= 0)
+        elseif reportWidget.hideAtMax(data) then
+            return shouldHide(reportWidget.mPercent(data, meterName) >= 1)
         end
         return oldVisible, false
     end
@@ -63,9 +69,7 @@ local function meterVisibility(data)
     end
 
     -- Meters 1 and 2 are the only ones that change visibility based on fullness
-    for i = 1, 2 do
-        testM(data, "meter"..i)
-    end
+    for i = 1, 2 do testM(data, "meter"..i) end
 
     return data
 end

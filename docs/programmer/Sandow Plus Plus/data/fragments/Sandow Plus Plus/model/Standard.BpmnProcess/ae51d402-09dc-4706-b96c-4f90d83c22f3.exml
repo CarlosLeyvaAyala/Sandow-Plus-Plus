@@ -1,0 +1,202 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Papyrus" version="4">
+  <OBJECT>
+    <ID name="Papyrus" mc="Standard.BpmnProcess" uid="ae51d402-09dc-4706-b96c-4f90d83c22f3"/>
+    <PID name="sandow plus plus" mc="Standard.Package" uid="9c13a71f-7c90-4ec3-b33d-50b43946ac35"/>
+    <ATTRIBUTES>
+      <ATT name="ProcessType">NoneProcess</ATT>
+      <ATT name="IsClosed">false</ATT>
+      <ATT name="IsExecutable">OUndefined</ATT>
+      <ATT name="IsReentrant">false</ATT>
+      <ATT name="Name"><![CDATA[Papyrus]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="FlowElement">
+        <OBJECT>
+          <ID name="Start" mc="Standard.BpmnStartEvent" uid="ac16f4f2-7ccb-43c2-a53c-765621144ac7"/>
+          <ATTRIBUTES>
+            <ATT name="IsInterrupting">true</ATT>
+            <ATT name="ParallelMultiple">false</ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[Start]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="End" mc="Standard.BpmnEndEvent" uid="c145d007-9304-402a-8298-6f824047b2d1"/>
+          <ATTRIBUTES>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[End]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Create JContainers structure" mc="Standard.BpmnTask" uid="5f94f48d-80e9-43e1-bf2d-2b35a508dfe7"/>
+          <ATTRIBUTES>
+            <ATT name="IsGlobal">false</ATT>
+            <ATT name="IsForCompensation">false</ATT>
+            <ATT name="StartQuantity">1</ATT>
+            <ATT name="CompletionQuantity">1</ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[Create JContainers structure]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="DependsOnDependency">
+              <OBJECT>
+                <ID name="" mc="Infrastructure.Dependency" uid="2c7bd999-1a7e-41bb-a0de-e438f94dd854"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="DependsOn">
+                    <REFOBJ>
+                      <ID name="Note" mc="Infrastructure.Note" uid="6834abbd-aa2f-4ccc-86b3-6556d5984343"/>
+                    </REFOBJ>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="" mc="Standard.BpmnSequenceFlow" uid="45619eef-1164-44be-8c48-116312afc190"/>
+          <ATTRIBUTES>
+            <ATT name="IsImmediate">false</ATT>
+            <ATT name="ConditionExpression"></ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="Start" mc="Standard.BpmnStartEvent" uid="ac16f4f2-7ccb-43c2-a53c-765621144ac7"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Create JContainers structure" mc="Standard.BpmnTask" uid="5f94f48d-80e9-43e1-bf2d-2b35a508dfe7"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="" mc="Standard.BpmnSequenceFlow" uid="85542db2-3392-4840-8d2e-5f74297c0498"/>
+          <ATTRIBUTES>
+            <ATT name="IsImmediate">false</ATT>
+            <ATT name="ConditionExpression"></ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="Create JContainers structure" mc="Standard.BpmnTask" uid="5f94f48d-80e9-43e1-bf2d-2b35a508dfe7"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Process data in Lua" mc="Standard.BpmnTask" uid="a6f4faad-4cf5-415a-b699-917f3f0e59ff"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Apply new values to Skyrim objects" mc="Standard.BpmnTask" uid="99b8c35e-c28f-4b01-9de4-d142f66cd75f"/>
+          <ATTRIBUTES>
+            <ATT name="IsGlobal">false</ATT>
+            <ATT name="IsForCompensation">false</ATT>
+            <ATT name="StartQuantity">1</ATT>
+            <ATT name="CompletionQuantity">1</ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[Apply new values to Skyrim objects]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="f" mc="Standard.BpmnSequenceFlow" uid="f1665c95-c4f8-441d-b364-0e7054124f5c"/>
+          <ATTRIBUTES>
+            <ATT name="IsImmediate">false</ATT>
+            <ATT name="ConditionExpression"></ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[f]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="Apply new values to Skyrim objects" mc="Standard.BpmnTask" uid="99b8c35e-c28f-4b01-9de4-d142f66cd75f"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="End" mc="Standard.BpmnEndEvent" uid="c145d007-9304-402a-8298-6f824047b2d1"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Process data in Lua" mc="Standard.BpmnTask" uid="a6f4faad-4cf5-415a-b699-917f3f0e59ff"/>
+          <ATTRIBUTES>
+            <ATT name="IsGlobal">false</ATT>
+            <ATT name="IsForCompensation">false</ATT>
+            <ATT name="StartQuantity">1</ATT>
+            <ATT name="CompletionQuantity">1</ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[Process data in Lua]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES></DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="f1" mc="Standard.BpmnSequenceFlow" uid="657b6d6c-55ab-42c2-b107-c8072e3a9682"/>
+          <ATTRIBUTES>
+            <ATT name="IsImmediate">false</ATT>
+            <ATT name="ConditionExpression"></ATT>
+            <ATT name="TriggeredByEvent">false</ATT>
+            <ATT name="Name"><![CDATA[f1]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="Process data in Lua" mc="Standard.BpmnTask" uid="a6f4faad-4cf5-415a-b699-917f3f0e59ff"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Apply new values to Skyrim objects" mc="Standard.BpmnTask" uid="99b8c35e-c28f-4b01-9de4-d142f66cd75f"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="Process" mc="Standard.BpmnProcessDesignDiagram" uid="47ac2a5c-49cd-4709-9e08-ff481121e8ad"/>
+      </COMP>
+      <COMP relation="Descriptor">
+        <OBJECT>
+          <ID name="Note" mc="Infrastructure.Note" uid="6834abbd-aa2f-4ccc-86b3-6556d5984343"/>
+          <ATTRIBUTES>
+            <ATT name="Content"><![CDATA[It contains values from Skyirm objects.]]></ATT>
+            <ATT name="MimeType"><![CDATA[text/plain]]></ATT>
+            <ATT name="Name"><![CDATA[Note]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="Model">
+              <FOREIGNID name="description" mc="Infrastructure.NoteType" uid="00000000-0000-3e81-0000-000000000000"/>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

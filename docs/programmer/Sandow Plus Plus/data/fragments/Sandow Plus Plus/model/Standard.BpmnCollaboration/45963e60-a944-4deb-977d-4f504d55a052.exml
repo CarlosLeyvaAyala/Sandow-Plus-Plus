@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
-<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Collaboration" version="4">
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="On new game" version="4">
   <OBJECT>
-    <ID name="Collaboration" mc="Standard.BpmnCollaboration" uid="45963e60-a944-4deb-977d-4f504d55a052"/>
+    <ID name="On new game" mc="Standard.BpmnCollaboration" uid="45963e60-a944-4deb-977d-4f504d55a052"/>
     <PID name="sandow plus plus" mc="Standard.Package" uid="9c13a71f-7c90-4ec3-b33d-50b43946ac35"/>
     <ATTRIBUTES>
       <ATT name="IsClosed">false</ATT>
       <ATT name="IsReentrant">false</ATT>
-      <ATT name="Name"><![CDATA[Collaboration]]></ATT>
+      <ATT name="Name"><![CDATA[On new game]]></ATT>
       <ATT name="status">1970354901745664</ATT>
     </ATTRIBUTES>
     <DEPENDENCIES>

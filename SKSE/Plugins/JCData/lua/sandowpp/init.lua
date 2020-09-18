@@ -15,14 +15,14 @@
 -- for this (maybe we need to create a JObject instead of a table?).
 -- Fortunately, tables seem to be properly allocating inside Lua structrues themselves.
 
-package.path = package.path..";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
-package.path = package.path..";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
+-- package.path = package.path..";E:/Skyrim SE/MO2/mods/DM-SkyrimSE-Library/SKSE/Plugins/JCData/lua/?/init.lua"
+-- package.path = package.path..";E:/Skyrim SE/MO2/mods/JContainers SE/SKSE/Plugins/JCData/lua/?/init.lua"
 
-local l = require 'dmlib'
-local addon_mgr = require 'addon_mgr'
-local bhv_mgr = require 'bhv_mgr'
-local reportWidget = require 'reportWidget'
-local skills = require 'skills'
+local l = jrequire 'dmlib'
+local addon_mgr = jrequire 'sandowpp.addon_mgr'
+local bhv_mgr = jrequire 'sandowpp.bhv_mgr'
+local reportWidget = jrequire 'sandowpp.reportWidget'
+local skills = jrequire 'sandowpp.skills'
 
 local sandowpp = {}
 
@@ -37,6 +37,7 @@ local data = {
 sandowpp.installAddons = addon_mgr.installAll
 sandowpp.widgetChangeVAlign = reportWidget.changeVAlign
 sandowpp.onSleep = bhv_mgr.onSleep
+sandowpp.onReport = bhv_mgr.onReport
 
 function sandowpp.getDefaults(data)
     local p = l.pipe(
@@ -48,15 +49,23 @@ function sandowpp.getDefaults(data)
 end
 
 --- Registers a training point gained by the player.
-function sandowpp.train(data, skName, now)
+function sandowpp.train(data, skName)
     local train, fatigue = skills.trainingAndFatigue(data, skName)
     if train and bhv_mgr.canGainWGP(data) then
-        data.state.skillFatigue = (data.state.skillFatigue or 0) + (train * fatigue)
-        data.state.WGP = data.state.WGP + train
-        data.state.lastActive = now
+        sandowpp.trainAndFatigue(data, train, fatigue)
     end
     return data
 end
+
+--- Registers training and fatigue gained by the player.
+--- This needs to be accessible to Papyrus because weight sacks directly call this.
+function sandowpp.trainAndFatigue(data, train, fatigue)
+    data.state.skillFatigue = (data.state.skillFatigue or 0) + (train * fatigue)
+    data.state.WGP = data.state.WGP + train
+    data.state.lastActive = -1
+    return data
+end
+
 
 -- ;>========================================================
 -- ;>===                TREE GENERATION                 ===<;
@@ -85,24 +94,24 @@ local function genPlayerData(data)
     s.hoursSlept = 10
     s.hoursInactive = 14
     s.hoursAwaken = 20
-    s.weight = 100
+    s.weight = 0
 
     return data
 end
 
 local function testTrain(data)
-    sandowpp.train(data, "TwoHanded", 1)
-    sandowpp.train(data, "Enchanting", 1)
-    sandowpp.train(data, "OneHanded", 1)
-    sandowpp.train(data, "Sneak", 1)
-    sandowpp.train(data, "Alteration", 1)
+    sandowpp.train(data, "TwoHanded")
+    sandowpp.train(data, "Enchanting")
+    sandowpp.train(data, "OneHanded")
+    sandowpp.train(data, "Sneak")
+    sandowpp.train(data, "Alteration")
     return data
 end
 
 local function simulateDays(data)
     print("Simulating training days")
     print("==================================")
-    for i = 1, 15 do
+    for i = 1, 35 do
         print("Day ".. i)
         print("===============")
         data = testTrain(data)
@@ -123,8 +132,6 @@ function sandowpp.runTest()
         simulateDays
     )
     data = p(data)
-    -- print(addon_mgr.onGainMult(data, 1, 0))
-    -- print(addon_mgr.onGainMult(data, 1, 1))
     return data
 end
 

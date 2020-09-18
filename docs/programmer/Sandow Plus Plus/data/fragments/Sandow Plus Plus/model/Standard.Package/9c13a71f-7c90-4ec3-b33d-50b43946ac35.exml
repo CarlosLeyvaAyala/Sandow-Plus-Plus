@@ -15,9 +15,12 @@
     <DEPENDENCIES>
       <COMP relation="OwnedBehavior">
         <COMPID name="Communication Interaction" mc="Standard.CommunicationInteraction" uid="43cd204d-b920-44ca-9f8e-85198635dcc3"/>
-        <COMPID name="Collaboration" mc="Standard.BpmnCollaboration" uid="45963e60-a944-4deb-977d-4f504d55a052"/>
+        <COMPID name="On new game" mc="Standard.BpmnCollaboration" uid="45963e60-a944-4deb-977d-4f504d55a052"/>
         <COMPID name="OnNewGame" mc="Standard.BpmnProcess" uid="d170ca4c-58be-4a3b-8407-9b5686341e52"/>
-        <COMPID name="Process" mc="Standard.BpmnProcess" uid="c1441954-bb90-4bb8-b8be-d3eac558590d"/>
+        <COMPID name="Load addons" mc="Standard.BpmnProcess" uid="c1441954-bb90-4bb8-b8be-d3eac558590d"/>
+        <COMPID name="Papyrus-Lua workflow" mc="Standard.BpmnCollaboration" uid="2b0713da-9a38-4dd2-8739-91d5a071be65"/>
+        <COMPID name="Papyrus" mc="Standard.BpmnProcess" uid="ae51d402-09dc-4706-b96c-4f90d83c22f3"/>
+        <COMPID name="Lua" mc="Standard.BpmnProcess" uid="5d3f919c-3506-4b7a-912e-3749606a101d"/>
       </COMP>
     </DEPENDENCIES>
   </OBJECT>

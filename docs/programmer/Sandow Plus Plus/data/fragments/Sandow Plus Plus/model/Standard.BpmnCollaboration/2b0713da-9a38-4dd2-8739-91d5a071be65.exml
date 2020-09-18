@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Papyrus-Lua workflow" version="4">
+  <OBJECT>
+    <ID name="Papyrus-Lua workflow" mc="Standard.BpmnCollaboration" uid="2b0713da-9a38-4dd2-8739-91d5a071be65"/>
+    <PID name="sandow plus plus" mc="Standard.Package" uid="9c13a71f-7c90-4ec3-b33d-50b43946ac35"/>
+    <ATTRIBUTES>
+      <ATT name="IsClosed">false</ATT>
+      <ATT name="IsReentrant">false</ATT>
+      <ATT name="Name"><![CDATA[Papyrus-Lua workflow]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="MessageFlow">
+        <OBJECT>
+          <ID name="JValue.evalLuaFlt/Int/Str/Form/Obj" mc="Standard.BpmnMessageFlow" uid="805831c3-2d52-48d4-97f6-4d77703cc3fb"/>
+          <ATTRIBUTES>
+            <ATT name="Name"><![CDATA[JValue.evalLuaFlt/Int/Str/Form/Obj]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="Process data in Lua" mc="Standard.BpmnTask" uid="a6f4faad-4cf5-415a-b699-917f3f0e59ff"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Start" mc="Standard.BpmnStartEvent" uid="0759e15b-9584-4c77-bd60-146f129d9265"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="return" mc="Standard.BpmnMessageFlow" uid="049b2ec7-2831-49d3-87ba-4b06a6bd5780"/>
+          <ATTRIBUTES>
+            <ATT name="Name"><![CDATA[return]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="SourceRef">
+              <REFOBJ>
+                <ID name="End" mc="Standard.BpmnEndEvent" uid="9321763a-64df-4263-81d1-0a32cb79e9f8"/>
+              </REFOBJ>
+            </LINK>
+            <LINK relation="TargetRef">
+              <REFOBJ>
+                <ID name="Apply new values to Skyrim objects" mc="Standard.BpmnTask" uid="99b8c35e-c28f-4b01-9de4-d142f66cd75f"/>
+              </REFOBJ>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Participants">
+        <OBJECT>
+          <ID name="Papyrus" mc="Standard.BpmnParticipant" uid="e0084438-1763-4301-b6cd-1e12bef712ed"/>
+          <ATTRIBUTES>
+            <ATT name="MultiplicityMin">0</ATT>
+            <ATT name="MultiplicityMax">0</ATT>
+            <ATT name="Name"><![CDATA[Papyrus]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="Process">
+              <ID name="Papyrus" mc="Standard.BpmnProcess" uid="ae51d402-09dc-4706-b96c-4f90d83c22f3"/>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+        <OBJECT>
+          <ID name="Lua" mc="Standard.BpmnParticipant" uid="31f49b42-3b7f-49b9-85bf-c91b8f267f97"/>
+          <ATTRIBUTES>
+            <ATT name="MultiplicityMin">0</ATT>
+            <ATT name="MultiplicityMax">0</ATT>
+            <ATT name="Name"><![CDATA[Lua]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="Process">
+              <ID name="Lua" mc="Standard.BpmnProcess" uid="5d3f919c-3506-4b7a-912e-3749606a101d"/>
+            </LINK>
+            <COMP relation="Descriptor">
+              <OBJECT>
+                <ID name="" mc="Infrastructure.Note" uid="51f76593-641f-40b7-8ecb-540e8f2d9310"/>
+                <ATTRIBUTES>
+                  <ATT name="Content"><![CDATA[<Enter note text here>]]></ATT>
+                  <ATT name="MimeType"><![CDATA[text/plain]]></ATT>
+                  <ATT name="Name"></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="Model">
+                    <FOREIGNID name="description" mc="Infrastructure.NoteType" uid="00000000-0000-3e81-0000-000000000000"/>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="Papyrus-Lua workflow" mc="Standard.BpmnCollaborationDiagram" uid="894b435b-95d1-411b-a3f2-a3a412657102"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

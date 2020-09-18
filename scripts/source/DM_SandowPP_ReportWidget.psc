@@ -37,9 +37,14 @@ DM_SandowPP_ReportMeterBase[] _meters
 ;>===                      CORE                      ===<;
 ;>========================================================
 
-    Function Report(int data)
+    Function ForceReport(int data)
         Cache(data)
+        WillTween(data)
         Apply()
+    EndFunction
+
+    Function Report(int data)
+        ForceReport(data)
     EndFunction
 
     ; Caches data to apply it as synchronically as possible.
@@ -60,19 +65,17 @@ DM_SandowPP_ReportMeterBase[] _meters
         EndWhile
     EndFunction
 
-    ;FIXME: The behavior must set this.
-    ; Meters are smart enough to know if they should hide. If one of
-    ; them finds out it has to, it sends a signal to all other meters to
-    ; tell them to tween for this update.
-    ; Function WillTween(int data, string p)
-    ;     bool t = JValue.solveInt(data, p)
-    ;     int i = 0
-    ;     While IterateMeters(i)
-    ;         _meters[i].tween = t
-    ;         i += 1
-    ;     EndWhile
-    ;     JValue.solveIntSetter(data, t, 0)
-    ; EndFunction
+    ; The Behavior Manager (Lua) has detected meters should tween to their pos.
+    Function WillTween(int data)
+        string p = ".widget.tweenToPos"
+        bool t = JValue.solveInt(data, p)
+        int i = 0
+        While IterateMeters(i)
+            _meters[i].tween = t
+            i += 1
+        EndWhile
+        JValue.solveIntSetter(data, p, 0, true)
+    EndFunction
 
 ;##########################################################################
 ;###                        REPORTING FUNCTIONS                         ###

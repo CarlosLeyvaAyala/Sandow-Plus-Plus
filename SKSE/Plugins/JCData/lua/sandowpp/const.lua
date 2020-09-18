@@ -1,4 +1,4 @@
-local l = require 'dmlib'
+local l = jrequire 'dmlib'
 local const = {}
 
 const.addon = {

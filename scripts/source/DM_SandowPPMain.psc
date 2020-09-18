@@ -1,6 +1,3 @@
-; Some comments are in english because I'm sure as hell you'll see this script.
-; If you want to change something, try to change only the things that are marked as
-; safe to change. Otherwise, you are bound to break this mod balance.
 Scriptname DM_SandowPPMain extends DM_SandowPPMain_Interface
 {Sandow Plus Plus main script. This controls everything.}
 
@@ -88,14 +85,15 @@ bool _t = false
 Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
         ; Algorithm.ReportOnHotkey(AlgorithmData)
-        If _t
-            UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'bottom')"))
-            _t = false
-        else
-            UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'center')"))
-            _t = true
-        EndIf
-        ReportWidget.Report(GetDataTree())
+        ; If _t
+        ;     UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'bottom')"))
+        ;     _t = false
+        ; else
+        ;     UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'center')"))
+        ;     _t = true
+        ; EndIf
+        ReportPlayer()
+
         ; TestSave(2)
     EndIf
     ; If KeyCode == 200
@@ -118,34 +116,6 @@ Event OnInit()
     ; EndIf
 EndEvent
 
-Function PreparePlayerToSleep()
-    {Being in animation (from Posers or something) while sleeping seems to freeze the game. Avoid it.}
-    If Player.IsWeaponDrawn()
-        Player.SheatheWeapon()
-    EndIf
-EndFunction
-
-Event OnSleepStart(float aStartTime, float aEndTime)
-    {Prepare player to sleep. Setup sleeping time and total hours awaken.}
-    PreparePlayerToSleep()
-    CurrentState.HoursAwaken = CurrentState.HoursAwakenRT() ; Freeze hours awaken because he just went to sleep. Duh!
-    _goneToSleepAt           = Now()                        ; Just went to sleep
-endEvent
-
-Event OnSleepStop(bool aInterrupted)
-    { Main calculation. This is the core of this mod. }
-    CurrentState.HoursSlept = ToRealHours(Now() - _goneToSleepAt)       ; Hours actually slept. Player can cancel.
-    If CurrentState.HoursSlept < 1
-        Return      ; Do nothing if didn't really slept
-    EndIf
-    CurrentState.Assign( Algorithm.OnSleep(AlgorithmData) )             ; Main calculation. Yep; that's all.
-    CurrentState.WeightGainMultiplier = 1.0                             ; Weight gain from anabolics expires on sleep
-    ChangeHeadSize()
-    CalcPlayerRippedness()
-    If Config.VerboseMod
-        Algorithm.ReportSleep(AlgorithmData)
-    EndIf
-endEvent
 
 int _bulkCutDays = 0
 DM_SandowPP_RippedPlayer _rippedPlayer
@@ -227,17 +197,17 @@ EndFunction
             ;
             ; That premade file contains the overall data structure for this mod.
         Function InitDataTree()
-            Trace(cfgDir)
-            UpdateData(JValue.readFromFile(cfgDir + "bare tree.json"))
+            UpdateDataTree(JValue.readFromFile(cfgDir + "bare tree.json"))
         EndFunction
 
         Function LoadDefaults()
-            UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.getDefaults(jobject)"))
+            ExecuteLua("return sandowpp.getDefaults(jobject)")
+            ; UpdateDataTree(JValue.evalLuaObj(GetDataTree(), "return sandowpp.getDefaults(jobject)"))
         EndFunction
 
         ; Creates the addon data tree in memory, so this mod can be used.
         Function LoadAddons()
-            UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)"))
+            UpdateDataTree(JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)"))
         EndFunction
 
     ; Gets the handle for the whole data tree.
@@ -249,13 +219,105 @@ EndFunction
         return JDB.solveObj("." + jDBRoot)
     EndFunction
 
-    Function UpdateData(int data)
+    Function UpdateDataTree(int data)
         JDB.setObj(jDBRoot, data)
     EndFunction
 
     Function TestSave(int f = 1)
         JValue.writeToFile(GetDataTree(), JContainers.userDirectory() + "spp" + f + ".json")
     EndFunction
+
+; Adds WGP/training and fatigue.
+Function Train(string aSkill)
+    ExecuteLua("return sandowpp.train(jobject, '" + aSkill + "')")
+    ReportPlayer()
+EndFunction
+
+Function ReportPlayer()
+    PapyrusToLuaState()
+    ExecuteLua("return sandowpp.onReport(jobject)")
+    ReportWidget.Report(GetDataTree())
+EndFunction
+
+; Gets the data tree and sends it to some Lua function, then updates data tree.
+Function ExecuteLua(string str)
+    UpdateDataTree(JValue.evalLuaObj(GetDataTree(), str))
+EndFunction
+
+; Saves current player variables so they can be processed by Lua.
+Function PapyrusToLuaState()
+    string s = ".state."
+    int data = GetDataTree()
+    float ls = GetLastSlept(data)
+    float la = GetLastActive(data)
+    JValue.solveFltSetter(data, s + "weight", Player.GetActorBase().GetWeight(), true)
+    JValue.solveFltSetter(data, s + "hoursAwaken", HourSpan(ls), true)
+    JValue.solveFltSetter(data, s + "hoursInactive", HourSpan(la), true)
+    UpdateDataTree(data)
+EndFunction
+
+; Avoids a bug when creating a new game when this mod seems to be initialized way
+; before the current date.
+; If not for this check, player would get they haven't slept for 3000 hours or so
+; the first time they play the game.
+float Function GetLastSlept(int data)
+    return EnsureTime(data, ".state.lastSlept")
+EndFunction
+
+float Function GetLastActive(int data)
+    return EnsureTime(data, ".state.lastActive")
+EndFunction
+
+; If an expected time is -1, sets it to now.
+float Function EnsureTime(int data, string path)
+    float ls = JValue.solveFlt(data, path, -1)
+    If ls < 0
+        ls = Now()
+        JValue.solveFltSetter(data, path, ls, true)
+    EndIf
+    return ls
+EndFunction
+
+; Retuns in real hours how much time has passed between do game hours.
+float Function HourSpan(float then)
+    Return ToRealHours(Now() - then)
+EndFunction
+
+    ;region: Sleeping
+        ; Being in animation (from Posers or something) while sleeping seems to freeze the game. Avoid it.
+        Function PreparePlayerToSleep()
+            If Player.IsWeaponDrawn()
+                Player.SheatheWeapon()
+            EndIf
+            PapyrusToLuaState()
+        EndFunction
+
+        Function SetHoursSlept(float hoursSlept)
+            int data = GetDataTree()
+            JValue.solveFltSetter(data, ".state.hoursSlept", hoursSlept, true)
+            UpdateDataTree(data)
+        EndFunction
+
+        ; Prepare player to sleep. Setup sleeping time and total hours awaken.
+        Event OnSleepStart(float aStartTime, float aEndTime)
+            ; TODO: Pause widget reporting loop
+            PreparePlayerToSleep()
+            _goneToSleepAt = Now()                        ; Just went to sleep
+        endEvent
+
+        ; Main calculation. This is the core of this mod.
+        Event OnSleepStop(bool aInterrupted)
+            float hoursSlept = HourSpan(_goneToSleepAt)       ; Hours actually slept, since player can cancel.
+            If hoursSlept < 1
+                Return      ; Do nothing if didn't really slept
+            EndIf
+            SetHoursSlept(hoursSlept)
+            ExecuteLua("return sandowpp.onSleep(jobject)")
+            ChangeHeadSize()
+            ReportPlayer()
+            ; TODO: Unpause report loop
+        endEvent
+
 
 ;>=========================================================
 ;>===                       END                         ===
@@ -342,60 +404,6 @@ Function RegisterAgainHotkey(int oldKey)
     if oldKey != Config.hotkeyInvalid
         RegisterForKey(oldKey)
     EndIf
-EndFunction
-
-; Decides how much WGP and fatigue will be added.
-Function Train(string aSkill)
-    if aSkill == "TwoHanded"
-        TrainAndFatigue(Config.skillRatio2H, Config.physFatigueRate)
-    elseif aSkill == "OneHanded"
-        TrainAndFatigue(Config.skillRatio1H, Config.physFatigueRate)
-    elseif aSkill == "Block"
-        TrainAndFatigue(Config.skillRatioBl, Config.physFatigueRate)
-    elseif aSkill == "Marksman"
-        TrainAndFatigue(Config.skillRatioAr, Config.physFatigueRate)
-    elseif aSkill == "HeavyArmor"
-        TrainAndFatigue(Config.skillRatioHa, Config.physFatigueRate)
-    elseif aSkill == "LightArmor"
-        TrainAndFatigue(Config.skillRatioLa, Config.physFatigueRate)
-    elseif aSkill == "Sneak"
-        TrainAndFatigue(Config.skillRatioSn, Config.physFatigueRate)
-    elseif aSkill == "Smithing"
-        TrainAndFatigue(Config.skillRatioSm, Config.physFatigueRate)
-    elseif aSkill == "Alteration"
-        TrainAndFatigue(Config.skillRatioAl, Config.magFatigueRate)
-    elseif aSkill == "Conjuration"
-        TrainAndFatigue(Config.skillRatioCo, Config.magFatigueRate)
-    elseif aSkill == "Destruction"
-        TrainAndFatigue(Config.skillRatioDe, Config.magFatigueRate)
-    elseif aSkill == "Illusion"
-        TrainAndFatigue(Config.skillRatioIl, Config.magFatigueRate)
-    elseif aSkill == "Restoration"
-        TrainAndFatigue(Config.skillRatioRe, Config.magFatigueRate)
-    EndIf
-EndFunction
-
-; Apply fatigue, WGP and inactivity related things.
-Function TrainAndFatigue(float aSkillTraining, float aSkillFatigueRate)
-    ; Trace("Old SkillFatigue = " + CurrentState.SkillFatigue)
-    ; Trace("Old WGP = " + CurrentState.WGP)
-    If !Algorithm.CanGainWGP()
-        ; Trace("Can't gain WGP. Returning.")
-        return
-    EndIf
-
-    CurrentState.SkillFatigue += (aSkillFatigueRate * aSkillTraining)
-    CurrentState.WGP += aSkillTraining
-    CurrentState.WGPGainType = Report.mtUp
-    If aSkillTraining > 0
-        CurrentState.LastSkillGainTime = Now()          ; Used for Inactivity calculations
-        if Config.VerboseMod
-            Algorithm.ReportSkillLvlUp(AlgorithmData)
-        EndIf
-    EndIf
-
-    Trace("New SkillFatigue = " + CurrentState.SkillFatigue)
-    Trace("New WGP = " + CurrentState.WGP)
 EndFunction
 
 ; ########################################################################

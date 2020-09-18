@@ -1,7 +1,7 @@
-local dml = require 'dmlib'
--- local l = require 'shared'
-local reportWidget = require 'reportWidget'
-local c = require 'const'
+local dml = jrequire 'dmlib'
+-- local l = jrequire 'sandowpp.shared'
+local reportWidget = jrequire 'sandowpp.reportWidget'
+local c = jrequire 'sandowpp.const'
 
 local bhv_all = {}
 

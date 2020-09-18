@@ -1,6 +1,6 @@
 -- Library for things exclusive to this mod.
 
--- local dmlib = require 'dmlib'
+-- local dmlib = jrequire 'dmlib'
 
 local shared = {}
 

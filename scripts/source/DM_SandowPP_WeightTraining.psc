@@ -7,7 +7,7 @@ Import DM_Utils
 DM_SandowPPMain Property Owner Auto
 {Link to the core of the mod}
 
-float Property LastTrainingTime = 0.0 Auto         
+float Property LastTrainingTime = 0.0 Auto
 {Used to limit the use Weights for training. Game hours.}
 
 int Property HoursToRest = 0 Auto
@@ -20,10 +20,11 @@ GlobalVariable Property GameHour Auto
 Function Train(float WGP, int aHoursToRest)
     {Script core}
     If CanTrainAgain()
-        Owner.TrainAndFatigue(WGP, Owner.Config.trainFatigueRate)
+        ; TODO: Update this
+        ; Owner.TrainAndFatigue(WGP, Owner.Config.trainFatigueRate)
         LastTrainingTime = Now()
         HoursToRest = aHoursToRest
-        AdvanceHours(1.0)
+        AdvanceHours(0.2)
     EndIf
 EndFunction
 

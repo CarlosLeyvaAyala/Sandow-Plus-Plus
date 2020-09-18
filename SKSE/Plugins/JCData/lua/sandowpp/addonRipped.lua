@@ -5,8 +5,8 @@
     --  The main idea of this mod is series of functions that accept a global configuration
     -- and make calculations based on it.
 
-local addon = require 'addon_all'
-local const = require 'const'
+local addon = jrequire 'sandowpp.addon_all'
+local const = jrequire 'sandowpp.const'
 
 local addonRipped = {}
 local name = const.addon.name.ripped      -- This plugin name
