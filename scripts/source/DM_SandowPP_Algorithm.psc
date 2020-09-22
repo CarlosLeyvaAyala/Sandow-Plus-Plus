@@ -5,7 +5,7 @@ Import DM_SandowPP_Globals
 import DM_Utils
 
 Actor property Player auto
-DM_SandowPP_ReportArgs property RArg auto
+; DM_SandowPP_ReportArgs property RArg auto
 DM_SandowPP_State property Result Auto
 
 ;@abstract:
@@ -33,14 +33,14 @@ EndFunction
 
 ; Sets up the most common type of widget.
 Function SetupCommonWidget(DM_SandowPP_AlgorithmData aData, int a3rdMeterEvt)
-    DM_SandowPP_Report r = aData.Report
-    r.Clear()
-    r.RegisterMessageCategory(r.mcWeight, 0)
-    r.RegisterMessageCategory(r.mcWGP, 1)
-    r.RegisterMessageCategory(a3rdMeterEvt, 2)
-    r.RegisterMessageCategory(r.mcInactivity, 3)
-    r.HidePermanently(3, !aData.Config.CanLoseWeight)       ; Hide meter if <CanLoseWeight> is disabled
-    r.HideNow(3, !aData.Config.CanLoseWeight)
+    ; DM_SandowPP_Report r = aData.Report
+    ; r.Clear()
+    ; r.RegisterMessageCategory(r.mcWeight, 0)
+    ; r.RegisterMessageCategory(r.mcWGP, 1)
+    ; r.RegisterMessageCategory(a3rdMeterEvt, 2)
+    ; r.RegisterMessageCategory(r.mcInactivity, 3)
+    ; r.HidePermanently(3, !aData.Config.CanLoseWeight)       ; Hide meter if <CanLoseWeight> is disabled
+    ; r.HideNow(3, !aData.Config.CanLoseWeight)
 EndFunction
 
 ; Needed to be overrided by descendants if they want to support widget reporting.
@@ -60,7 +60,7 @@ EndFunction
 
 ; Reports things on demand.
 Function ReportOnHotkey(DM_SandowPP_AlgorithmData aData)
-    aData.Report.OnHotkeyReport(Self)
+    ; aData.Report.OnHotkeyReport(Self)
 EndFunction
 
 ; Reports things after done sleeping.
@@ -114,8 +114,8 @@ float Function InactivityHoursToLoses()
 EndFunction
 
 float Function InactivityHoursLeft(DM_SandowPP_AlgorithmData aData)
-    float inactivityTime = HoursInactive(aData.CurrentState.LastSkillGainTime)
-    Return InactivityHoursToLoses() - inactivityTime
+;     ; float inactivityTime = HoursInactive(aData.CurrentState.LastSkillGainTime)
+;     ; Return InactivityHoursToLoses() - inactivityTime
 EndFunction
 
 float Function ReportInactivityPercentThreshold()
@@ -123,7 +123,7 @@ float Function ReportInactivityPercentThreshold()
 EndFunction
 
 float Function InactivityAsPercent(DM_SandowPP_AlgorithmData aData)
-    Return HoursInactive(aData.CurrentState.LastSkillGainTime) / InactivityHoursToLoses()
+    ; Return HoursInactive(aData.CurrentState.LastSkillGainTime) / InactivityHoursToLoses()
 EndFunction
 
 
@@ -141,11 +141,11 @@ EndFunction
 
 ; Calculates raw gains by steroids.
 float Function UseSteroids(float baseGain, DM_SandowPP_AlgorithmData aData)
-    baseGain += aData.CurrentState.WeightGainBase           ; Gains even if sedentary
-    baseGain *= aData.CurrentState.WeightGainMultiplier     ; Gains are multiplied
-    ; Drops effect after use
-    aData.CurrentState.WeightGainBase = 0.0
-    aData.CurrentState.WeightGainMultiplier = 1.0
+    ; baseGain += aData.CurrentState.WeightGainBase           ; Gains even if sedentary
+    ; baseGain *= aData.CurrentState.WeightGainMultiplier     ; Gains are multiplied
+    ; ; Drops effect after use
+    ; aData.CurrentState.WeightGainBase = 0.0
+    ; aData.CurrentState.WeightGainMultiplier = 1.0
     return baseGain
 EndFunction
 
@@ -156,12 +156,12 @@ EndFunction
 
 ; Max time used for sleeping calculations
 float Function CappedSleepingTime(DM_SandowPP_AlgorithmData aData)
-    return MinF(aData.CurrentState.HoursSlept, SleepFullRestHours())
+    ; return MinF(aData.CurrentState.HoursSlept, SleepFullRestHours())
 EndFunction
 
 ; Returns how many hours of inactivity have passed at the time of going to bed.
 float Function HoursInactiveBeforeSleeping(DM_SandowPP_AlgorithmData aData)
-    return HoursInactive(aData.CurrentState.LastSkillGainTime) - aData.CurrentState.HoursSlept
+    ; return HoursInactive(aData.CurrentState.LastSkillGainTime) - aData.CurrentState.HoursSlept
 EndFunction
 
 ; Returns how many hours of inactivity have passed at the time of calling this function.

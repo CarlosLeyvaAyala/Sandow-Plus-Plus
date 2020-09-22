@@ -30,14 +30,14 @@ DM_SandowPP_PresetManager property PresetManager
     EndFunction
 EndProperty
 
-DM_SandowPP_ReportDebug Property ReportDebug Auto
-DM_SandowPP_ReportSkyUILib Property ReportSkyUILib Auto
+; DM_SandowPP_ReportDebug Property ReportDebug Auto
+; DM_SandowPP_ReportSkyUILib Property ReportSkyUILib Auto
 DM_SandowPP_ReportWidget Property ReportWidget Auto
-DM_SandowPP_Report Property Report
-    DM_SandowPP_Report Function get()
-        Return _report
-    EndFunction
-EndProperty
+; DM_SandowPP_Report Property Report
+;     DM_SandowPP_Report Function get()
+;         Return _report
+;     EndFunction
+; EndProperty
 
 DM_SandowPP_AlgorithmPause Property AlgoPause Auto
 {Paused Behavior}
@@ -45,8 +45,8 @@ DM_SandowPP_AlgoWCSandow Property AlgoWCSandow Auto
 {Sandow++ Behavior}
 DM_SandowPP_AlgoWCPumping Property AlgoWCPumping Auto
 {Pumping Iron Behavior}
-DM_SandowPP_AlgorithmBodyfatBruce Property AlgoBFBruce Auto
-{Bruce Lee Behavior}
+; DM_SandowPP_AlgorithmBodyfatBruce Property AlgoBFBruce Auto
+; {Bruce Lee Behavior}
 
 DM_SandowPP_Algorithm Property Algorithm
     {Current Behavior}
@@ -64,7 +64,7 @@ DM_SandowPP_AlgorithmData Property AlgorithmData Auto
 float _goneToSleepAt
 
 DM_SandowPP_PresetManager _presetManager
-DM_SandowPP_Report _report
+; DM_SandowPP_Report _report
 DM_SandowPP_Algorithm _algorithm
 
 ; ########################################################################
@@ -92,18 +92,20 @@ Event OnKeyDown(Int KeyCode)
         ;     UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'center')"))
         ;     _t = true
         ; EndIf
-        ReportPlayer()
+        ReportWidget.Visible = !ReportWidget.Visible
 
+        ; ReportPlayer()
         ; TestSave(2)
     EndIf
-    ; If KeyCode == 200
-    ;     la()
-    ; EndIf
+    If KeyCode == 200 || KeyCode == 21
+        ReportWidget.Visible = !ReportWidget.Visible
+    EndIf
 EndEvent
 
 Event OnInit()
     OpenLog()
     Trace("$Gen_Init")
+    InitSequence()
     ResetVariables()
     RegisterForSleep()
     RegisterEvents()
@@ -118,37 +120,37 @@ EndEvent
 
 
 int _bulkCutDays = 0
-DM_SandowPP_RippedPlayer _rippedPlayer
-DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerAlpha
+; DM_SandowPP_RippedPlayer _rippedPlayer
+; DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerAlpha
 Function CalcPlayerRippedness()
     {Calculate muscular definition settings for player.}
-    If _rippedPlayer.bulkCut
-            ; SwapBulkCut()
-    Else
-        ;  Simple muscle def. options
-        Trace("Simple muscle def")
-        If !(_rippedPlayerAlpha.MethodIsNone() || _rippedPlayerAlpha.MethodIsBehavior())
-            ; Reapply texture because some actions can clean it
-            texMngr.InitializeActor(Player)
-        EndIf
-    EndIf
+    ; If _rippedPlayer.bulkCut
+    ;         ; SwapBulkCut()
+    ; Else
+    ;     ;  Simple muscle def. options
+    ;     Trace("Simple muscle def")
+    ;     If !(_rippedPlayerAlpha.MethodIsNone() || _rippedPlayerAlpha.MethodIsBehavior())
+    ;         ; Reapply texture because some actions can clean it
+    ;         texMngr.InitializeActor(Player)
+    ;     EndIf
+    ; EndIf
 EndFunction
 
 Function SwapBulkCut()
     {Swap bulkin and cutting behaviors.}
-    _bulkCutDays += 1
-    If _bulkCutDays >= _rippedPlayer.bulkCutDays
-        _bulkCutDays = 0
-        Debug.Notification("$RippedNotiBulk")
-        Debug.Notification("$RippedNotiCut")
-    EndIf
+    ; _bulkCutDays += 1
+    ; If _bulkCutDays >= _rippedPlayer.bulkCutDays
+    ;     _bulkCutDays = 0
+    ;     Debug.Notification("$RippedNotiBulk")
+    ;     Debug.Notification("$RippedNotiCut")
+    ; EndIf
 EndFunction
 
 Function PrepareAlgorithmData()
     { Algorithms need data to function properly. This method properly points to that data. }
-    AlgorithmData.CurrentState = CurrentState
-    AlgorithmData.Config = Config
-    AlgorithmData.Report = Report
+    ; AlgorithmData.CurrentState = CurrentState
+    ; AlgorithmData.Config = Config
+    ; AlgorithmData.Report = Report
 EndFunction
 
 ; ########################################################################
@@ -166,7 +168,10 @@ Function OnGameReload()
     ;RegisterForKey(200)
     texMngr.InitData()
     texMngr.Debug(Player)
-    InitSequence()
+    ; TestSave(29)
+    JDB.writeToFile(JContainers.userDirectory() + "tree.json")
+    ReportPlayer()
+    ; InitSequence()
 EndFunction
 
 ;>=========================================================
@@ -183,7 +188,6 @@ EndFunction
             InitDataTree()
             LoadAddons()
             LoadDefaults()
-            ReportWidget.Report(GetDataTree())
             TestSave()
         EndFunction
 
@@ -219,6 +223,10 @@ EndFunction
         return JDB.solveObj("." + jDBRoot)
     EndFunction
 
+    int Function GetMCMConfig()
+        return JValue.solveObj(GetDataTree(), ".preset")
+    EndFunction
+
     Function UpdateDataTree(int data)
         JDB.setObj(jDBRoot, data)
     EndFunction
@@ -239,9 +247,23 @@ Function ReportPlayer()
     ReportWidget.Report(GetDataTree())
 EndFunction
 
+Function UpdateMcmData()
+    PapyrusToLuaState()
+    ExecuteLua("return sandowpp.getMcmData(jobject)")
+EndFunction
+
 ; Gets the data tree and sends it to some Lua function, then updates data tree.
 Function ExecuteLua(string str)
-    UpdateDataTree(JValue.evalLuaObj(GetDataTree(), str))
+    ;@Hint: It's QUITE important to not let a function to accidentally clear the data tree.
+    int t = JValue.evalLuaObj(GetDataTree(), str)
+    If t == 0 || JValue.empty(t)
+        string s = "ExecuteLua(): ***ERROR*** " + str + " returns an empty data tree"
+        Trace(s, 2)
+        Debug.TraceStack(s, 2)
+        Debug.MessageBox("Sandow Plus Plus\nExecuteLua(): " + str + " returns an empty data tree.\nPlease contact this mod's author.")
+        return
+    EndIf
+    UpdateDataTree(t)
 EndFunction
 
 ; Saves current player variables so they can be processed by Lua.
@@ -250,10 +272,15 @@ Function PapyrusToLuaState()
     int data = GetDataTree()
     float ls = GetLastSlept(data)
     float la = GetLastActive(data)
-    JValue.solveFltSetter(data, s + "weight", Player.GetActorBase().GetWeight(), true)
+    JValue.solveFltSetter(data, s + "weight", GetPlayerWeight(), true)
     JValue.solveFltSetter(data, s + "hoursAwaken", HourSpan(ls), true)
     JValue.solveFltSetter(data, s + "hoursInactive", HourSpan(la), true)
     UpdateDataTree(data)
+EndFunction
+
+; Returns player weight. Weight ∈ [0, 100]
+float Function GetPlayerWeight()
+    return Player.GetActorBase().GetWeight()
 EndFunction
 
 ; Avoids a bug when creating a new game when this mod seems to be initialized way
@@ -325,8 +352,8 @@ EndFunction
 
 Function InitVars()
     Config.Owner = Self         ; For some reason, Config.Owner refuses to stay as configured in the CK
-    _rippedPlayer = texMngr.PlayerSettings
-    _rippedPlayerAlpha = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
+    ; _rippedPlayer = texMngr.PlayerSettings
+    ; _rippedPlayerAlpha = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
 
 Event SexLabEnter(string eventName, string argString, float argNum, form sender)
@@ -368,7 +395,7 @@ Function ChangeAlgorithm()
         newAlgo = AlgoPause
     ElseIf Config.IsBruce()
         Trace("Is Bruce " + Config.bhBruce)
-        newAlgo = AlgoBFBruce
+        ; newAlgo = AlgoBFBruce
     Else
         newAlgo = AlgoWCSandow
     EndIf
@@ -413,11 +440,9 @@ EndFunction
 
 Function ResetVariables()
     Config.HkShowStatus = Config.hotkeyInvalid
-    _algorithm = AlgoWCSandow
-    Config.Owner = Self
-    _report = ReportDebug
-    PrepareAlgorithmData()
-    CurrentState.LastSlept = -1
+    ; _algorithm = AlgoWCSandow
+    ; Config.Owner = Self
+    ; _report = ReportDebug
 EndFunction
 
 ; Used by the MCM only.

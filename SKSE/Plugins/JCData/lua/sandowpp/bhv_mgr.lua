@@ -93,10 +93,14 @@ function bhv_mgr.onSleep(data)
 end
 
 function bhv_mgr.onReport(data)
-    data = currBhv(data).report(data)
+    data = currBhv(data).report(data) or data
     data = meterVisibility(data)
     data = reportWidget.mCalcPositions(data)
     return data
+end
+
+function bhv_mgr.getMcmData(data)
+    return currBhv(data).getMcmData(data) or data
 end
 
 -- ;>========================================================
@@ -123,7 +127,7 @@ end
 -- ;>========================================================
 
 function bhv_mgr.canGainWGP(data)
-    return currBhv(data).canGainWGP or true
+    return (currBhv(data).canGainWGP ~= nil) or true
 end
 
 return bhv_mgr

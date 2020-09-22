@@ -1,15 +1,14 @@
 ; https://github.com/schlangster/skyui/wiki/MCM-State-Options
-Scriptname DM_SandowPPMCM extends SKI_ConfigBase
+Scriptname DM_SandowPPMCM extends DM_SandowPP_MCM_Presets
 
 Import DM_Utils
 Import JsonUtil
 Import DM_SandowPP_Globals
 Import DM_SandowPP_SkeletonNodes
+Import JValue
 
-DM_SandowPPMain property SandowPP auto
-DM_SandowPPMain SPP
-DM_SandowPP_Config Cfg
-
+; DM_SandowPP_Config Cfg
+; DM_SandowPPMain property SPP auto
 
 ;>=========================================================
 ;>===               PRIVATE VARIABLES                   ===
@@ -48,14 +47,11 @@ string Property slFmt2r = "{2}" AutoReadOnly
 
 string _ppMain = "$Main"
 string _ppSkills = "$Skills"
-; string _ppRipped = "$Ripped"
 string _ppWidget = "$Widget"
-; string _ppProfiles = "$Presets"
 string _ppCompat = "$Compat"
 
 string[] _reports
 string[] _behaviors
-; string[] _presetManagers
 string[] _vAlign
 string[] _hAlign
 string[] _rippedPlayerMethods
@@ -74,7 +70,7 @@ int function GetVersion()
 endFunction
 
 Event OnConfigInit()
-    Cfg = SandowPP.Config
+    Cfg = SPP.Config
 
     Pages = new string[4]
     Pages[0] = _ppMain
@@ -103,11 +99,6 @@ Event OnConfigInit()
     _behaviors[Cfg.bhPumpingIron] = "Pumping Iron"
     _behaviors[Cfg.bhBruce] = "Bruce Lee"
 
-    ; _presetManagers = new string[3]
-    ; _presetManagers[Cfg.pmNone] = "$None"
-    ; _presetManagers[Cfg.pmPapyrusUtil] = "Papyrus Util"
-    ; _presetManagers[Cfg.pmFISS] = "FISS -deprecated-"
-
     _rippedPlayerMethods = new string[6]
     _rippedPlayerMethods[Cfg.rpmNone] = "$None"
     _rippedPlayerMethods[Cfg.rpmConst] = "$Constant"
@@ -129,8 +120,7 @@ event OnVersionUpdate(int aVersion)
 endEvent
 
 event OnPageReset(string aPage)
-    ; if aPage == _ppProfiles
-    ;     PageProfiles()
+    Trace("on page reset " + aPage)
     If aPage == _ppWidget
         PageWidget()
     ElseIf aPage == _ppSkills
@@ -145,14 +135,13 @@ endEvent
 Event OnGameReload()
     DM_SandowPP_Globals.Trace("MCM.OnGameReload()")
     parent.OnGameReload()
-    SandowPP.OnGameReload()
+    SPP.OnGameReload()
     InitVars()
 EndEvent
 
 Function InitVars()
     {Initializes variables needed for this to work.}
-    Cfg = SandowPP.Config
-    SPP = SandowPP
+    Cfg = SPP.Config
     _rippedPlayer = SPP.texMngr.PlayerSettings
     _rippedPlayerA = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
@@ -163,153 +152,20 @@ EndFunction
 
 Function PageMain()
     SetCursorFillMode(TOP_TO_BOTTOM)
+    ; If !JContainersExists()
+    ;     return
+    ; EndIf
     ; Row 1
     int presets = PageMainPresets(0)
     int stats = PageMainStats(1)
-    ; Row 2
-    ; int row2 = MaxI(stats - 1, presets)
+    ; ; Row 2
+    ; ; int row2 = MaxI(stats - 1, presets)
     int mainCfg = PageMainConfiguration(presets)
-    int ripped = PageRippedPlayer(stats)
-    ;Row 3
-    PageMainOtherOptions(mainCfg)
-    PageMainItems(ripped)
+    ; int ripped = PageRippedPlayer(stats)
+    ; ; ;Row 3
+    ; PageMainOtherOptions(mainCfg)
+    ; PageMainItems(ripped)
 EndFunction
-
-
-;>=========================================================
-;>===                   MAIN - PRESETS                  ===
-;>=========================================================
-
-int Function PageMainPresets(int pos)
-    SetCursorPosition(pos)
-    Header("$Presets")
-    int count = 1
-    If PapyrusUtilExists()
-        Menu("MN_PresetLoad", "$Load", "")
-        AddInputOptionST("IN_PresetSave", "$Save as...", "")
-        count += 2
-    Else
-        TagPapyrusUtil()
-        count += 1
-    EndIf
-    Return pos + ToNewPos(count)
-EndFunction
-
-
-
-;>=========================================================
-;>===               MAIN - CONFIGURATION                ===
-;>=========================================================
-
-int Function PageMainConfiguration(int pos)
-    int count = 3
-    SetCursorPosition(pos)
-    ;AddEmptyOption()
-    Header("$Configuration")
-    If !_rippedPlayer.bulkCut
-        Menu("MN_BEHAVIOR", "$Behavior", _behaviors[Cfg.Behavior])
-    Else
-        Label("TX_BulkCutCantShowBhv", "", "$MCM_BulkCutCantShowBhv")
-    EndIf
-    AddToggleOptionST("TG_LOSEW", "$Can lose gains", Cfg.CanLoseWeight)
-    If !Cfg.IsPumpingIron()
-        AddToggleOptionST("TG_DR", "$Diminishing returns", Cfg.DiminishingReturns)
-        count += 1
-        If Cfg.IsSandow()
-            AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Cfg.CanReboundWeight)
-            count += 1
-        EndIf
-    EndIf
-    ;AddToggleOptionST("TG_DISEASE", "$Disease affects Weight", false)
-    ;AddToggleOptionST("TG_FOOD", "$Needs food to grow", false)
-    Return pos + ToNewPos(count)
-EndFunction
-
-State TX_BulkCutCantShowBhv
-    Event OnHighlightST()
-        SetInfoText("$MCM_BulkCutCantShowBhvInfo")
-    EndEvent
-EndState
-
-State MN_BEHAVIOR
-    Event OnMenuOpenST()
-        OpenMenu(Cfg.Behavior, Cfg.bhSandowPP, _behaviors)
-    EndEvent
-
-    Event OnMenuAcceptST(int index)
-        If Cfg.Behavior == index
-            Return
-        EndIf
-        Cfg.Behavior = index
-        SetMenuOptionValueST(_behaviors[Cfg.Behavior])
-        If Cfg.IsPumpingIron()
-            ShowMessage("$MCM_PIResetSkills")
-        EndIf
-        ForcePageReset()
-    EndEvent
-
-    Event OnDefaultST()
-        If Cfg.Behavior == Cfg.bhSandowPP
-            Return
-        EndIf
-        Cfg.Behavior = Cfg.bhSandowPP
-        SetMenuOptionValueST(_behaviors[Cfg.Behavior])
-        ForcePageReset()
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_BehaviorInfo{" + SandowPP.Algorithm.MCMInfo() + "}")
-    EndEvent
-EndState
-
-State TG_LOSEW
-    Event OnSelectST()
-        Cfg.CanLoseWeight = !Cfg.CanLoseWeight
-        SetToggleOptionValueST(Cfg.CanLoseWeight)
-        Trace("Toggled CanLoseWeight. Now " + Cfg.CanLoseWeight)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.CanLoseWeight = True
-        SetToggleOptionValueST(True)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_LoseWeightInfo")
-    EndEvent
-EndState
-
-State TG_DR
-    Event OnSelectST()
-        Cfg.DiminishingReturns = !Cfg.DiminishingReturns
-        SetToggleOptionValueST(Cfg.DiminishingReturns)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.DiminishingReturns = True
-        SetToggleOptionValueST(True)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_DiminishingInfo")
-    EndEvent
-EndState
-
-State TG_REBOUNDW
-    Event OnSelectST()
-        Cfg.CanReboundWeight = !Cfg.CanReboundWeight
-        SetToggleOptionValueST(Cfg.CanReboundWeight)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.CanReboundWeight = True
-        SetToggleOptionValueST(True)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_ReboundInfo")
-    EndEvent
-EndState
 
 ;>=========================================================
 ;>===                   MAIN - OTHER                    ===
@@ -337,7 +193,7 @@ int Function PageMainOtherOptions(int pos)
 EndFunction
 
 int Function GetSkelFlags(string aNodeName)
-    If !SkelNodeExists(SandowPP.Player, aNodeName)
+    If !SkelNodeExists(SPP.Player, aNodeName)
         Return OPTION_FLAG_DISABLED
     Else
         Return OPTION_FLAG_NONE
@@ -345,11 +201,11 @@ int Function GetSkelFlags(string aNodeName)
 EndFunction
 
 Function EnsurePresetManager(string mgr)
-    If SandowPP.PresetManager.Exists() || Cfg.PresetManager == Cfg.pmNone
+    If SPP.PresetManager.Exists() || Cfg.PresetManager == Cfg.pmNone
         Return
     EndIf
     ShowMessage("$MCM_PresetMgrInexistent{" + mgr + "}")
-    ; Cfg.PresetManager = SandowPP.DefaultPresetManager()
+    ; Cfg.PresetManager = SPP.DefaultPresetManager()
 EndFunction
 
 State SL_WEIGHTMULT
@@ -505,49 +361,6 @@ EndState
 ;>===                   MAIN - STATS                    ===
 ;>=========================================================
 
-int Function PageMainStats(int pos)
-    SandowPP.PrepareAlgorithmData()
-    SetCursorPosition(pos)
-
-    Header("$Stats")
-    Label("TX_BW", SPP.Algorithm.GetMCMMainStatLabel(), SPP.Algorithm.GetMcmMainStat() + "%" )
-    Label("TX_TRAINING", "$Weight Gain Potential:", SPP.GetMCMWGP() + "%")
-    int count = 3
-    ; Posibly won't exist
-    If SPP.GetMCMCustomLabel1() && SPP.GetMCMCustomData1()
-        Label("TX_CUSTOM1", SPP.GetMCMCustomLabel1(), SPP.GetMCMCustomData1() )
-        count += 1
-    EndIf
-    If SPP.GetMCMStatus()
-        Label("TX_STATUS", "", SandowPP.GetMCMStatus())
-        count += 1
-    EndIf
-    Return pos + ToNewPos(count)
-EndFunction
-
-State TX_BW
-    Event OnHighlightST()
-        SetInfoText("$Your current body Weight.")
-    EndEvent
-EndState
-
-State TX_TRAINING
-    Event OnHighlightST()
-        SetInfoText("$MCM_WGPInfo")
-    EndEvent
-EndState
-
-State TX_CUSTOM1
-    Event OnHighlightST()
-        SetInfoText(SandowPP.GetMCMCustomInfo1())
-    EndEvent
-EndState
-
-State TX_STATUS
-    Event OnHighlightST()
-        SetInfoText(SandowPP.GetMCMStatus())
-    EndEvent
-EndState
 
 ;>=========================================================
 ;>===                   MAIN - ITEMS                    ===
@@ -562,7 +375,7 @@ EndFunction
 
 State TX_IT_SACKS
     Event OnSelectST()
-        SandowPP.Items.DistributeWeightSacks()
+        SPP.Items.DistributeWeightSacks()
         ShowMessage("$MCM_ItemsSacks", False)
         SetOptionFlagsST(OPTION_FLAG_DISABLED, False, "TX_IT_SACKS")
     EndEvent
@@ -570,7 +383,7 @@ EndState
 
 State TX_IT_ANABOL
     Event OnSelectST()
-        SandowPP.Items.DistributeSilly()
+        SPP.Items.DistributeSilly()
         ShowMessage("$MCM_ItemsAnabolics", False)
         SetOptionFlagsST(OPTION_FLAG_DISABLED, False, "TX_IT_ANABOL")
     EndEvent
@@ -1289,144 +1102,4 @@ Function PageCompat()
     If SexLabExists()
         TagSexlab()
     EndIf
-EndFunction
-
-
-;>========================================================================#
-; Generic tags functions
-;>========================================================================#
-string Function TagExists(bool condition)
-    If condition
-        return "$Found"
-    Else
-        return Error("$Not found")
-    EndIf
-EndFunction
-
-Function TagPapyrusUtil()
-    ; AddTextOptionST("TX_NfPapyrusU", "PapyrusUtil", TagExists(PapyrusUtilExists()), OPTION_FLAG_DISABLED )
-    AddTextOptionST("TX_NfPapyrusU", "PapyrusUtil", TagExists(PapyrusUtilExists()))
-EndFunction
-
-Function TagNiOverride()
-    AddTextOptionST("TX_NfNiOverride", "NiOverride", TagExists(NiOverrideExists()))
-EndFunction
-
-Function TagSexlab()
-    AddTextOptionST("TX_NfSexlab", "Sexlab", TagExists(SexLabExists()))
-EndFunction
-
-State TX_NfPapyrusU
-    Event OnHighlightST()
-        SetInfoText("$MCM_CompatPapyrusUtilInfo")
-    EndEvent
-EndState
-
-State TX_NfNiOverride
-    Event OnHighlightST()
-        SetInfoText("$MCM_CompatNiOverrideInfo")
-    EndEvent
-EndState
-
-State TX_NfSexlab
-    Event OnHighlightST()
-        SetInfoText("$MCM_CompatSexlabInfo")
-    EndEvent
-EndState
-
-
-;>========================================================================#
-; Helper functions
-;>========================================================================#
-
-Function OpenMenu(int aStart, int aDefault, string[] aOptions)
-    SetMenuDialogStartIndex(aStart)
-    SetMenuDialogDefaultIndex(aDefault)
-    SetMenuDialogOptions(aOptions)
-EndFunction
-
-Function CreateSkillSliderPhys(float startValue)
-    CreateSkillSlider(startValue, 0.5)
-EndFunction
-
-Function CreateSkillSliderMag(float startValue)
-    CreateSkillSlider(startValue, 0.20)
-EndFunction
-
-Function CreateSkillSlider(float startValue, float maxValue)
-    CreateSlider(startValue, 0.0, maxValue, 0.01)
-EndFunction
-
-Function CreateSlider(float aStart, float aMin, float aMax, float aInterval)
-    SetSliderDialogStartValue(aStart)
-    SetSliderDialogDefaultValue(aStart)
-    SetSliderDialogRange(aMin, aMax)
-    SetSliderDialogInterval(aInterval)
-EndFunction
-
-Function CreateFatigueSlider(float startValue)
-    float x = ToPercent(startValue)
-    CreateSlider(x, 5, 50, 1)
-EndFunction
-
-Function CreatePercentSlider(float startValue)
-    {Creates a slider from 0% to 100%. startValue goes from [0.0, 1.0].}
-    CreateSlider(FloatToPercent(startValue), 0.0, 100.0, 1.0)
-EndFunction
-
-bool Function ConfirmHotkeyChange(string conflictControl, string conflictName)
-    if (conflictControl != "")
-        string msg
-        if (conflictName != "")
-            msg = "$MCM_HotkeyConflict2{" + conflictControl + "}{" + conflictName + "}"
-        else
-            msg = "$MCM_HotkeyConflict1{" + conflictControl + "}"
-        endIf
-        Return ShowMessage(msg, true, "$Yes", "$No")
-    endIf
-    Return True
-EndFunction
-
-int Function ToNewPos(int aPos)
-    Return (aPos * 2) + 2
-EndFunction
-
-int Function FlagByBool(bool aVal)
-    {Enables control if aVal is True}
-    If aVal
-        Return OPTION_FLAG_NONE
-    Else
-        Return OPTION_FLAG_DISABLED
-    EndIf
-EndFunction
-
-; string Function Header(string text)
-;     AddHeaderOption(Header("$Presets"))
-;     return "$MCM_Header{" + text + "}"
-; EndFunction
-Function Header(string text)
-    AddHeaderOption("$MCM_Header{" + text + "}")
-EndFunction
-
-string Function Error(string text)
-    return "$MCM_Error{" + text + "}"
-EndFunction
-
-; Renames AddTextOptionST() to declutter code
-Function Button(string stateName, string ltext, string rtext, int flags = 0)
-    AddTextOptionST(stateName, ltext, rtext, flags)
-EndFunction
-
-; Renames AddTextOptionST() to declutter code
-Function Label(string stateName, string ltext, string rtext, int flags = 0)
-    AddTextOptionST(stateName, ltext, rtext, flags)
-EndFunction
-
-; Renames Slider() to declutter code
-Function Slider(string stateName, string text, float val, string fmt, int flags = 0)
-    AddSliderOptionST(stateName, text, val, fmt, flags)
-EndFunction
-
-Function Menu(string stateName, string label, string options, int flags = 0)
-    AddMenuOptionST(stateName, label, options, flags)
 EndFunction

@@ -22,6 +22,25 @@
         <COMPID name="Papyrus" mc="Standard.BpmnProcess" uid="ae51d402-09dc-4706-b96c-4f90d83c22f3"/>
         <COMPID name="Lua" mc="Standard.BpmnProcess" uid="5d3f919c-3506-4b7a-912e-3749606a101d"/>
       </COMP>
+      <COMP relation="OwnedElement">
+        <COMPID name="DM_SandowPPMCM" mc="Standard.Class" uid="ace0f517-2dcc-49ae-800d-943472843cd4"/>
+        <COMPID name="DM_SandowPP_MCM_Presets" mc="Standard.Class" uid="eab8d0c1-0a44-46a7-a5c6-88b61abf2650"/>
+        <COMPID name="DM_SandowPP_MCM_Stats" mc="Standard.Class" uid="6e8f25ce-90cd-4007-84b9-e2bd0313513a"/>
+        <COMPID name="DM_SandowPP_MCM_Skills" mc="Standard.Class" uid="347aac13-69ce-41c2-b73c-358af6b47ee1"/>
+        <COMPID name="DM_SandowPP_MCM_Bhv" mc="Standard.Class" uid="8272653d-11c7-4bba-bde6-a5c6b0aca01c"/>
+        <COMPID name="DM_SandowPP_MCM_Base" mc="Standard.Class" uid="e085f556-0d2c-4975-b139-32c021e1e3b2"/>
+        <COMPID name="SKI_ConfigBase" mc="Standard.Class" uid="51da4ec2-a445-46b2-a29f-4898b3568b0c"/>
+        <COMPID name="SKI_ConfigBase" mc="Standard.Class" uid="90436602-2863-4104-b00f-8c36d406d66b"/>
+        <COMPID name="Splitted code 1" mc="Standard.Class" uid="66df5a85-7b70-4c17-8f8d-72c7c681228b"/>
+        <COMPID name="Splitted code 2" mc="Standard.Class" uid="14f88022-22a5-4916-b959-8cb77a2a4941"/>
+        <COMPID name="..." mc="Standard.Class" uid="802770ff-2cb5-4677-9662-6a388718e3b0"/>
+        <COMPID name="Splitted code n" mc="Standard.Class" uid="998f2f3e-bf00-4987-81ae-ea3a0289da7f"/>
+        <COMPID name="Quest script" mc="Standard.Class" uid="1ff56b3e-02dc-4538-9934-2eed8adc8e0a"/>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="MCM Hierarchy" mc="Standard.ClassDiagram" uid="c8dfb5c5-e136-4bbf-9b65-cae0b02a364b"/>
+        <COMPID name="MCM Splittin overview" mc="Standard.ClassDiagram" uid="fe975bbc-ac2d-4c4e-8fa8-11086c30119e"/>
+      </COMP>
     </DEPENDENCIES>
   </OBJECT>
 </EXT>

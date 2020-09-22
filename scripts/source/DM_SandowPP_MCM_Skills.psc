@@ -1,0 +1,4 @@
+Scriptname DM_SandowPP_MCM_Skills extends DM_SandowPP_MCM_Bhv Hidden
+
+Import DM_Utils
+Import DM_SandowPP_Globals

@@ -12,20 +12,37 @@ local addonRipped = {}
 local name = const.addon.name.ripped      -- This plugin name
 
 addonRipped.showInMCM = addon.internalProp(name, addon.names.showInMCM)
+
+--- Current muscle def. Used for constant def or values set by behavior.
+addonRipped.currDef = addon.MCMProp(name, "currDef")
+
+--- x ∈ [0, 1]
+addonRipped.minAlpha = addon.MCMProp(name, "minAlpha")
+
+--- x ∈ [0, 1]
+addonRipped.maxAlpha = addon.MCMProp(name, "maxAlpha")
+
 addonRipped.daysForMin = addon.MCMProp(name, "daysForMin")
 addonRipped.daysForMax = addon.MCMProp(name, "daysForMax")
-addonRipped.currentRipped = addon.MCMProp(name, "currentRipped")
 
--- function addonAnabolics.onGainMult(x)
---     x.val = x.val * 10
---     return x
--- end
+addonRipped.mode = addon.MCMProp(name, "mode")
+addonRipped.modes = {
+    none = "$None",
+    const = "$Constant",
+    weight= "$By weight",
+    wInv = "$By weight inv",
+    skills = "$By skills"
+}
 
 function addonRipped.install(data)
     addonRipped.showInMCM(data, true)
     addonRipped.daysForMin(data, 30)
     addonRipped.daysForMax(data, 120)
-    addonRipped.currentRipped(data, 0)
+    addonRipped.minAlpha(data, 0)
+    addonRipped.maxAlpha(data, 100)
+    addonRipped.mode(data, addonRipped.modes.none)
+    addonRipped.currDef(data, 0)
+    -- addonRipped.interpolate(data, false)
 end
 
 return addonRipped

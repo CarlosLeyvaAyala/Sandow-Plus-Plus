@@ -1,4 +1,6 @@
-#Thu Sep 17 11:20:08 CDT 2020
+#Mon Sep 21 12:54:49 CDT 2020
+org.modelio.diagram.editor.OpenedDiagrams5='MCM Splitting overview' {fe975bbc-ac2d-4c4e-8fa8-11086c30119e} Standard.ClassDiagram
+org.modelio.diagram.editor.OpenedDiagrams4='MCM Hierarchy' {c8dfb5c5-e136-4bbf-9b65-cae0b02a364b} Standard.ClassDiagram
 org.modelio.diagram.editor.OpenedDiagrams3='Papyrus-Lua workflow' {894b435b-95d1-411b-a3f2-a3a412657102} Standard.BpmnCollaborationDiagram
 org.modelio.diagram.editor.OpenedDiagrams2='Lua Workflow' {dfd58b8f-b58b-4eaf-8cb1-f81d0ad39c58} Standard.BpmnProcessDesignDiagram
 org.modelio.diagram.editor.OpenedDiagrams1='Papyrus to Lua' {47ac2a5c-49cd-4709-9e08-ff481121e8ad} Standard.BpmnProcessDesignDiagram

@@ -82,3 +82,7 @@ EndFunction
 bool Function NiOverrideExists() Global
     Return NiOverride.GetScriptVersion() > 0 && SKSE.GetPluginVersion("skee") >= 1
 EndFunction
+
+bool Function JContainersExists() Global
+    Return JContainers.isInstalled()
+EndFunction

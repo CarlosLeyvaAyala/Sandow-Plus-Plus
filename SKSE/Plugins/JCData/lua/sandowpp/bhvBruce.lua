@@ -17,6 +17,7 @@ local allowedInactivity = 30
 local name = c.bhv.name.bruce
 
 local _OldWGP = bhv_all.internalProp(name, "_oldWGP")
+local _oldRipped = bhv_all.internalProp(name, "_oldRipped")
 local training = bhv_all.internalProp(name, "training")
 
 -- ;>========================================================
@@ -146,6 +147,7 @@ local function gainOrLose(data, train)
     end
     training(data, capLeanness(train))
     data.state.lastSlept = -1
+    rip.currDef(data, bhvBruce.currLeanness(data))
     return data, flash
 end
 
@@ -188,14 +190,21 @@ local function restoreOldWGP(data)
     data.state.WGP = _OldWGP(data)
 end
 
+local function storeOldRipped(data)
+    _oldRipped(data, rip.mode(data))
+    rip.mode(data, "bruce lee")
+end
+
 function bhvBruce.onEnter(data)
     print("Entering behavior")
     storeOldWGP(data)
+    storeOldRipped(data)
 end
 
 function bhvBruce.onExit(data)
     print("Exit behavior")
     restoreOldWGP(data)
+    rip.mode(data, _oldRipped(data))
     -- ;TODO: reapply old muscle definition
 end
 
@@ -226,6 +235,18 @@ function bhvBruce.report(data)
         reportWidget.mPercent(data, "meter4", inactive)
         reportWidget.mFlash(data, "meter4", bhv_all.flashByInactivity(inactive))
     end
+    return data
+end
+
+function bhvBruce.getMcmData(data)
+    closeFuncs(data)
+    local b = data.bhv
+    b.mainStatLbl = "$Muscle definition:"
+    b.mainStatVal = l.floatToPercentStr(bhvBruce.currLeanness(data))
+    b.mainStatInf = "$MCM_RippedLblInfo"
+    b.trainingLbl = "$Daily training:"
+    b.trainingVal = l.floatToPercentStr(data.state.WGP)
+    b.trainingInf = "$MCM_RippedTrainingInfo"
     return data
 end
 

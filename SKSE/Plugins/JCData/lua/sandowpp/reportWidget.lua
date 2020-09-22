@@ -61,6 +61,9 @@ reportWidget.hideAtMin = mcmProp("hideAtMin")
 --- Hides the meter is it's at max.
 reportWidget.hideAtMax = mcmProp("hideAtMax")
 
+--- How fast will the widget update.
+reportWidget.refreshRate = mcmProp("refreshRate")
+
 
 -- ;>========================================================
 -- ;>===                 GLOBAL HIDDEN                  ===<;
@@ -210,6 +213,7 @@ function reportWidget.default(data)
     reportWidget.hAlign(data, reportWidget.HAlign.right)
     reportWidget.x(data, 0)
     reportWidget.y(data, 0)
+    reportWidget.refreshRate(data, 5)
     reportWidget.opacity(data, 100)
     reportWidget.meterH(data, 17.5)
     reportWidget.meterW(data, 150)

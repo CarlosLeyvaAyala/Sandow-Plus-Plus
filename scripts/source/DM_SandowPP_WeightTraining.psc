@@ -1,5 +1,5 @@
 Scriptname DM_SandowPP_WeightTraining extends Quest
-{Controls how player trains with weights}
+{Controls how player trains with weights.}
 
 Import DM_SandowPP_Globals
 Import DM_Utils
@@ -24,7 +24,7 @@ Function Train(float WGP, int aHoursToRest)
         ; Owner.TrainAndFatigue(WGP, Owner.Config.trainFatigueRate)
         LastTrainingTime = Now()
         HoursToRest = aHoursToRest
-        AdvanceHours(0.2)
+        AdvanceHours(0.4)
     EndIf
 EndFunction
 

@@ -15,34 +15,34 @@ int Property maxDaysToMax = 120 Auto
 {How many days does it takes the player to get max definition at 100% weight. [90,420]. Default = 120.}
 
 
-;@override:
-bool Function IsMe(Actor akTarget)
-    return akTarget == Player
-EndFunction
+; ;@override:
+; bool Function IsMe(Actor akTarget)
+;     return akTarget == Player
+; EndFunction
 
-;@override:
-string Function Name()
-    return "Player"
-EndFunction
+; ;@override:
+; string Function Name()
+;     return "Player"
+; EndFunction
 
-;@override:
-bool Function IsFemale()
-    return ActorIsFemale(Player)
-EndFunction
+; ;@override:
+; bool Function IsFemale()
+;     return ActorIsFemale(Player)
+; EndFunction
 
-;@override:
-; TODO: Do it.
-Function SaveToFile()
-    {Saves this }
-EndFunction
+; ;@override:
+; ; TODO: Do it.
+; Function SaveToFile()
+;     {Saves this }
+; EndFunction
 
-;@override:
-; TODO: Do it.
-Function LoadFromFile()
-    {Saves this }
-EndFunction
+; ;@override:
+; ; TODO: Do it.
+; Function LoadFromFile()
+;     {Saves this }
+; EndFunction
 
-; Sets the behavior that controls player muscle definiton
-Function SetBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
-    ((self as Form) as DM_SandowPP_RippedAlphaCalcPlayer).SetBehavior(bhv)
-EndFunction
+; ; Sets the behavior that controls player muscle definiton
+; Function SetBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
+;     ((self as Form) as DM_SandowPP_RippedAlphaCalcPlayer).SetBehavior(bhv)
+; EndFunction

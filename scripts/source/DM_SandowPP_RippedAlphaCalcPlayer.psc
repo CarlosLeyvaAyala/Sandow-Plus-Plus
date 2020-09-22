@@ -3,7 +3,7 @@ Scriptname DM_SandowPP_RippedAlphaCalcPlayer extends DM_SandowPP_RippedAlphaCalc
 
 Import DM_SandowPP_Globals
 
-DM_SandowPP_AlgorithmBodyfatChange _bhv
+; DM_SandowPP_AlgorithmBodyfatChange _bhv
 
 ;>=========================================================
 ;>===                      PUBLIC                       ===
@@ -13,12 +13,12 @@ DM_SandowPP_AlgorithmBodyfatChange _bhv
 ;@override:
 ; Gets an alpha based on settings.
 float Function GetAlpha(Actor akTarget)
-    If _bhv != None
-        return LerpAlpha(_bhv.GetBodyFat())
-    Else
-        return GetAlphaFromOptions(aktarget)
-    EndIf
-    return 0.0
+    ; If _bhv != None
+    ;     return LerpAlpha(_bhv.GetBodyFat())
+    ; Else
+    ;     return GetAlphaFromOptions(aktarget)
+    ; EndIf
+    ; return 0.0
 EndFunction
 
 string Function MethodInfo()
@@ -46,14 +46,14 @@ EndFunction
 
 ;@Public:
 ; Sets the behavior that controls player muscle definiton
-Function SetBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
-    If bhv != None
-        MethodIsNowBehavior()
-    Else
-        MethodIsNoLongerBehavior()
-    EndIf
-    _bhv = bhv
-EndFunction
+; Function SetBehavior(DM_SandowPP_AlgorithmBodyfatChange bhv)
+;     ; If bhv != None
+;     ;     MethodIsNowBehavior()
+;     ; Else
+;     ;     MethodIsNoLongerBehavior()
+;     ; EndIf
+;     ; _bhv = bhv
+; EndFunction
 
 int _oldBhv
 Function MethodIsNowBehavior()

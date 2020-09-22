@@ -38,6 +38,7 @@ sandowpp.installAddons = addon_mgr.installAll
 sandowpp.widgetChangeVAlign = reportWidget.changeVAlign
 sandowpp.onSleep = bhv_mgr.onSleep
 sandowpp.onReport = bhv_mgr.onReport
+sandowpp.getMcmData = bhv_mgr.getMcmData
 
 function sandowpp.getDefaults(data)
     local p = l.pipe(
