@@ -4,7 +4,9 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				206,
+				-1,
+				253,
+				313,
 				-1,
 				-1,
 				-1,
@@ -12,33 +14,35 @@
 				-1,
 				-1,
 				-1,
-				-1
+				-1,
+				-1,
+				234
 			]
 		},
 		{
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMCM.psc",
 			"bookmarks": [
 				-1,
-				1057,
-				-1,
-				161,
+				480,
 				-1,
 				-1,
 				-1,
 				-1,
 				-1,
-				132,
-				1274,
-				1229
+				-1,
+				-1,
+				-1,
+				1408,
+				1363
 			]
 		},
 		{
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_TextureMngr.psc",
 			"bookmarks": [
 				-1,
-				88,
-				318,
+				234,
 				-1,
+				215,
 				-1,
 				-1,
 				-1,
@@ -51,9 +55,9 @@
 			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				252,
 				-1,
-				-1,
+				269,
+				99,
 				-1,
 				-1,
 				-1,
@@ -83,7 +87,7 @@
 			"bookmarks": [
 				-1,
 				80,
-				230,
+				222,
 				-1,
 				-1,
 				-1,
@@ -140,10 +144,10 @@
 			]
 		},
 		{
-			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_ReportWidget.psc",
+			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPP_Report.psc",
 			"bookmarks": [
 				-1,
-				136,
+				52,
 				-1,
 				-1,
 				-1,
@@ -155,11 +159,88 @@
 			]
 		},
 		{
-			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPP_Report.psc",
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\addon_mgr.lua",
 			"bookmarks": [
 				-1,
-				52,
+				81,
 				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\skills.lua",
+			"bookmarks": [
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				61
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhvBruce.lua",
+			"bookmarks": [
+				-1,
+				192,
+				105,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhv_mgr.lua",
+			"bookmarks": [
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				67
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_MCM_Stats.psc",
+			"bookmarks": [
+				-1,
+				22,
+				43,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_ReportWidget.psc",
+			"bookmarks": [
+				-1,
+				139,
+				16,
 				-1,
 				-1,
 				-1,
