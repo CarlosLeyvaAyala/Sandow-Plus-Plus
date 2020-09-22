@@ -166,7 +166,7 @@ Function OnGameReload()
     PrepareAlgorithmData()
     HeightChanger.ReapplyHeight()
     ;RegisterForKey(200)
-    texMngr.InitData()
+    texMngr.MakePlayerRipped()
     texMngr.Debug(Player)
     ; TestSave(29)
     JDB.writeToFile(JContainers.userDirectory() + "tree.json")
@@ -340,6 +340,7 @@ EndFunction
             EndIf
             SetHoursSlept(hoursSlept)
             ExecuteLua("return sandowpp.onSleep(jobject)")
+            texMngr.MakePlayerRipped()
             ChangeHeadSize()
             ReportPlayer()
             ; TODO: Unpause report loop

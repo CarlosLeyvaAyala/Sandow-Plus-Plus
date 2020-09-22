@@ -55,19 +55,6 @@ TextureSet Property LizMalW100 Auto
 
 ;TODO: Delete
 Function Debug(Actor akTarget)
-    int tx = _GetTextures(Player)
-    Trace("textures array " + tx)
-    Trace("tx0" + JArray.getForm(tx, 0))
-    Trace("tx100" + JArray.getForm(tx, 1))
-
-    MakePlayerRipped()
-
-    ; PlayerSettings.method = 1
-    ; PlayerSettings.constAlpha = 0.4
-
-    ; InitializeActor(Player)
-    ; string actorRace = MiscUtil.GetActorRaceEditorID(akTarget)
-    ; Debug.Notification("Target Sex " + IsFemale(akTarget))
 EndFunction
 
 ;>=========================================================
@@ -98,32 +85,6 @@ Function MakeRipped(Actor akTarget)
     _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 1) as TextureSet, _GetAlpha(akTarget, m))
 EndFunction
 
-; Initializes this script. Call this on game reload.
-Function InitData()
-EndFunction
-
-; Sets a suitable texture set and a suitable alpha.
-bool Function InitializeActor(Actor akTarget)
-    ; Trace("DM_SandowPP_TextureMngr.InitializeActor " + akTarget.getLeveledActorBase().getName())
-    DM_SandowPP_RippedActor settings = SelectSettings(akTarget)
-    If settings != None
-        If !settings.Config().MethodIsNone()
-            ; Set least ripped texture to always visible
-            _SetTextureSetAndAlpha(akTarget, settings.texSetLo, 1.0, "Body [Ovl0]")
-            ; Sets most ripped texture as a blend.
-            _SetTextureSetAndAlpha(akTarget, settings.texSet, settings.GetAlpha(akTarget))
-        Else
-            Clear(akTarget)
-        EndIf
-        return true
-    EndIf
-    return false
-EndFunction
-
-Function InitPlayer()
-    InitializeActor(Player)
-EndFunction
-
 Function Clear(Actor akTarget)
     Trace("---------- Clearing textures")
     ; Ripped texture
@@ -133,65 +94,12 @@ Function Clear(Actor akTarget)
 EndFunction
 
 
-;>=========================================================
-;>===                       MCM                         ===
-;>=========================================================
-
-
 ;@Private:
 ;>Building blocks. These aren't designed for interacting with other scripts.
 
-;>=========================================================
-;>===                       SETUP                       ===
-;>=========================================================
-
-; Initialize racial settings.
-;
-; Loads configurations for all known races.
-Function InitRacialSettings()
-EndFunction
-
-; Gets racial settings for an Actor.
-;
-; This checks if an actor is member of one of the known races. If it is,
-; it returns their racial settings. If not from known race, returns None.
-DM_SandowPP_RippedActor Function GetRacialSettings(Actor akTarget)
-    return None
-EndFunction
-
-; Returns the ripped actor at idx from the supported races Formlist.
-DM_SandowPP_RippedActor Function RippedActor(int idx)
-    ; return racesSettings.GetAt(idx) as DM_SandowPP_RippedActor
-EndFunction
-
-; Gets the texture of the player based on their race and sex.
-Function InitPlayerTexture()
-    ; DM_SandowPP_RippedActor pl = GetRacialSettings(Player)
-    ; PlayerSettings.texSet = pl.texSet
-    ; PlayerSettings.texSetLo = pl.texSetLo
-EndFunction
-
-
-; Selects suitable racial settings for akTarget.
-; Fully usable when textures can be aplplied to NPCs.
-DM_SandowPP_RippedActor Function SelectSettings(Actor akTarget)
-    ; DM_SandowPP_RippedActor settings = GetRacialSettings(akTarget)
-    ; If akTarget == Player
-    ;     settings = PlayerSettings
-    ; Else
-    ;     settings = GetRacialSettings(akTarget)
-    ; EndIf
-    ; return settings
-EndFunction
-
-;>=========================================================
-;>===                 RACE VALIDATORS                   ===
-;>=========================================================
-
-; Checks if an actor has a compatible race.
-bool Function IsValidRace(Actor akTarget)
-    ; return GetRacialSettings(akTarget) != None
-EndFunction
+;>========================================================
+;>===                    HELPERS                     ===<;
+;>========================================================
 
 ; It seems GetSex won't work if used inside a Global function; it can't be added to a library.
 bool Function _IsFemale(Actor akTarget)
@@ -203,7 +111,7 @@ string Function _GetRace(Actor akTarget)
     return MiscUtil.GetActorRaceEditorID(akTarget)
 EndFunction
 
-float Function PlayerWeight()
+float Function _PlayerWeight()
     return SPP.GetPlayerWeight() / 100
 EndFunction
 
@@ -226,26 +134,30 @@ float function _GetAlpha(Actor akTarget, string mode)
 EndFunction
 
 float Function _GetPlayerAlpha(string m)
+    Trace("_GetPlayerAlpha() " + m)
     float min = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "minAlpha")
-    float max = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "maxAlpha")
+    float max = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "maxAlpha", 1) / 100.0
 
     If m == "$Constant"
         return JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "currDef")
     ElseIf m == "$By weight"
-        return Lerp(min, max, PlayerWeight())
+        return Lerp(min, max, _PlayerWeight())
     ElseIf m == "$By weight inv"
-        return Lerp(min, max, 1.0 - PlayerWeight())
+        return Lerp(min, max, 1.0 - _PlayerWeight())
     ElseIf m == "$By skills"
-        return Lerp(min, max, AlphaFromSkills(Player))
+        return Lerp(min, max, _AlphaFromSkills(Player))
     Else
         ; When nothing else matches, let's assume we are using a behavior.
         ; So we'll take the value directly from the add on settings.
         float val = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "currDef")
+        Trace("Training " + val)
+        Trace("Lerp " + Lerp(min, max, val))
+        Trace("Min, max " + min + ", " + max)
         return Lerp(min, max, val)
     EndIf
 EndFunction
 
-float Function AlphaFromSkills(Actor akTarget)
+float Function _AlphaFromSkills(Actor akTarget)
     float hi = 1.25
     float md = 0.75
     float lo = 0.50

@@ -142,7 +142,7 @@ EndEvent
 Function InitVars()
     {Initializes variables needed for this to work.}
     Cfg = SPP.Config
-    _rippedPlayer = SPP.texMngr.PlayerSettings
+    ; _rippedPlayer = SPP.texMngr.PlayerSettings
     _rippedPlayerA = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
 
