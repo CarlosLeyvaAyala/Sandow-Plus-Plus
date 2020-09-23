@@ -2,7 +2,7 @@
 ;  Overview
 ;  ===========================================
 ; This is the main script that changes an Actor appeareance.
-; It basically decides how and which texture to apply to the player. ~~any given actor and automates the MCM options for NPCs.
+; It basically decides how and which texture to apply to the player.
 ; This script adds two layers:
 ;       * The least ripped the actor can be.
 ;       * The most ripped the actor can be.
@@ -10,26 +10,23 @@
 ; To simulate muscle definiton it alpha blends the most ripped layer.
 
 ;@Overview:
-;       * Initializes everything needed to get actors ripped.
-;       * Applies texture sets on other scripts' demands.
-;       ~~* Scans the environment every <x> seconds to apply the spell that keeps track of whom NPCs
-;        ~~ have been set their muscle definition.
-;        ~~ This spell expires after 30 min, so it can be reapplied to NPCs.
+;       * Gets which textures match a given actor's race.
+;       * Applies an alpha based on MCM options.
 
 ;@Info:
 ; To add a new race based on the ones that already exist:
-;       * Add its name to  "__Ripped Races.json" under whichever texture is right.
+;       * Add its name to the corresponding Race Support function.
 
 ; To add more races (like avian races and shit):
 ;       * Do the same steps as adding support for already existing races.
-;       * Create a new texture set in the CK, pointing to the most ripped texture.
-          ;WARNING:
+;       * Create two new texture sets in the CK, one pointing to the most ripped texture
+;         and the other for the least one.
+          ; WARNING:
 ;         As long as NiOverride fails to work for NPCs, a "least ripped" texture set is needed
 ;         for using it on the player, so this mod can be compatible with Ripped Bodies.
-;         This mods changes player while ripped bodies changes NPCs.
-;       * Create new "DM_SandowPP_RippedActor" descendants and add them to new quests.
-;         Don't forget to set all their needed properties.
-;       * Add those new quests to the "DM_SPP_RippedRaces" formlist in the CK.
+;         This mod changes the player while ripped bodies changes NPCs.
+;       * Add new properties to this script, those properties will point at those new texture sets.
+
 
 Scriptname DM_SandowPP_TextureMngr Extends Quest
 {Decides which texture set an actor should use. Used to make them ripped.}
@@ -57,9 +54,9 @@ TextureSet Property LizMalW100 Auto
 Function Debug(Actor akTarget)
 EndFunction
 
-;>=========================================================
-;>===                      PUBLIC                       ===
-;>=========================================================
+;>========================================================
+;>===                     PUBLIC                     ===<;
+;>========================================================
 
 ;> Use these functions when you want to enable muscle definition.
 
@@ -93,9 +90,6 @@ Function Clear(Actor akTarget)
     _SetTextureSetAndAlpha(akTarget, None, 0.0)
 EndFunction
 
-
-;@Private:
-;>Building blocks. These aren't designed for interacting with other scripts.
 
 ;>========================================================
 ;>===                    HELPERS                     ===<;
@@ -134,7 +128,6 @@ float function _GetAlpha(Actor akTarget, string mode)
 EndFunction
 
 float Function _GetPlayerAlpha(string m)
-    Trace("_GetPlayerAlpha() " + m)
     float min = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "minAlpha")
     float max = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "maxAlpha", 1) / 100.0
 
@@ -148,11 +141,11 @@ float Function _GetPlayerAlpha(string m)
         return Lerp(min, max, _AlphaFromSkills(Player))
     Else
         ; When nothing else matches, let's assume we are using a behavior.
-        ; So we'll take the value directly from the add on settings.
+        ; So we'll take the value directly from the addon settings.
         float val = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "currDef")
-        Trace("Training " + val)
-        Trace("Lerp " + Lerp(min, max, val))
-        Trace("Min, max " + min + ", " + max)
+        ; Trace("Training " + val)
+        ; Trace("Lerp " + Lerp(min, max, val))
+        ; Trace("Min, max " + min + ", " + max)
         return Lerp(min, max, val)
     EndIf
 EndFunction

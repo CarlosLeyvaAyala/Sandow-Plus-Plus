@@ -1,2 +1,2 @@
-function floatToPercentStr(x) return string.format("%.2f%%", x * 100) end
-print(floatToPercentStr(35/46))
+VAlign = {top = "top", center = "center", bottom = "bottom", [0] = "top"}
+print(VAlign[0])

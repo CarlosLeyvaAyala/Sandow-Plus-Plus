@@ -58,9 +58,9 @@ DM_SandowPP_ReportMeterBase[] _meters
     EndFunction
 
     Function Report(int data)
-        If Visible
+        ; If Visible
             _ForceReport(data)
-        EndIf
+        ; EndIf
     EndFunction
 
     ; Caches data to apply it as synchronically as possible.
@@ -97,11 +97,13 @@ DM_SandowPP_ReportMeterBase[] _meters
 ;>===                 UPDATING CICLE                 ===<;
 ;>========================================================
     Function _Kickstart()
-        Owner.ReportPlayer()
+        If Visible
+            Owner.ReportPlayer()
+        EndIf
         RegisterForSingleUpdate(\
             JValue.solveFlt(Owner.GetDataTree(),\
             "preset.widget.refreshRate",\
-            2)\
+            5)\
         )
     EndFunction
 
@@ -115,13 +117,20 @@ DM_SandowPP_ReportMeterBase[] _meters
         UnregisterForUpdate()
     EndEvent
 
-
-    ;>========================================================
-    ;>===                   APPEARANCE                   ===<;
-    ;>========================================================
-    Function _Hide()
-        Trace("Hide widget")
+    Function Pause()
         GotoState("Paused")
+    EndFunction
+
+    Function Resume()
+        GotoState("Running")
+    EndFunction
+
+;>========================================================
+;>===                   APPEARANCE                   ===<;
+;>========================================================
+
+    Function _Hide()
+        Pause()
         int i = 0
         While IterateMeters(i)
             _meters[i].FadeTo(0, 0.35)
@@ -131,7 +140,6 @@ DM_SandowPP_ReportMeterBase[] _meters
     EndFunction
 
     Function _Show()
-        Trace("Show widget")
         int i = 0
         int d = Owner.GetDataTree()
         float a = JValue.solveFlt(d, ".preset.widget.opacity", 100.0)
@@ -143,10 +151,17 @@ DM_SandowPP_ReportMeterBase[] _meters
             i += 1
         EndWhile
         Utility.Wait(0.4)
-        GotoState("Running")
+        Resume()
         _Kickstart()
     EndFunction
 
+    ; Since switching to Lua, we need to do this at game reload. Don't know why.
+    Function EnsureVisibility()
+        If Visible
+            _Show()
+        EndIf
+        Owner.ReportPlayer()
+    EndFunction
 
 ;>========================================================
 ;>===                     OTHER                      ===<;

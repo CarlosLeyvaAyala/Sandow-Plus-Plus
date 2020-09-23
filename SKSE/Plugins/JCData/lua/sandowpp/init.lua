@@ -35,10 +35,12 @@ local data = {
 -- ;>===                   INTERFACES                   ===<;
 -- ;>========================================================
 sandowpp.installAddons = addon_mgr.installAll
-sandowpp.widgetChangeVAlign = reportWidget.changeVAlign
+sandowpp.repositionWidget = reportWidget.mCalcPositions
 sandowpp.onSleep = bhv_mgr.onSleep
 sandowpp.onReport = bhv_mgr.onReport
 sandowpp.getMcmData = bhv_mgr.getMcmData
+sandowpp.changeHAlign = reportWidget.changeHAlign
+sandowpp.changeVAlign = reportWidget.changeVAlign
 
 function sandowpp.getDefaults(data)
     local p = l.pipe(
@@ -46,6 +48,7 @@ function sandowpp.getDefaults(data)
         bhv_mgr.default,
         skills.default
     )
+    data.defaultsInit = true
     return p(data)
 end
 

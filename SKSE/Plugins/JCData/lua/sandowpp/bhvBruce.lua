@@ -220,7 +220,7 @@ end
 function bhvBruce.report(data)
     closeFuncs(data)
     reportWidget.mPercent(data, "meter1", bhvBruce.currLeanness(data))
-    reportWidget.mPercent(data, "meter2", data.state.WGP)
+    reportWidget.mPercent(data, "meter2", bhv_all.adjMeter2(data))
     if not bhv_all.canLose(data) then
         reportWidget.mVisible(data, "meter3", false)
         reportWidget.mVisible(data, "meter4", false)

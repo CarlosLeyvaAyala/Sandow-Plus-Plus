@@ -97,8 +97,9 @@ Event OnKeyDown(Int KeyCode)
         ; ReportPlayer()
         ; TestSave(2)
     EndIf
-    If KeyCode == 200 || KeyCode == 21
-        ReportWidget.Visible = !ReportWidget.Visible
+    If KeyCode == 200
+        TestSave(38)
+        ; ReportWidget.Visible = !ReportWidget.Visible
     EndIf
 EndEvent
 
@@ -153,25 +154,25 @@ Function PrepareAlgorithmData()
     ; AlgorithmData.Report = Report
 EndFunction
 
-; ########################################################################
-; Public functions. Call them from wherever you want.
-; ########################################################################
+; Setup things again after reloading a save. Mostly registering events again.
 Function OnGameReload()
-    {Setup things again after reloading a save. Mostly registering events again}
     OpenLog()
     Trace("Reloading a saved game")
     InitVars()
     RegisterAgainHotkeys()
     RegisterEvents()
-    PrepareAlgorithmData()
     HeightChanger.ReapplyHeight()
-    ;RegisterForKey(200)
     texMngr.MakePlayerRipped()
-    texMngr.Debug(Player)
-    ; TestSave(29)
-    JDB.writeToFile(JContainers.userDirectory() + "tree.json")
-    ReportPlayer()
-    ; InitSequence()
+    ; texMngr.Debug(Player)
+    RegisterForKey(200)
+    LoadAddons()
+    LoadDefaults()
+    ; Since switching to Lua, we need to do this. Don't know why.
+    ReportWidget.EnsureVisibility()
+    ; JValue.solveFltSetter(GetMCMConfig(), ".widget.refreshRate", 2)
+    ; TestSave(300)
+    ; SavePreset("preset")
+    ;
 EndFunction
 
 ;>=========================================================
@@ -227,6 +228,10 @@ EndFunction
         return JValue.solveObj(GetDataTree(), ".preset")
     EndFunction
 
+    Function SavePreset(string fname)
+        JValue.writeToFile(GetMCMConfig(), JContainers.userDirectory() + fname + ".json")
+    EndFunction
+
     Function UpdateDataTree(int data)
         JDB.setObj(jDBRoot, data)
     EndFunction
@@ -254,16 +259,21 @@ EndFunction
 
 ; Gets the data tree and sends it to some Lua function, then updates data tree.
 Function ExecuteLua(string str)
-    ;@Hint: It's QUITE important to not let a function to accidentally clear the data tree.
+    ;@Hint: It's QUITE important to not let a function accidentally clear the data tree.
     int t = JValue.evalLuaObj(GetDataTree(), str)
     If t == 0 || JValue.empty(t)
-        string s = "ExecuteLua(): ***ERROR*** " + str + " returns an empty data tree"
-        Trace(s, 2)
-        Debug.TraceStack(s, 2)
-        Debug.MessageBox("Sandow Plus Plus\nExecuteLua(): " + str + " returns an empty data tree.\nPlease contact this mod's author.")
+        _LogAndShowLuaExecErrors(str)
         return
     EndIf
     UpdateDataTree(t)
+EndFunction
+
+Function _LogAndShowLuaExecErrors(string cmd)
+    string s = "ExecuteLua('" + cmd + "'): returns an empty data tree."
+    string s2 = "***ERROR*** " + s
+    Trace(s2, 2)
+    Debug.TraceStack(s2, 2)
+    Debug.MessageBox("Sandow Plus Plus\n" + s + "\nPlease contact this mod's author.")
 EndFunction
 
 ; Saves current player variables so they can be processed by Lua.
@@ -305,7 +315,7 @@ float Function EnsureTime(int data, string path)
     return ls
 EndFunction
 
-; Retuns in real hours how much time has passed between do game hours.
+; Retuns in real hours how much time has passed between two game hours.
 float Function HourSpan(float then)
     Return ToRealHours(Now() - then)
 EndFunction
@@ -327,25 +337,37 @@ EndFunction
 
         ; Prepare player to sleep. Setup sleeping time and total hours awaken.
         Event OnSleepStart(float aStartTime, float aEndTime)
-            ; TODO: Pause widget reporting loop
+            ReportWidget.Pause()
             PreparePlayerToSleep()
             _goneToSleepAt = Now()                        ; Just went to sleep
         endEvent
 
         ; Main calculation. This is the core of this mod.
         Event OnSleepStop(bool aInterrupted)
-            float hoursSlept = HourSpan(_goneToSleepAt)       ; Hours actually slept, since player can cancel.
+            ; Hours actually slept, since player can cancel or Astrid can kidnap.
+            float hoursSlept = HourSpan(_goneToSleepAt)
             If hoursSlept < 1
                 Return      ; Do nothing if didn't really slept
             EndIf
             SetHoursSlept(hoursSlept)
             ExecuteLua("return sandowpp.onSleep(jobject)")
-            texMngr.MakePlayerRipped()
-            ChangeHeadSize()
+            SleepPostprocess()
             ReportPlayer()
-            ; TODO: Unpause report loop
+            ReportWidget.Resume()
         endEvent
 
+        Function SleepPostprocess()
+            texMngr.MakePlayerRipped()
+            ChangeHeadSize()
+        EndFunction
+
+
+; Registers a new hotkey.
+Function RegisterHotkey(int aOldKey, int aNewKey)
+    Trace("Main.RegisterHotkey(" + aOldKey + ", " + aNewKey + ")")
+    UnRegisterForKey(aOldKey)
+    RegisterForKey(aNewKey)
+EndFunction
 
 ;>=========================================================
 ;>===                       END                         ===
@@ -379,9 +401,9 @@ EndFunction
 
 Function Configure()
     { Configure data after using the MCM or reloading a preset. This method is called by the Config script/object belonging to this script }
-    Trace("Main.Configure()")
-    PrepareAlgorithmData()
-    ChangeAlgorithm()
+    ; Trace("Main.Configure()")
+    ; PrepareAlgorithmData()
+    ; ChangeAlgorithm()
 EndFunction
 
 
@@ -412,24 +434,16 @@ Function ChangeAlgorithm()
     Trace("Ending Main.ChangeAlgorithm()")
 EndFunction
 
+; Registers again events for hotkeys that have already been set up.
 Function RegisterAgainHotkeys()
-    { Registers again events for hotkeys that have already been set up }
-    Trace("Main.RegisterAgainHotkeys(HkShowStatus = " + Config.HkShowStatus + ")")
-    RegisterAgainHotkey(Config.HkShowStatus)
-EndFunction
-
-Function RegisterHotkey(int aOldKey, int aNewKey)
-    {Registers a new hotkey}
-    Trace("Main.RegisterHotkey(" + aOldKey + ", " + aNewKey + ")")
-    UnRegisterForKey(aOldKey)
-    RegisterForKey(aNewKey)
+    RegisterAgainHotkey(JValue.solveInt(GetMCMConfig(), ".widget.hotkey", -1))
 EndFunction
 
 Function RegisterAgainHotkey(int oldKey)
     { Registers again events for ONE hotkey that have already been set up }
     Trace("Main.RegisterAgainHotkey(oldKey = " + oldKey + ")")
 
-    if oldKey != Config.hotkeyInvalid
+    if oldKey != -1
         RegisterForKey(oldKey)
     EndIf
 EndFunction

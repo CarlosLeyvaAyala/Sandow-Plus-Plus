@@ -4,7 +4,45 @@ Scriptname DM_SandowPP_MCM_Base extends SKI_ConfigBase Hidden
 Import DM_Utils
 Import DM_SandowPP_Globals
 ; Import DM_SandowPP_SkeletonNodes
+; Slider fomats declared like this so they can be changed once this mod was published
+string Property slFmt2r = "{2}" AutoReadOnly
 
+string Property f0 = "$f0" AutoReadOnly
+{Format 0-precision}
+string Property f0c = "$f0c" AutoReadOnly
+{Format 0-precision perCent}
+string Property f1c = "$f1c" AutoReadOnly
+{Format 1-precision perCent}
+string Property f0s = "$f0s" AutoReadOnly
+{Format 0-precision Seconds}
+
+string Property slFmt
+    string Function get()
+        Return "{2}%"
+    EndFunction
+EndProperty
+string Property xslFmt
+    string Function get()
+        Return "{0}x"
+    EndFunction
+EndProperty
+string Property slFmt4
+    string Function get()
+        Return "{4}%"
+    EndFunction
+EndProperty
+; TODO: Delete
+string Property slFmt0
+    string Function get()
+        Return "{0}%"
+    EndFunction
+EndProperty
+; TODO: Delete
+string Property slFmt0r
+    string Function get()
+        Return "{0}"
+    EndFunction
+EndProperty
 
 DM_SandowPPMain property SPP auto
 DM_SandowPP_Config property Cfg auto
@@ -15,6 +53,16 @@ EndFunction
 
 string Function Error(string text)
     return "$MCM_Error{" + text + "}"
+EndFunction
+
+; Renames AddKeyMapOptionST() to declutter code
+Function Toggle(string stateName, string text, bool checked, int flags = 0)
+    AddToggleOptionST(stateName, text, checked, flags)
+EndFunction
+
+; Renames AddKeyMapOptionST() to declutter code
+Function Hotkey(string stateName, string text, int hKey, int flags = 0)
+    AddKeyMapOptionST(stateName, text, hKey, flags)
 EndFunction
 
 ; Renames AddTextOptionST() to declutter code

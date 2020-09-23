@@ -4,15 +4,15 @@ Import DM_Utils
 Import DM_SandowPP_Globals
 
 string[] _behaviors
-int Function PageMainConfiguration(int pos)
+Function PageMainConfiguration()
     _behaviors = new string[4]
     _behaviors[0] = "$MCM_PausedBehavior"
     _behaviors[1] = "Sandow Plus Plus"
     _behaviors[2] = "Pumping Iron"
     _behaviors[3] = "Bruce Lee"
 
-    int count = 3
-    SetCursorPosition(pos)
+    ; int count = 3
+    ; SetCursorPosition(pos)
     ;AddEmptyOption()
     Header("$Configuration")
     ; If !_rippedPlayer.bulkCut
@@ -25,17 +25,18 @@ int Function PageMainConfiguration(int pos)
 
     If !Cfg.IsPumpingIron()
         AddToggleOptionST("TG_DR", "$Diminishing returns", Cfg.DiminishingReturns)
-        count += 1
+        ; count += 1
         If Cfg.IsSandow()
             AddToggleOptionST("TG_REBOUNDW", "$Weight rebound", Cfg.CanReboundWeight)
-            count += 1
+            ; count += 1
         EndIf
     EndIf
 
 
     ;AddToggleOptionST("TG_DISEASE", "$Disease affects Weight", false)
     ;AddToggleOptionST("TG_FOOD", "$Needs food to grow", false)
-    Return pos + ToNewPos(count)
+    AddEmptyOption()
+    ; Return pos + ToNewPos(count)
 EndFunction
 
 State TX_BulkCutCantShowBhv

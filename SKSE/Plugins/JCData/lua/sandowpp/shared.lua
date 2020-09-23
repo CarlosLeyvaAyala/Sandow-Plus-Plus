@@ -4,6 +4,14 @@
 
 local shared = {}
 
+---Creates a default value for some *"property"* if such property is `nil`.
+---@param data table
+---@param property function
+---@param val any
+function shared.defVal(data, property, val)
+    if property(data) == nil then property(data, val) end
+end
+
 -- ;>========================================================
 -- ;>===                    MANAGERS                    ===<;
 -- ;>========================================================

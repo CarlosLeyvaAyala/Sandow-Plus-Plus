@@ -77,6 +77,7 @@ end
 --- Generates default values and multipliers for all skills.
 --- @param data table
 function skills.default(data)
+    if data.defaultsInit then return data end
     data.preset.bhv.skills.fatigueMul = 1 -- This value is used to configure mulitpliers in the mcm
     skills.defaultMult(data)
     skills.defaultTraining(data)

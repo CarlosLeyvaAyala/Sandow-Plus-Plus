@@ -16,44 +16,11 @@ Import JValue
 
 int sDecimals = 1                       ; To give format to floats
 
-; Slider fomats declared like this so they can be changed once this mod was published
-string Property slFmt
-    string Function get()
-        Return "{2}%"
-    EndFunction
-EndProperty
-string Property xslFmt
-    string Function get()
-        Return "{0}x"
-    EndFunction
-EndProperty
-string Property slFmt4
-    string Function get()
-        Return "{4}%"
-    EndFunction
-EndProperty
-string Property slFmt0
-    string Function get()
-        Return "{0}%"
-    EndFunction
-EndProperty
-string Property slFmt0r
-    string Function get()
-        Return "{0}"
-    EndFunction
-EndProperty
-
-string Property slFmt2r = "{2}" AutoReadOnly
-
 string _ppMain = "$Main"
 string _ppSkills = "$Skills"
 string _ppWidget = "$Widget"
 string _ppCompat = "$Compat"
 
-string[] _reports
-string[] _behaviors
-string[] _vAlign
-string[] _hAlign
 string[] _rippedPlayerMethods
 string[] _rippedPlayerBulkBhvMenu
 
@@ -78,27 +45,6 @@ Event OnConfigInit()
     Pages[2] = _ppWidget
     Pages[3] = _ppCompat
 
-    _hAlign = new string[3]
-    _hAlign[0] = "left"
-    _hAlign[1] = "center"
-    _hAlign[2] = "right"
-
-    _vAlign = new string[3]
-    _vAlign[0] = "top"
-    _vAlign[1] = "center"
-    _vAlign[2] = "bottom"
-
-    _reports = new string[3]
-    _reports[Cfg.rtDebug] = "$Simple message"
-    _reports[Cfg.rtSkyUiLib] = "$Color notifications"
-    _reports[Cfg.rtWidget] = "$Widget"
-
-    _behaviors = new string[4]
-    _behaviors[Cfg.bhPause] = "$MCM_PausedBehavior"
-    _behaviors[Cfg.bhSandowPP] = "Sandow Plus Plus"
-    _behaviors[Cfg.bhPumpingIron] = "Pumping Iron"
-    _behaviors[Cfg.bhBruce] = "Bruce Lee"
-
     _rippedPlayerMethods = new string[6]
     _rippedPlayerMethods[Cfg.rpmNone] = "$None"
     _rippedPlayerMethods[Cfg.rpmConst] = "$Constant"
@@ -120,7 +66,6 @@ event OnVersionUpdate(int aVersion)
 endEvent
 
 event OnPageReset(string aPage)
-    Trace("on page reset " + aPage)
     If aPage == _ppWidget
         PageWidget()
     ElseIf aPage == _ppSkills
@@ -143,7 +88,7 @@ Function InitVars()
     {Initializes variables needed for this to work.}
     Cfg = SPP.Config
     ; _rippedPlayer = SPP.texMngr.PlayerSettings
-    _rippedPlayerA = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
+    ; _rippedPlayerA = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
 
 ;>=========================================================
@@ -152,19 +97,21 @@ EndFunction
 
 Function PageMain()
     SetCursorFillMode(TOP_TO_BOTTOM)
+    ; Col 1
+    SetCursorPosition(0)
     ; If !JContainersExists()
     ;     return
     ; EndIf
-    ; Row 1
-    int presets = PageMainPresets(0)
-    int stats = PageMainStats(1)
-    ; ; Row 2
-    ; ; int row2 = MaxI(stats - 1, presets)
-    int mainCfg = PageMainConfiguration(presets)
-    ; int ripped = PageRippedPlayer(stats)
-    ; ; ;Row 3
+
+    PageMainPresets()
+    PageMainConfiguration()
     ; PageMainOtherOptions(mainCfg)
-    ; PageMainItems(ripped)
+
+    ; Col 2
+    SetCursorPosition(1)
+    PageMainStats()
+    ; PageRippedPlayer()
+    PageMainItems()
 EndFunction
 
 ;>=========================================================
@@ -357,501 +304,6 @@ State SL_HEADSZ_MX
     EndEvent
 EndState
 
-;>=========================================================
-;>===                   MAIN - STATS                    ===
-;>=========================================================
-
-
-;>=========================================================
-;>===                   MAIN - ITEMS                    ===
-;>=========================================================
-int Function PageMainItems(int pos)
-    SetCursorPosition(pos)
-    Header("$Items")
-    Button("TX_IT_SACKS", "$Weight sacks", "$Distribute", FlagByBool(!SPP.Items.WeightSacksDistributed) )
-    Button("TX_IT_ANABOL", "$Weight gainers", "$Distribute", FlagByBool(!SPP.Items.SillyDistributed) )
-    Return pos + ToNewPos(3)
-EndFunction
-
-State TX_IT_SACKS
-    Event OnSelectST()
-        SPP.Items.DistributeWeightSacks()
-        ShowMessage("$MCM_ItemsSacks", False)
-        SetOptionFlagsST(OPTION_FLAG_DISABLED, False, "TX_IT_SACKS")
-    EndEvent
-EndState
-
-State TX_IT_ANABOL
-    Event OnSelectST()
-        SPP.Items.DistributeSilly()
-        ShowMessage("$MCM_ItemsAnabolics", False)
-        SetOptionFlagsST(OPTION_FLAG_DISABLED, False, "TX_IT_ANABOL")
-    EndEvent
-EndState
-
-
-;>=========================================================
-;>===                   REPORT WIDGET                   ===
-;>=========================================================
-
-Function PageWidget()
-    SetCursorFillMode(TOP_TO_BOTTOM)
-    Header("$Configuration")
-    ; AddHeaderOption("<font color='#daa520'>$Configuration</font>")
-    AddKeyMapOptionST("KM_WIDGET", "$MCM_HideShowWidget", Cfg.HkShowStatus)
-    Slider("SL_RWUPDTIME", "$Update time", Cfg.rwUpdateTime, slFmt0r + " s")
-    Slider("SL_RWALPHA", "$Opacity", Cfg.rwOpacity, slFmt0)
-    Slider("SL_RWSCALE", "$Scale", FloatToPercent(Cfg.rwScale), slFmt0)
-
-    SetCursorPosition(1)
-    Header("$Other options")
-    ; AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    Menu("MN_RWHAL", "$Horizontal Align", Cfg.rwHAlign)
-    Menu("MN_RWVAL", "$Vertical Align", Cfg.rwVAlign)
-    Slider("SL_RWX", "$X Offset", Cfg.rwX, slFmt0r)
-    Slider("SL_RWY", "$Y Offset", Cfg.rwY, slFmt0r)
-EndFunction
-
-State KM_WIDGET
-    Event OnKeyMapChangeST(int newKeyCode, string conflictControl, string conflictName)
-        If ( ConfirmHotkeyChange(conflictControl, conflictName) )
-            Cfg.HkShowStatus = newKeyCode
-            SetKeyMapOptionValueST(newKeyCode)
-        EndIf
-    EndEvent
-
-    Event OnDefaultST()
-        SetKeyMapOptionValueST(Cfg.hotkeyInvalid)
-        Cfg.HkShowStatus = Cfg.hotkeyInvalid
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_HKStatusRWInfo")
-    EndEvent
-EndState
-
-State SL_RWUPDTIME
-    Event OnSliderOpenST()
-        CreateSlider(Cfg.rwUpdateTime, 1.0, 20.0, 1.0)
-    EndEvent
-
-    Event OnSliderAcceptST(float val)
-        Cfg.rwUpdateTime =  val
-        SetSliderOptionValueST(Cfg.rwUpdateTime, slFmt0r + " s")
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwUpdateTime = 3.0
-        SetSliderOptionValueST(Cfg.rwUpdateTime, slFmt0r + " s")
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_RWUpdateTimeInfo")
-    EndEvent
-EndState
-
-State SL_RWALPHA
-    Event OnSliderOpenST()
-        CreateSlider(Cfg.rwOpacity, 10, 100, 5)
-    EndEvent
-
-    Event OnSliderAcceptST(float val)
-        Cfg.rwOpacity =  val
-        SetSliderOptionValueST(Cfg.rwOpacity, slFmt0)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwOpacity = 100
-        SetSliderOptionValueST(Cfg.rwOpacity, slFmt0)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_RWAlphaInfo")
-    EndEvent
-EndState
-
-State SL_RWSCALE
-    Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(Cfg.rwScale), 10, 200, 1)
-    EndEvent
-
-    Event OnSliderAcceptST(float val)
-        Cfg.rwScale = PercentToFloat(val)
-        SetSliderOptionValueST(val, slFmt0)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwScale = 1.0
-        SetSliderOptionValueST(FloatToPercent(Cfg.rwScale), slFmt0)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_RWScaleInfo")
-    EndEvent
-EndState
-
-State MN_RWHAL
-    Event OnMenuOpenST()
-        int p = IndexOfS(_hAlign, Cfg.rwHAlign)
-        OpenMenu(p, p, _hAlign)
-    EndEvent
-
-    Event OnMenuAcceptST(int index)
-        Cfg.rwHAlign = _hAlign[index]
-        SetMenuOptionValueST(Cfg.rwHAlign)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwHAlign = _hAlign[0]
-        SetMenuOptionValueST(Cfg.rwHAlign)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_RWhAlignInfo")
-    EndEvent
-EndState
-
-State MN_RWVAL
-    Event OnMenuOpenST()
-        int p = IndexOfS(_vAlign, Cfg.rwVAlign)
-        OpenMenu(p, p, _vAlign)
-    EndEvent
-
-    Event OnMenuAcceptST(int index)
-        Cfg.rwVAlign = _vAlign[index]
-        SetMenuOptionValueST(Cfg.rwVAlign)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwVAlign = _vAlign[0]
-        SetMenuOptionValueST(Cfg.rwVAlign)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("MCM_RWvAlignInfo")
-    EndEvent
-EndState
-
-State SL_RWX
-    Event OnSliderOpenST()
-        CreateSlider(Cfg.rwX, -425, 425, 1)
-    EndEvent
-
-    Event OnSliderAcceptST(float val)
-        Cfg.rwX = val
-        SetSliderOptionValueST(val, slFmt0r)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwX = 0
-        SetSliderOptionValueST(0, slFmt0r)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_RWXInfo")
-    EndEvent
-EndState
-
-State SL_RWY
-    Event OnSliderOpenST()
-        CreateSlider(Cfg.rwY, -240, 240, 1)
-    EndEvent
-
-    Event OnSliderAcceptST(float val)
-        Cfg.rwY = val
-        SetSliderOptionValueST(val, slFmt0r)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.rwY = 0
-        SetSliderOptionValueST(0, slFmt0r)
-    EndEvent
-
-    Event OnHighlightST()
-        SetInfoText("$MCM_RWYInfo")
-    EndEvent
-EndState
-
-
-;>=========================================================
-;>===                       SKILLS                      ===
-;>=========================================================
-
-Function PageSkills()
-    SetCursorFillMode(TOP_TO_BOTTOM)
-    int flag = DisableSkills()
-    ;================================
-    SetCursorPosition(0)
-    AddHeaderOption("<font color='#daa520'>$MCM_WGPHeader</font>")
-    Slider("SL_AR", "$Archery", Cfg.skillRatioAr, slFmt, flag)
-    Slider("SL_BL", "$Block", Cfg.skillRatioBl, slFmt, flag)
-    Slider("SL_HA", "$Heavy Armor", Cfg.skillRatioHa, slFmt, flag)
-    Slider("SL_LA", "$Light Armor", Cfg.skillRatioLa, slFmt, flag)
-    Slider("SL_1H", "$One Handed", Cfg.skillRatio1H, slFmt, flag)
-    Slider("SL_SM", "$Smithing", Cfg.skillRatioSm, slFmt, flag)
-    Slider("SL_SN", "$Sneak", Cfg.skillRatioSn, slFmt, flag)
-    Slider("SL_2H", "$Two Handed", Cfg.skillRatio2H, slFmt, flag)
-
-    SetCursorPosition(1)
-    AddHeaderOption("")
-    Slider("SL_AL", "$Alteration", Cfg.skillRatioAl, slFmt, flag)
-    Slider("SL_CO", "$Conjuration", Cfg.skillRatioCo, slFmt, flag)
-    Slider("SL_DE", "$Destruction", Cfg.skillRatioDe, slFmt, flag)
-    Slider("SL_IL", "$Illusion", Cfg.skillRatioIl, slFmt, flag)
-    Slider("SL_RE", "$Restoration", Cfg.skillRatioRe, slFmt, flag)
-
-    ;================================
-    If !Cfg.IsSandow()
-        Return
-    EndIf
-    SetCursorPosition(20)
-    AddHeaderOption("<font color='#daa520'>$Other options</font>")
-    Slider("SL_FP", "$MCM_SlFatiguePhys", ToPercent(Cfg.physFatigueRate), xslFmt)
-
-    SetCursorPosition(21)
-    AddHeaderOption("")
-EndFunction
-
-int Function DisableSkills()
-    If Cfg.skillsLocked
-        Return OPTION_FLAG_DISABLED
-    Else
-        Return OPTION_FLAG_NONE
-    EndIf
-EndFunction
-
-State SL_AR
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatioAr)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioAr =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioAr = Cfg.skillDefaultAr
-        SetSliderOptionValueST(Cfg.skillRatioAr, slFmt)
-    endEvent
-EndState
-
-State SL_BL
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatioBl)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioBl =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioBl = Cfg.skillDefaultBl
-        SetSliderOptionValueST(Cfg.skillRatioBl, slFmt)
-    endEvent
-EndState
-
-State SL_HA
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatioHa)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioHa =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioHa = Cfg.skillDefaultHa
-        SetSliderOptionValueST(Cfg.skillRatioHa, slFmt)
-    endEvent
-EndState
-
-State SL_LA
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatioLa)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioLa =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioLa = Cfg.skillDefaultLa
-        SetSliderOptionValueST(Cfg.skillRatioLa, slFmt)
-    endEvent
-EndState
-
-State SL_1H
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatio1H)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatio1H =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatio1H = Cfg.skillDefault1H
-        SetSliderOptionValueST(Cfg.skillRatio1H, slFmt)
-    endEvent
-EndState
-
-State SL_SN
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatioSn)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioSn =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioSn = Cfg.skillDefaultSn
-        SetSliderOptionValueST(Cfg.skillRatioSn, slFmt)
-    endEvent
-EndState
-
-State SL_SM
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatioSm)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioSm =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioSm = Cfg.skillDefaultSm
-        SetSliderOptionValueST(Cfg.skillRatioSm, slFmt)
-    endEvent
-EndState
-
-State SL_2H
-    Event OnSliderOpenST()
-        CreateSkillSliderPhys(Cfg.skillRatio2H)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatio2H =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatio2H = Cfg.skillDefault2H
-        SetSliderOptionValueST(Cfg.skillRatio2H, slFmt)
-    endEvent
-EndState
-
-State SL_AL
-    Event OnSliderOpenST()
-        CreateSkillSliderMag(Cfg.skillRatioAl)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioAl =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioAl = Cfg.skillDefaultAl
-        SetSliderOptionValueST(Cfg.skillRatioAl, slFmt)
-    endEvent
-EndState
-
-State SL_CO
-    Event OnSliderOpenST()
-        CreateSkillSliderMag(Cfg.skillRatioCo)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioCo =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioCo = Cfg.skillDefaultCo
-        SetSliderOptionValueST(Cfg.skillRatioCo, slFmt)
-    endEvent
-EndState
-
-State SL_DE
-    Event OnSliderOpenST()
-        CreateSkillSliderMag(Cfg.skillRatioDe)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioDe =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioDe = Cfg.skillDefaultDe
-        SetSliderOptionValueST(Cfg.skillRatioDe, slFmt)
-    endEvent
-EndState
-
-State SL_IL
-    Event OnSliderOpenST()
-        CreateSkillSliderMag(Cfg.skillRatioIl)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioIl =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioIl = Cfg.skillDefaultIl
-        SetSliderOptionValueST(Cfg.skillRatioIl, slFmt)
-    endEvent
-EndState
-
-State SL_RE
-    Event OnSliderOpenST()
-        CreateSkillSliderMag(Cfg.skillRatioRe)
-    EndEvent
-
-    event OnSliderAcceptST(float val)
-        Cfg.skillRatioRe =  val
-        SetSliderOptionValueST(val, slFmt)
-    endEvent
-
-    event OnDefaultST()
-        Cfg.skillRatioRe = Cfg.skillDefaultRe
-        SetSliderOptionValueST(Cfg.skillRatioRe, slFmt)
-    endEvent
-EndState
-
-State SL_FP
-    Event OnSliderOpenST()
-        CreateFatigueSlider(Cfg.physFatigueRate)
-    EndEvent
-
-    Event OnSliderAcceptST(float val)
-        Cfg.physFatigueRate =  PercentToFloat(val)
-        SetSliderOptionValueST(val, xslFmt)
-    EndEvent
-
-    Event OnDefaultST()
-        Cfg.physFatigueRate = PercentToFloat(10)
-        SetSliderOptionValueST(10, xslFmt)
-    EndEvent
-
-    Event OnHighlightST()
-        float sk = Cfg.skillRatioRe
-        float mr = Cfg.magFatigueRateMultiplier
-        float r = Cfg.physFatigueRate * mr
-        float rr = FloatToPercent(sk * r)
-        string s = "$MCM_SlWGPMultInfo{" + FloatToStr(mr, 1) + "}{" + FloatToStr(rr) + "}"
-        SetInfoText(s)
-    EndEvent
-EndState
 
 
 ;>=========================================================
@@ -859,49 +311,49 @@ EndState
 ;>=========================================================
 
 string _sl_DaysFmt = "$sl_DaysFmt"
-DM_SandowPP_RippedPlayer _rippedPlayer
-DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerA
+; DM_SandowPP_RippedPlayer _rippedPlayer
+; DM_SandowPP_RippedAlphaCalcPlayer _rippedPlayerA
 
 int Function PageRippedPlayer(int pos)
     SetCursorPosition(pos)
     int count = 1
     Header("$Getting ripped")
-    If (SPP.texMngr.IsValidRace(SPP.Player))
-        ; Hide menu when the player wants to bulk & cut or get ripped by behavior, because it doesn't make sense in those cases
-        If !(_rippedPlayer.bulkCut || Cfg.IsBruce())
-            Menu("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[_rippedPlayer.Method])
-            count += 1
-        Else
-            Label("TX_RippedPlayerHiddenMethod", "$Behavior", SPP.Algorithm.Signature(), FlagByBool(false))
-            count += 1
-        EndIf
-        ; Hide bulk & cut when it doesn't make sense
-        If _rippedPlayerA.MethodIsBehavior() || Cfg.IsBruce()
-            AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", _rippedPlayer.bulkCut)
-            count += 1
-            If _rippedPlayer.bulkCut
-                Slider("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", _rippedPlayer.bulkCutDays, _sl_DaysFmt)
-                Menu("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
-                count += 2
-            EndIf
-        EndIf
+    ; If (SPP.texMngr.IsValidRace(SPP.Player))
+    ;     ; Hide menu when the player wants to bulk & cut or get ripped by behavior, because it doesn't make sense in those cases
+    ;     If !(_rippedPlayer.bulkCut || Cfg.IsBruce())
+    ;         Menu("MN_RippedPlayerOpt", "$MCM_RippedApply", _rippedPlayerMethods[_rippedPlayer.Method])
+    ;         count += 1
+    ;     Else
+    ;         Label("TX_RippedPlayerHiddenMethod", "$Behavior", SPP.Algorithm.Signature(), FlagByBool(false))
+    ;         count += 1
+    ;     EndIf
+    ;     ; Hide bulk & cut when it doesn't make sense
+    ;     If _rippedPlayerA.MethodIsBehavior() || Cfg.IsBruce()
+    ;         AddToggleOptionST("TG_RippedPlayerBulkCut", "$MCM_BulkCut", _rippedPlayer.bulkCut)
+    ;         count += 1
+    ;         If _rippedPlayer.bulkCut
+    ;             Slider("SL_RippedBulkDaysSwap", "$MCM_SwapBulkCutDays", _rippedPlayer.bulkCutDays, _sl_DaysFmt)
+    ;             Menu("MN_RippedBulkBhv", "$MCM_BulkBhv", _rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
+    ;             count += 2
+    ;         EndIf
+    ;     EndIf
 
-        ; Show constant config only when it's required.
-        If _rippedPlayerA.MethodIsConst()
-            Slider("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
-            count += 1
-        EndIf
+    ;     ; Show constant config only when it's required.
+    ;     If _rippedPlayerA.MethodIsConst()
+    ;         Slider("SL_RippedPlayerConstAlpha", "$MCM_RippedConst", FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
+    ;         count += 1
+    ;     EndIf
 
-        ; Texture bounds for player
-        If !_rippedPlayerA.MethodIsNone() && !_rippedPlayerA.MethodIsConst()
-            Slider("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(_rippedPlayer.LB), slFmt0)
-            Slider("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(_rippedPlayer.UB), slFmt0)
-            count += 2
-        EndIf
-    Else
-        AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
-        count += 1
-    EndIf
+    ;     ; Texture bounds for player
+    ;     If !_rippedPlayerA.MethodIsNone() && !_rippedPlayerA.MethodIsConst()
+    ;         Slider("SL_RippedPlayerLB", "$MCM_RippedLowerBound", FloatToPercent(_rippedPlayer.LB), slFmt0)
+    ;         Slider("SL_RippedPlayerUB", "$MCM_RippedUpperBound", FloatToPercent(_rippedPlayer.UB), slFmt0)
+    ;         count += 2
+    ;     EndIf
+    ; Else
+    ;     AddTextOptionST("TX_RippedInvalidRace", "", "$MCM_RippedInvalidRace{" + MiscUtil.GetActorRaceEditorID(SPP.Player) + "}" )
+    ;     count += 1
+    ; EndIf
     return pos + ToNewPos(count)
 EndFunction
 
@@ -913,19 +365,19 @@ EndState
 
 State SL_RippedPlayerLB
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(_rippedPlayer.LB), 0.0, FloatToPercent(_rippedPlayer.UB) - 1.0, 1.0)
+        ; CreateSlider(FloatToPercent(_rippedPlayer.LB), 0.0, FloatToPercent(_rippedPlayer.UB) - 1.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        _rippedPlayer.LB = PercentToFloat(val)
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetSliderOptionValueST(val, slFmt0)
+        ; _rippedPlayer.LB = PercentToFloat(val)
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        _rippedPlayer.LB = 0.0
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetSliderOptionValueST(0.0, slFmt0)
+        ; _rippedPlayer.LB = 0.0
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetSliderOptionValueST(0.0, slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -935,19 +387,19 @@ EndState
 
 State SL_RippedPlayerUB
     Event OnSliderOpenST()
-        CreateSlider(FloatToPercent(_rippedPlayer.UB), FloatToPercent(_rippedPlayer.LB) + 1.0, 100.0, 1.0)
+        ; CreateSlider(FloatToPercent(_rippedPlayer.UB), FloatToPercent(_rippedPlayer.LB) + 1.0, 100.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        _rippedPlayer.UB = PercentToFloat(val)
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetSliderOptionValueST(val, slFmt0)
+        ; _rippedPlayer.UB = PercentToFloat(val)
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        _rippedPlayer.UB = 1.0
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetSliderOptionValueST(100, slFmt0)
+        ; _rippedPlayer.UB = 1.0
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetSliderOptionValueST(100, slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -957,20 +409,20 @@ EndState
 
 State SL_RippedPlayerConstAlpha
     Event OnSliderOpenST()
-        CreatePercentSlider(_rippedPlayer.constAlpha)
+        ; CreatePercentSlider(_rippedPlayer.constAlpha)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        _rippedPlayer.constAlpha =  PercentToFloat(val)
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetSliderOptionValueST(val, slFmt0)
+        ; _rippedPlayer.constAlpha =  PercentToFloat(val)
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetSliderOptionValueST(val, slFmt0)
     EndEvent
 
     Event OnDefaultST()
-        _rippedPlayer.constAlpha = 1.0
-        ; RippedPlayerSetCnstAlpha()
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetSliderOptionValueST(FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
+        ; _rippedPlayer.constAlpha = 1.0
+        ; ; RippedPlayerSetCnstAlpha()
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetSliderOptionValueST(FloatToPercent(_rippedPlayer.constAlpha), slFmt0)
     EndEvent
 
     Event OnHighlightST()
@@ -980,17 +432,17 @@ EndState
 
 State SL_RippedBulkDaysSwap
     Event OnSliderOpenST()
-        CreateSlider(_rippedPlayer.bulkCutDays, 1.0, 20.0, 1.0)
+        ; CreateSlider(_rippedPlayer.bulkCutDays, 1.0, 20.0, 1.0)
     EndEvent
 
     Event OnSliderAcceptST(float val)
-        _rippedPlayer.bulkCutDays = val as int
-        SetSliderOptionValueST(_rippedPlayer.bulkCutDays, _sl_DaysFmt)
+        ; _rippedPlayer.bulkCutDays = val as int
+        ; SetSliderOptionValueST(_rippedPlayer.bulkCutDays, _sl_DaysFmt)
     EndEvent
 
     Event OnDefaultST()
-        _rippedPlayer.bulkCutDays = 4
-        SetSliderOptionValueST(_rippedPlayer.bulkCutDays, _sl_DaysFmt)
+        ; _rippedPlayer.bulkCutDays = 4
+        ; SetSliderOptionValueST(_rippedPlayer.bulkCutDays, _sl_DaysFmt)
     EndEvent
 
     Event OnHighlightST()
@@ -1006,55 +458,55 @@ EndState
 
 State MN_RippedPlayerOpt
     Event OnMenuOpenST()
-        OpenMenu(_rippedPlayer.Method, 0, _rippedPlayerMethods)
+        ; OpenMenu(_rippedPlayer.Method, 0, _rippedPlayerMethods)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        IF _rippedPlayer.Method == index
-            return
-        EndIf
-        _rippedPlayer.Method = index
-        SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
+        ; IF _rippedPlayer.Method == index
+        ;     return
+        ; EndIf
+        ; _rippedPlayer.Method = index
+        ; SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
 
-        If _rippedPlayerA.MethodIsBehavior()
-            ; Bruce Lee behavior was actually selected from here
-            ;FIXME: Delete this
-            Cfg.Behavior = Cfg.bhBruce
-        Else
-            SPP.texMngr.InitializeActor(SPP.Player)
-        EndIf
-        ForcePageReset()
+        ; If _rippedPlayerA.MethodIsBehavior()
+        ;     ; Bruce Lee behavior was actually selected from here
+        ;     ;FIXME: Delete this
+        ;     Cfg.Behavior = Cfg.bhBruce
+        ; Else
+        ;     SPP.texMngr.InitializeActor(SPP.Player)
+        ; EndIf
+        ; ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        If _rippedPlayer.Method == Cfg.rpmNone
-            return
-        EndIf
-        _rippedPlayer.Method = Cfg.rpmNone
-        SPP.texMngr.InitializeActor(SPP.Player)
-        SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
-        ForcePageReset()
+        ; If _rippedPlayer.Method == Cfg.rpmNone
+        ;     return
+        ; EndIf
+        ; _rippedPlayer.Method = Cfg.rpmNone
+        ; SPP.texMngr.InitializeActor(SPP.Player)
+        ; SetMenuOptionValueST(_rippedPlayerMethods[_rippedPlayer.Method])
+        ; ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
-        SetInfoText("$MCM_RippedApplyInfo{" + _rippedPlayerA.MethodInfo() + "}")
+        ; SetInfoText("$MCM_RippedApplyInfo{" + _rippedPlayerA.MethodInfo() + "}")
     EndEvent
 EndState
 
 State MN_RippedBulkBhv
     Event OnMenuOpenST()
-        OpenMenu(_rippedPlayer.bulkCutBhv, 0, _rippedPlayerBulkBhvMenu)
+        ; OpenMenu(_rippedPlayer.bulkCutBhv, 0, _rippedPlayerBulkBhvMenu)
     EndEvent
 
     Event OnMenuAcceptST(int index)
-        _rippedPlayer.bulkCutBhv = index
-        SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
+        ; _rippedPlayer.bulkCutBhv = index
+        ; SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
     EndEvent
 
     Event OnDefaultST()
-        _rippedPlayer.bulkCutBhv = 0
-        SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
-        ForcePageReset()
+        ; _rippedPlayer.bulkCutBhv = 0
+        ; SetMenuOptionValueST(_rippedPlayerBulkBhvMenu[_rippedPlayer.bulkCutBhv])
+        ; ForcePageReset()
     EndEvent
 
     Event OnHighlightST()
@@ -1064,13 +516,13 @@ EndState
 
 State TG_RippedPlayerBulkCut
     Event OnSelectST()
-        _rippedPlayer.bulkCut = !_rippedPlayer.bulkCut
-        SetToggleOptionValueST(_rippedPlayer.bulkCut)
-        ForcePageReset()
+        ; _rippedPlayer.bulkCut = !_rippedPlayer.bulkCut
+        ; SetToggleOptionValueST(_rippedPlayer.bulkCut)
+        ; ForcePageReset()
     EndEvent
 
     Event OnDefaultST()
-        _rippedPlayer.bulkCut = False
+        ; _rippedPlayer.bulkCut = False
         SetToggleOptionValueST(False)
         ForcePageReset()
     EndEvent

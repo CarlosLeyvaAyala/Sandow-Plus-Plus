@@ -51,4 +51,9 @@ function bhv_all.flashByInactivity(inactivePercent)
     return bhv_all.flashByDanger(danger)
 end
 
+--- Adjusts the value of meter2 (training meter) to MCM capping options.
+function bhv_all.adjMeter2(data)
+    return data.state.WGP / (reportWidget.maxMTrainPercent(data) or 10)
+end
+
 return bhv_all

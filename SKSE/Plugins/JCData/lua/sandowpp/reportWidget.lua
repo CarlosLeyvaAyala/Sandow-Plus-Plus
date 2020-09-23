@@ -1,15 +1,15 @@
 local dmlib = jrequire 'dmlib'
-local l = jrequire 'sandowpp.shared'
-local const = jrequire 'sandowpp.const'
--- local l = jrequire 'sandowpp.sandowpp.shared'
--- local const = jrequire 'sandowpp.sandowpp.const'
+local s = jrequire 'sandowpp.shared'
+-- local const = jrequire 'sandowpp.const'
 
 local reportWidget = {}
 
 local nMeters = 4
 
-reportWidget.VAlign = {top = "top", center = "center", bottom = "bottom"}
-reportWidget.HAlign = {left = "left", center = "center", right = "right"}
+reportWidget.VAlign = {top = "top", center = "center", bottom = "bottom",
+    [0] = "top", [1] = "center", [2] = "bottom"}
+reportWidget.HAlign = {left = "left", center = "center", right = "right",
+    [0] = "left", [1] = "center", [2] = "right"}
 
 
 -- ;>========================================================
@@ -63,6 +63,12 @@ reportWidget.hideAtMax = mcmProp("hideAtMax")
 
 --- How fast will the widget update.
 reportWidget.refreshRate = mcmProp("refreshRate")
+
+--- Toggle visibility.
+reportWidget.hotkey = mcmProp("hotkey")
+
+--- At which value the Training meter (meter2) fills up.
+reportWidget.maxMTrainPercent = mcmProp("maxMTrainPercent")
 
 
 -- ;>========================================================
@@ -121,7 +127,7 @@ local function mPercentAll(data, val)
 end
 
 -- Makes all meters visible.
-function reportWidget.setVisibeAll(data, val)
+function reportWidget.setVisibleAll(data, val)
     mIterateAll(
         function (data, meterName) reportWidget.mVisible(data, meterName, val) end,
         data
@@ -209,30 +215,46 @@ end
 
 --- Generates default settings for the widget.
 function reportWidget.default(data)
-    reportWidget.vAlign(data, reportWidget.VAlign.top)
-    reportWidget.hAlign(data, reportWidget.HAlign.right)
-    reportWidget.x(data, 0)
-    reportWidget.y(data, 0)
-    reportWidget.refreshRate(data, 5)
-    reportWidget.opacity(data, 100)
-    reportWidget.meterH(data, 17.5)
-    reportWidget.meterW(data, 150)
-    reportWidget.vGap(data, -0.31)
-    reportWidget.transT(data, 1)
-    reportWidget.hideAtMin(data, false)
-    reportWidget.hideAtMax(data, true)
-    reportWidget.tweenToPos(data, false)
+    s.defVal(data, reportWidget.vAlign, reportWidget.VAlign.top)
+    s.defVal(data, reportWidget.hAlign, reportWidget.HAlign.right)
+    s.defVal(data, reportWidget.x, 0)
+    s.defVal(data, reportWidget.y, 0)
+    s.defVal(data, reportWidget.refreshRate, 5)
+    s.defVal(data, reportWidget.opacity, 100)
+    s.defVal(data, reportWidget.meterH, 17.5)
+    s.defVal(data, reportWidget.meterW, 150)
+    s.defVal(data, reportWidget.vGap, -0.31)
+    s.defVal(data, reportWidget.transT, 1)
+    s.defVal(data, reportWidget.hideAtMin, false)
+    s.defVal(data, reportWidget.hideAtMax, true)
+    s.defVal(data, reportWidget.tweenToPos, false)
+    s.defVal(data, reportWidget.hotkey, -1)
+    s.defVal(data, reportWidget.maxMTrainPercent, 10)
+
     -- Meters
-    reportWidget.setVisibeAll(data, true)
-    reportWidget.mCalcPositions(data)
-    mPercentAll(data, 0.0)
+    if not data.defaultsInit then
+        reportWidget.setVisibleAll(data, true)
+        reportWidget.mCalcPositions(data)
+        mPercentAll(data, 0.0)
+    end
     -- reportWidget.mFlash(data, "meter1", reportWidget.flashCol.danger)
     -- reportWidget.mFlash(data, "meter2", reportWidget.flashCol.critical)
     return data
 end
 
+---@param data table
+---@param align integer
 function reportWidget.changeVAlign(data, align)
-    reportWidget.vAlign(data, align)
+    local al = reportWidget.VAlign[align]
+    reportWidget.vAlign(data, al)
+    return reportWidget.mCalcPositions(data)
+end
+
+---@param data table
+---@param align integer
+function reportWidget.changeHAlign(data, align)
+    local al = reportWidget.HAlign[align]
+    reportWidget.hAlign(data, al)
     return reportWidget.mCalcPositions(data)
 end
 

@@ -8,44 +8,32 @@ string _mainStatInf
 string _trainingInf
 string _otherInf
 
-int Function PageMainStats(int pos)
+Function PageMainStats()
     SPP.UpdateMcmData()
     int d = SPP.GetDataTree()
     string p = ".bhv."
     _PageMainSetInfo(d, p)
 
-    SetCursorPosition(pos)
-    int count = 1
     Header("$Stats")
-    count += _PageMainOptLbl(d, p, "LblMain_Stat", "mainStatLbl", "mainStatVal")
-    count += _PageMainOptLbl(d, p, "LblMain_Training", "trainingLbl", "trainingVal")
-    count += _PageMainOptLbl(d, p, "LblMain_Other", "otherLbl", "otherVal")
+    _PageMainOptLbl(d, p, "LblMain_Stat", "mainStatLbl", "mainStatVal")
+    _PageMainOptLbl(d, p, "LblMain_Training", "trainingLbl", "trainingVal")
+    _PageMainOptLbl(d, p, "LblMain_Other", "otherLbl", "otherVal")
     ; If SPP.GetMCMStatus()
     ;     Label("LblMain_Status", "", "You need to sleep")
     ;     count += 1
     ; EndIf
     ; count += _PageMainShowWidget()
-    Return pos + ToNewPos(count)
-EndFunction
-
-int Function _PageMainShowWidget()
-    If SPP.ReportWidget.Visible
-        Button("BtnMain_ToggleWidget", "", "$Hide widget")
-    else
-        Button("BtnMain_ToggleWidget", "", "$Show widget")
-    EndIf
-    return 1
+    Toggle("tgMain_ToggleWidget", "$Show widget", SPP.ReportWidget.Visible)
+    AddEmptyOption()
 EndFunction
 
 ; Shows a label if said label exists
-int Function _PageMainOptLbl(int d, string p, string aState, string lbl, string val)
+Function _PageMainOptLbl(int d, string p, string aState, string lbl, string val)
     string mainLbl = solveStr(d, p + lbl)
     string mainVal = solveStr(d, p + val)
     If mainLbl
         Label(aState, mainLbl, mainVal)
-        return 1
     EndIf
-    return 0
 EndFunction
 
 ; Sets info text for all labels
@@ -80,11 +68,21 @@ EndFunction
         EndEvent
     EndState
 
-    ; State BtnMain_ToggleWidget
-    ;     Event OnSelectST()
-    ;         SPP.ReportWidget.Visible = !SPP.ReportWidget.Visible
-    ;         Trace("BF ForcePageReset")
-    ;         Parent.ForcePageReset()
-    ;         Trace("AF ForcePageReset")
-    ;     EndEvent
-    ; EndState
+    ; FIXME: Doesn't reload page
+    State tgMain_ToggleWidget
+        Event OnSelectST()
+            SPP.ReportWidget.Visible = !SPP.ReportWidget.Visible
+            SetToggleOptionValueST(SPP.ReportWidget.Visible)
+            ForcePageReset()
+        EndEvent
+
+        Event OnDefaultST()
+            SPP.ReportWidget.Visible = False
+            SetToggleOptionValueST(False)
+            ForcePageReset()
+        EndEvent
+
+        Event OnHighlightST()
+            SetInfoText("$MCM_MainToggleWidgetInfo")
+        EndEvent
+    EndState

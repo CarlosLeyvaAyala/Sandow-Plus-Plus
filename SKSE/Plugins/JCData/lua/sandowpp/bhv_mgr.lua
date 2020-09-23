@@ -32,8 +32,10 @@ end
 --- Generates default values for behaviors.
 function bhv_mgr.default(data)
     traverse(initBhv, {data = data})
-    bhv_all.canLose(data, true)
-    bhv_mgr.changeBhv(data, const.bhv.name.bruce)
+    l.defVal(data, bhv_all.canLose, true)
+    -- bhv_all.canLose(data, true)
+    --;TODO: change to paused
+    if not data.defaultsInit then bhv_mgr.changeBhv(data, const.bhv.name.bruce) end
     return data
 end
 
@@ -41,6 +43,7 @@ end
 -- ;>========================================================
 -- ;>===                      CORE                      ===<;
 -- ;>========================================================
+
 local function currBhv(data) return bhvTbl[data.preset.bhv.current] end
 
 --- Determines if meters should be visible if max/min.
