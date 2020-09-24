@@ -170,7 +170,6 @@ Function OnGameReload()
     ; Since switching to Lua, we need to do this. Don't know why.
     ReportWidget.EnsureVisibility()
     ; JValue.solveFltSetter(GetMCMConfig(), ".widget.refreshRate", 2)
-    ; TestSave(300)
     ; SavePreset("preset")
     ;
 EndFunction
@@ -282,10 +281,28 @@ Function PapyrusToLuaState()
     int data = GetDataTree()
     float ls = GetLastSlept(data)
     float la = GetLastActive(data)
-    JValue.solveFltSetter(data, s + "weight", GetPlayerWeight(), true)
-    JValue.solveFltSetter(data, s + "hoursAwaken", HourSpan(ls), true)
-    JValue.solveFltSetter(data, s + "hoursInactive", HourSpan(la), true)
+    JValue.solveFltSetter(data, s + "weight", GetPlayerWeight())
+    JValue.solveFltSetter(data, s + "hoursAwaken", HourSpan(ls))
+    JValue.solveFltSetter(data, s + "hoursInactive", HourSpan(la))
+    SetDecay()
     UpdateDataTree(data)
+EndFunction
+
+; Sets a `decay` multiplier.
+;
+; @param ratio - Ratio for the decay multiplier. Use it to decay less when
+; sleeping and shit.
+;
+; Decay multiplier is used for behaviors that constantly drain resources based
+; on time, like Pumping Iron degrading WGP all the time or Bruce Lee degrading
+; training after some inactivity time.
+Function SetDecay(float ratio = 1.0)
+    int data = GetDataTree()
+    float ld = GetLastDecay(data)
+    string s = ".state."
+    JValue.solveFltSetter(data, s + "decay", (Now() - ld) * ratio)
+    JValue.solveFltSetter(data, s + "lastDecay", Now())
+    TestSave(203)
 EndFunction
 
 ; Returns player weight. Weight ∈ [0, 100]
@@ -293,16 +310,38 @@ float Function GetPlayerWeight()
     return Player.GetActorBase().GetWeight()
 EndFunction
 
+; Function WGPDecay(DM_SandowPP_State aState)
+;     {WGP is always decaying}
+;     Trace("Pumping.WGPDecay()")
+
+;     float decayVal
+;     if _lastTimeWGPQuery > 0.0
+;         float time = Now() - _lastTimeWGPQuery
+;         decayVal = aState.WGP * _WGPDailyDecayRate * time
+;         aState.WGP -= decayVal
+;     EndIf
+;     _lastTimeWGPQuery = Now()
+
+;     Trace("decayVal = " + decayVal)
+; EndFunction
+
+
 ; Avoids a bug when creating a new game when this mod seems to be initialized way
 ; before the current date.
 ; If not for this check, player would get they haven't slept for 3000 hours or so
 ; the first time they play the game.
 float Function GetLastSlept(int data)
+    ; Behaviors are the ones that change this value.
     return EnsureTime(data, ".state.lastSlept")
 EndFunction
 
 float Function GetLastActive(int data)
+    ; This value is changed by anything that changes activity.
     return EnsureTime(data, ".state.lastActive")
+EndFunction
+
+float Function GetLastDecay(int data)
+    return EnsureTime(data, ".state.lastDecay")
 EndFunction
 
 ; If an expected time is -1, sets it to now.
@@ -350,6 +389,7 @@ EndFunction
                 Return      ; Do nothing if didn't really slept
             EndIf
             SetHoursSlept(hoursSlept)
+            SetDecay(0.6)
             ExecuteLua("return sandowpp.onSleep(jobject)")
             SleepPostprocess()
             ReportPlayer()

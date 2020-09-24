@@ -29,11 +29,27 @@ local function initBhv(bhv, _, data)
     if bhv.init then bhv.init(data) end
 end
 
+--- These variables need to be explicitly initialized due to Papyrus
+--- mangling string case at random. Since Lua is case sensitive, this could lead to
+--- unexpected bugs.
+local function initState(data)
+    local s = data.state
+    s.weight = s.weight or 0
+    s.hoursAwaken = s.hoursAwaken or 0
+    s.hoursInactive = s.hoursInactive or 0
+    s.decay = s.decay or 0
+    s.WGP = s.WGP or 0
+    s.hoursSlept = s.hoursSlept or 0
+    s.lastSlept = s.lastSlept or -1
+    s.lastActive = s.lastActive or -1
+    s.lastDecay = s.lastDecay or -1
+end
+
 --- Generates default values for behaviors.
 function bhv_mgr.default(data)
     traverse(initBhv, {data = data})
     l.defVal(data, bhv_all.canLose, true)
-    -- bhv_all.canLose(data, true)
+    initState(data)
     --;TODO: change to paused
     if not data.defaultsInit then bhv_mgr.changeBhv(data, const.bhv.name.bruce) end
     return data

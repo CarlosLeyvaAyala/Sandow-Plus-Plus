@@ -25,6 +25,10 @@ New features:
 		Having sex won't make you muscular or ripped, since it's not physical training.
 	* This mod has gotten so big (thank you all for your suggestions!) it now needs a proper User Manual, so I made a PDF file just for that.
 
+Major changes:
+	* "Weight Gain Potential" got renamed to "Training", like good ole' Pumping Iron.
+		It was a needed change, since "WGP" doesn't make sense for the new muscle definition behaviors.
+
 Minor changes:
 	* Reworked and (hopefully) less cluttered MCM.
 	* Weight gain rate can now be set up to 300% (formerly 200%), because of the new option to Bulk & Cut.

@@ -3,6 +3,7 @@ local c = jrequire 'sandowpp.const'
 local rip = jrequire 'sandowpp.addonRipped'
 local bhv_all = jrequire 'sandowpp.bhv_all'
 local reportWidget = jrequire 'sandowpp.reportWidget'
+local sh = jrequire 'sandowpp.shared'
 
 local bhvBruce = {}
 
@@ -13,10 +14,10 @@ local bhvBruce = {}
 local trainRatio = 0.1
 local capSleep = l.forceMax(10)
 local allowedAwakenHrs = 30
-local allowedInactivity = 30
+local allowedInactivity = 36
 local name = c.bhv.name.bruce
 
-local _OldWGP = bhv_all.internalProp(name, "_oldWGP")
+local _storedWGP = bhv_all.internalProp(name, "_storedWGP")
 local _oldRipped = bhv_all.internalProp(name, "_oldRipped")
 local training = bhv_all.internalProp(name, "training")
 
@@ -32,7 +33,7 @@ local daysToMaxLeanness
 --- The more you weight, the less harsh the penalty is (because muscles give
 --- you some room to caloric expenditure IRL).
 ---      weight ∈ [0..100]
-local weightPenaltyMult
+local weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.2})
 
 --- Penalty for inactivity. This number is an addition.
 ---      hoursInactive:      Real hours, not game hours
@@ -46,12 +47,27 @@ local capLeanness
 -- ;>===                     LOSSES                     ===<;
 -- ;>========================================================
 
+--- Calculates how much training (WGP) will decay for inactivity.
+---
+---     `trainDecay(Hours inactive)`
+---
+---     `Hours inactive ∈ [30, 72]`
+local trainDecay = l.pipe(
+    l.expCurve(0.057762265046665, {x=allowedInactivity, y=0.05}, {x=72, y=0.4}),
+    l.forceMax(0.4)
+)
+
 local function canPunishInactivity(hoursInactive) return hoursInactive >= allowedInactivity end
 
 --- Rate of decay for muscle definiton. Base number, not multiplier.
----      hoursInactive:      Real hours, not game hours
+---
+---      `hoursInactive`:      Real hours, not game hours
+---
 --- This formula punishes up to 96 hours (4 in game days).
-local inactivityPenaltyCurve = l.pipe(l.expCurve(0.04, {x=24, y=0.5}, {x=96, y=12}), l.forceMax(12))
+local inactivityPenaltyCurve = l.pipe(
+    l.expCurve(0.04, {x=allowedInactivity, y=0.5}, {x=96, y=12}),
+    l.forceMax(12)
+)
 
 --- Danger levels for not sleeping.
 local function sleepDanger(hoursAwaken)
@@ -82,11 +98,27 @@ local function canLose(data)
     if not bhv_all.canLose(data) then return false end
     local state = data.state
     local byInactivity = canPunishInactivity(state.hoursInactive)
-    local bySleep = canPunishSleep(state.hoursAwaken)
+    -- local bySleep = canPunishSleep(state.hoursAwaken)
     -- ;TODO: Lose for bad eating
-    return byInactivity or bySleep
+    return byInactivity --or bySleep
 end
 
+--- Decays training and returns if there was decay.
+local function decayTraining(data)
+    local s, inactive = data.state, data.state.hoursInactive
+    if not canPunishInactivity(inactive) then return false end
+
+    local oldWGP = s.WGP
+    local v = s.WGP * s.decay * trainDecay(inactive)
+    s.WGP = l.forcePositve(s.WGP - v)
+    return oldWGP ~= s.WGP
+end
+
+local function decayAndReportTrain(data)
+    if decayTraining(data) then
+        reportWidget.mFlash(data, "meter2", reportWidget.flashCol.down)
+    end
+end
 
 -- ;>========================================================
 -- ;>===                      CORE                      ===<;
@@ -95,7 +127,7 @@ end
 -- Defines functions based on current values.
 local function closeFuncs(data)
     daysToMaxLeanness = l.expCurve(0.02, {x=0, y=rip.daysForMin(data)}, {x=100, y=rip.daysForMax(data)})
-    weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.2})
+    -- weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.2})
     inactivityPenaltyBase = l.boolBase(inactivityPenaltyCurve, canPunishInactivity(data.state.hoursInactive))
     capLeanness = function (training) return l.forceMax(daysToMaxLeanness(data.state.weight) * 1.03)(training) end
 end
@@ -131,7 +163,7 @@ end
 --- Calculates gains.
 local function gains(data)
     local state = data.state
-    local wgp = l.forcePercent(state.WGP)       -- Can't have more than 100% training a day
+    local wgp = state.WGP
     local todayTrained = l.forceMax(wgp)(capSleep(state.hoursSlept) * trainRatio)
     wgp = l.forcePositve(wgp - todayTrained)
     todayTrained = applyGainMod(data, todayTrained)
@@ -148,6 +180,7 @@ local function gainOrLose(data, train)
     training(data, capLeanness(train))
     data.state.lastSlept = -1
     rip.currDef(data, bhvBruce.currLeanness(data))
+    decayAndReportTrain(data)
     return data, flash
 end
 
@@ -172,22 +205,23 @@ function bhvBruce.onSleep(data)
 end
 
 function bhvBruce.init(data)
-    training(data, 0)
+    sh.defVal(data, training, 0)
 end
 
 -- ;>========================================================
 -- ;>===                     EVENTS                     ===<;
 -- ;>========================================================
 
-local function storeOldWGP(data)
-    local s = data.state
-    s.WGP = s.WGP or 0
-    _OldWGP(data, s.WGP)
-    s.WGP = l.forcePercent(s.WGP)
+local function storeOtherWGP(data)
+    local o = _storedWGP(data) or 0
+    _storedWGP(data, data.state.WGP)
+    data.state.WGP = o
 end
 
-local function restoreOldWGP(data)
-    data.state.WGP = _OldWGP(data)
+local function restoreOtherWGP(data)
+    local o = data.state.WGP
+    data.state.WGP = _storedWGP(data)
+    _storedWGP(data, o)
 end
 
 local function storeOldRipped(data)
@@ -197,13 +231,14 @@ end
 
 function bhvBruce.onEnter(data)
     print("Entering behavior")
-    storeOldWGP(data)
+    storeOtherWGP(data)
     storeOldRipped(data)
+    reportWidget.mName(data, "meter2", "$training")
 end
 
 function bhvBruce.onExit(data)
     print("Exit behavior")
-    restoreOldWGP(data)
+    restoreOtherWGP(data)
     rip.mode(data, _oldRipped(data))
     -- ;TODO: reapply old muscle definition
 end
@@ -217,24 +252,40 @@ local function log(msg, val)
     return val
 end
 
-function bhvBruce.report(data)
-    closeFuncs(data)
+local function setMeter1(data)
     reportWidget.mPercent(data, "meter1", bhvBruce.currLeanness(data))
+end
+
+local function setMeter2(data)
+    decayAndReportTrain(data)
     reportWidget.mPercent(data, "meter2", bhv_all.adjMeter2(data))
+end
+
+local function setMeter3(data)
     if not bhv_all.canLose(data) then
         reportWidget.mVisible(data, "meter3", false)
-        reportWidget.mVisible(data, "meter4", false)
     else
         local sleepFlash = bhv_all.flashByDanger(sleepDanger(data.state.hoursAwaken))
         reportWidget.mVisible(data, "meter3", true)
         reportWidget.mPercent(data, "meter3", data.state.hoursAwaken / allowedAwakenHrs)
         reportWidget.mFlash(data, "meter3", sleepFlash)
-
-        local inactive = data.state.hoursInactive / allowedInactivity
-        reportWidget.mVisible(data, "meter4", true)
-        reportWidget.mPercent(data, "meter4", inactive)
-        reportWidget.mFlash(data, "meter4", bhv_all.flashByInactivity(inactive))
     end
+end
+
+local function setMeter4(data)
+    -- Inactivity is integral to this behavior, so this meter is always displayed.
+    local inactive = data.state.hoursInactive / allowedInactivity
+    reportWidget.mVisible(data, "meter4", true)
+    reportWidget.mPercent(data, "meter4", inactive)
+    reportWidget.mFlash(data, "meter4", bhv_all.flashByInactivity(inactive))
+end
+
+function bhvBruce.report(data)
+    closeFuncs(data)
+    setMeter1(data)
+    setMeter2(data)
+    setMeter3(data)
+    setMeter4(data)
     return data
 end
 
