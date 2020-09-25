@@ -30,11 +30,6 @@ local training = bhv_all.internalProp(name, "training")
 ---      weight ∈ [0..100]
 local daysToMaxLeanness
 
---- The more you weight, the less harsh the penalty is (because muscles give
---- you some room to caloric expenditure IRL).
----      weight ∈ [0..100]
-local weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.2})
-
 --- Penalty for inactivity. This number is an addition.
 ---      hoursInactive:      Real hours, not game hours
 local inactivityPenaltyBase
@@ -43,9 +38,17 @@ local inactivityPenaltyBase
 --- @param training number
 local capLeanness
 
+--- Flashes some meter for down color
+local flashDown
+
 -- ;>========================================================
 -- ;>===                     LOSSES                     ===<;
 -- ;>========================================================
+
+--- The more you weight, the less harsh the penalty is (because muscles give
+--- you some room to caloric expenditure IRL).
+---      weight ∈ [0..100]
+local weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.5})
 
 --- Calculates how much training (WGP) will decay for inactivity.
 ---     `trainDecay(Hours inactive)`
@@ -114,7 +117,8 @@ end
 
 local function decayAndReportTrain(data)
     if decayTraining(data) then
-        reportWidget.mFlash(data, "meter2", reportWidget.flashCol.down)
+        flashDown("meter2")
+        -- reportWidget.mFlash(data, "meter2", reportWidget.flashCol.down)
     end
 end
 
@@ -125,9 +129,9 @@ end
 -- Defines functions based on current values.
 local function closeFuncs(data)
     daysToMaxLeanness = l.expCurve(0.02, {x=0, y=rip.daysForMin(data)}, {x=100, y=rip.daysForMax(data)})
-    -- weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.2})
     inactivityPenaltyBase = l.boolBase(inactivityPenaltyCurve, canPunishInactivity(data.state.hoursInactive))
     capLeanness = function (training) return l.forceMax(daysToMaxLeanness(data.state.weight) * 1.03)(training) end
+    flashDown = function (meterName) reportWidget.mFlash(data, meterName, reportWidget.flashCol.down) end
 end
 
 --- Calculates current leanness. This is what the player will actually see
@@ -151,8 +155,8 @@ local function losses(data)
     local inactive = inactivityPenaltyBase(state.hoursInactive)
     local sleep = sleepPenaltyBase(state.hoursAwaken)
     local lo = inactive + sleep
-    -- ; ;TODO: not eating properly
-    lo = lo * weightPenaltyMult(state.weight)
+    -- ;TODO: not eating properly
+    lo = lo * weightPenaltyMult(state.weight) * state.decay
     return l.forcePositve(training(data) - lo), l.forcePositve(wgp)
 end
 
@@ -166,24 +170,23 @@ local function gains(data)
     return training(data) + todayTrained, wgp
 end
 
-local function gainOrLose(data, train)
-    local flash = -1
-    if canLose(data) then
-        flash, train, data.state.WGP = reportWidget.flashCol.down, losses(data)
-    else
-        flash, train, data.state.WGP = reportWidget.flashCol.up, gains(data)
-    end
+local function updateTrainAndLean(data, train)
     training(data, capLeanness(train))
-    data.state.lastSlept = -1
     rip.currDef(data, bhvBruce.currLeanness(data))
-    decayAndReportTrain(data)
+end
+
+local function gainSeq(data, train)
+    local flash, oldT = -1, train
+    train, data.state.WGP = gains(data)
+    updateTrainAndLean(data, train)
+    if training(data) ~= oldT then flash = reportWidget.flashCol.up end
+    data.state.lastSlept = -1
     return data, flash
 end
 
-local function prepareBeforeSleep(data)
+local function prepareBeforeProcess(data)
     -- data.preset.addons.diminishingReturns.enabled= false
     closeFuncs(data)
-
     -- Cap before processing
     local train = capLeanness(training(data))
     training(data, train)
@@ -192,16 +195,32 @@ end
 
 --- Returns processed data and which color should the main bar flash.
 function bhvBruce.onSleep(data)
-    local train, flash = prepareBeforeSleep(data), -1
+    local train, flash = prepareBeforeProcess(data), -1
     print("start ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
     -- Core calculations
-    data, flash = gainOrLose(data, train)
+    data, flash = gainSeq(data, train)
     print("result ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
     return data, flash
 end
 
 function bhvBruce.init(data)
     sh.defVal(data, training, 0)
+end
+
+local function lossSeq(data)
+    if not canLose(data) then return end
+    local train = prepareBeforeProcess(data)
+    local oldT = train
+    train, data.state.WGP = losses(data)
+    if oldT ~= train then flashDown("meter1") end
+    updateTrainAndLean(data, train)
+end
+
+--- All loses are done in real time.
+function bhvBruce.realTimeCalc(data)
+    lossSeq(data)
+    decayAndReportTrain(data)
+    return data
 end
 
 -- ;>========================================================
@@ -253,7 +272,6 @@ local function setMeter1(data)
 end
 
 local function setMeter2(data)
-    decayAndReportTrain(data)
     reportWidget.mPercent(data, "meter2", bhv_all.adjMeter2(data))
 end
 

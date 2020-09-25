@@ -63,7 +63,7 @@ EndFunction
 ; Repositions widget.
 Function _wReposition()
     SPP.ExecuteLua("return sandowpp.repositionWidget(jobject)")
-    SPP.ReportPlayer()
+    SPP.RealTimeCalculations()
 EndFunction
 
 ; Gap to silder.

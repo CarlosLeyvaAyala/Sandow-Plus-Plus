@@ -4,6 +4,7 @@ Scriptname DM_SandowPPMain extends DM_SandowPPMain_Interface
 Import DM_Utils
 Import DM_SandowPP_Globals
 Import DM_SandowPP_SkeletonNodes
+Import JValue
 
 ; ########################################################################
 ; Variables needed for this system to work. ***DON'T CHANGE AT RUN TIME***
@@ -30,14 +31,7 @@ DM_SandowPP_PresetManager property PresetManager
     EndFunction
 EndProperty
 
-; DM_SandowPP_ReportDebug Property ReportDebug Auto
-; DM_SandowPP_ReportSkyUILib Property ReportSkyUILib Auto
 DM_SandowPP_ReportWidget Property ReportWidget Auto
-; DM_SandowPP_Report Property Report
-;     DM_SandowPP_Report Function get()
-;         Return _report
-;     EndFunction
-; EndProperty
 
 DM_SandowPP_AlgorithmPause Property AlgoPause Auto
 {Paused Behavior}
@@ -45,8 +39,6 @@ DM_SandowPP_AlgoWCSandow Property AlgoWCSandow Auto
 {Sandow++ Behavior}
 DM_SandowPP_AlgoWCPumping Property AlgoWCPumping Auto
 {Pumping Iron Behavior}
-; DM_SandowPP_AlgorithmBodyfatBruce Property AlgoBFBruce Auto
-; {Bruce Lee Behavior}
 
 DM_SandowPP_Algorithm Property Algorithm
     {Current Behavior}
@@ -84,18 +76,7 @@ bool _t = false
 
 Event OnKeyDown(Int KeyCode)
     If KeyCode == Config.HkShowStatus
-        ; Algorithm.ReportOnHotkey(AlgorithmData)
-        ; If _t
-        ;     UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'bottom')"))
-        ;     _t = false
-        ; else
-        ;     UpdateData(JValue.evalLuaObj(GetDataTree(), "return sandowpp.widgetChangeVAlign(jobject, 'center')"))
-        ;     _t = true
-        ; EndIf
         ReportWidget.Visible = !ReportWidget.Visible
-
-        ; ReportPlayer()
-        ; TestSave(2)
     EndIf
     If KeyCode == 200
         TestSave(38)
@@ -106,7 +87,7 @@ EndEvent
 Event OnInit()
     OpenLog()
     Trace("$Gen_Init")
-    InitSequence()
+    _InitSequence()
     ResetVariables()
     RegisterForSleep()
     RegisterEvents()
@@ -165,8 +146,8 @@ Function OnGameReload()
     texMngr.MakePlayerRipped()
     ; texMngr.Debug(Player)
     RegisterForKey(200)
-    LoadAddons()
-    LoadDefaults()
+    _LoadAddons()
+    _LoadDefaults()
     ; Since switching to Lua, we need to do this. Don't know why.
     ReportWidget.EnsureVisibility()
     ; JValue.solveFltSetter(GetMCMConfig(), ".widget.refreshRate", 2)
@@ -183,15 +164,17 @@ EndFunction
     string Property jDBRoot =   "sandow++" AutoReadOnly Hidden
 
     ;region: Initialization
-        Function InitSequence()
-            InitVars40()
-            InitDataTree()
-            LoadAddons()
-            LoadDefaults()
-            TestSave()
+        Function _InitSequence()
+            ReportWidget.Visible = false
+            _InitVars40()
+            _InitDataTree()
+            _LoadAddons()
+            _LoadDefaults()
+            ; TestSave()
+            _Resume()
         EndFunction
 
-        Function InitVars40()
+        Function _InitVars40()
             ; Init paths
             cfgDir = mainDir + "config/"
         EndFunction
@@ -200,17 +183,17 @@ EndFunction
             ; The file is "Data/SKSE/Plugins/Sandow Plus Plus/config/bare tree.json".
             ;
             ; That premade file contains the overall data structure for this mod.
-        Function InitDataTree()
+        Function _InitDataTree()
             UpdateDataTree(JValue.readFromFile(cfgDir + "bare tree.json"))
         EndFunction
 
-        Function LoadDefaults()
+        Function _LoadDefaults()
             ExecuteLua("return sandowpp.getDefaults(jobject)")
             ; UpdateDataTree(JValue.evalLuaObj(GetDataTree(), "return sandowpp.getDefaults(jobject)"))
         EndFunction
 
         ; Creates the addon data tree in memory, so this mod can be used.
-        Function LoadAddons()
+        Function _LoadAddons()
             UpdateDataTree(JValue.evalLuaObj(GetDataTree(), "return sandowpp.installAddons(jobject)"))
         EndFunction
 
@@ -240,19 +223,39 @@ EndFunction
     EndFunction
 
 ; Adds WGP/training and fatigue.
-Function Train(string aSkill)
+Function TrainSkill(string aSkill)
     ExecuteLua("return sandowpp.train(jobject, '" + aSkill + "')")
-    ReportPlayer()
+    RealTimeCalculations()
 EndFunction
 
-Function ReportPlayer()
-    PapyrusToLuaState()
+; Trains bypassing skill checks. Use it for things that directly set
+; training/fatigue, like weight sacks or SexLab.
+Function Train(float training, float fatigue)
+    ExecuteLua("return sandowpp.trainAndFatigue(jobject, " + \
+        training + ", " + \
+        fatigue + ")"\
+    )
+    RealTimeCalculations()
+EndFunction
+
+Function RealTimeCalculations()
+    _PapyrusToLuaState()
+    ExecuteLua("return sandowpp.realTimeCalc(jobject)")
     ExecuteLua("return sandowpp.onReport(jobject)")
     ReportWidget.Report(GetDataTree())
+    _CheckRipped()
+EndFunction
+
+; Checks every 4 cycles if player muscle definition has changed in real time.
+Function _CheckRipped()
+    Trace("Changing ripped tex " + _cycle)
+    If _IsNthCycle(4)
+        texMngr.MakePlayerRipped()
+    EndIf
 EndFunction
 
 Function UpdateMcmData()
-    PapyrusToLuaState()
+    _PapyrusToLuaState()
     ExecuteLua("return sandowpp.getMcmData(jobject)")
 EndFunction
 
@@ -276,7 +279,7 @@ Function _LogAndShowLuaExecErrors(string cmd)
 EndFunction
 
 ; Saves current player variables so they can be processed by Lua.
-Function PapyrusToLuaState()
+Function _PapyrusToLuaState()
     string s = ".state."
     int data = GetDataTree()
     float ls = GetLastSlept(data)
@@ -284,7 +287,7 @@ Function PapyrusToLuaState()
     JValue.solveFltSetter(data, s + "weight", GetPlayerWeight())
     JValue.solveFltSetter(data, s + "hoursAwaken", HourSpan(ls))
     JValue.solveFltSetter(data, s + "hoursInactive", HourSpan(la))
-    SetDecay()
+    _SetDecay()
     UpdateDataTree(data)
 EndFunction
 
@@ -296,7 +299,7 @@ EndFunction
 ; Decay multiplier is used for behaviors that constantly drain resources based
 ; on time, like Pumping Iron degrading WGP all the time or Bruce Lee degrading
 ; training after some inactivity time.
-Function SetDecay(float ratio = 1.0)
+Function _SetDecay(float ratio = 1.0)
     int data = GetDataTree()
     float ld = GetLastDecay(data)
     string s = ".state."
@@ -309,22 +312,6 @@ EndFunction
 float Function GetPlayerWeight()
     return Player.GetActorBase().GetWeight()
 EndFunction
-
-; Function WGPDecay(DM_SandowPP_State aState)
-;     {WGP is always decaying}
-;     Trace("Pumping.WGPDecay()")
-
-;     float decayVal
-;     if _lastTimeWGPQuery > 0.0
-;         float time = Now() - _lastTimeWGPQuery
-;         decayVal = aState.WGP * _WGPDailyDecayRate * time
-;         aState.WGP -= decayVal
-;     EndIf
-;     _lastTimeWGPQuery = Now()
-
-;     Trace("decayVal = " + decayVal)
-; EndFunction
-
 
 ; Avoids a bug when creating a new game when this mod seems to be initialized way
 ; before the current date.
@@ -365,7 +352,7 @@ EndFunction
             If Player.IsWeaponDrawn()
                 Player.SheatheWeapon()
             EndIf
-            PapyrusToLuaState()
+            _PapyrusToLuaState()
         EndFunction
 
         Function SetHoursSlept(float hoursSlept)
@@ -376,7 +363,7 @@ EndFunction
 
         ; Prepare player to sleep. Setup sleeping time and total hours awaken.
         Event OnSleepStart(float aStartTime, float aEndTime)
-            ReportWidget.Pause()
+            _Pause()
             PreparePlayerToSleep()
             _goneToSleepAt = Now()                        ; Just went to sleep
         endEvent
@@ -389,14 +376,14 @@ EndFunction
                 Return      ; Do nothing if didn't really slept
             EndIf
             SetHoursSlept(hoursSlept)
-            SetDecay(0.6)
+            _SetDecay(0.6)
             ExecuteLua("return sandowpp.onSleep(jobject)")
-            SleepPostprocess()
-            ReportPlayer()
-            ReportWidget.Resume()
+            _SleepPostprocess()
+            RealTimeCalculations()
+            _Resume()
         endEvent
 
-        Function SleepPostprocess()
+        Function _SleepPostprocess()
             texMngr.MakePlayerRipped()
             ChangeHeadSize()
         EndFunction
@@ -407,6 +394,52 @@ Function RegisterHotkey(int aOldKey, int aNewKey)
     Trace("Main.RegisterHotkey(" + aOldKey + ", " + aNewKey + ")")
     UnRegisterForKey(aOldKey)
     RegisterForKey(aNewKey)
+EndFunction
+
+;>========================================================
+;>===                 UPDATING CICLE                 ===<;
+;>========================================================
+
+int _cycle = 0
+
+; Advances cycle by one.
+;       _cycle ∈ [0, 59]
+; 60 is the upper limit so modulo calculations don't get too slow with larger numbers.
+Function _AdvCycle()
+    _cycle = (_cycle + 1) % 60
+EndFunction
+
+; Tells if current cycle is divisible by some number.
+; Cycle is compared from [1, 60] because 60 it's divisible by many numbers.
+bool Function _IsNthCycle(int num)
+    return (_cycle + 1) % num == 0
+EndFunction
+
+Function _Loop()
+    RegisterForSingleUpdate(solveFlt(GetMCMConfig(), ".widget.refreshRate", 5))
+EndFunction
+
+State Running
+    Event OnUpdate()
+        Trace("Loop " + _cycle)
+        RealTimeCalculations()
+        _AdvCycle()
+        _Loop()
+    EndEvent
+EndState
+
+Event OnUpdate()
+    UnregisterForUpdate()
+EndEvent
+
+Function _Pause()
+    UnregisterForUpdate()
+    GotoState("Paused")
+EndFunction
+
+Function _Resume()
+    GotoState("Running")
+    _Loop()
 EndFunction
 
 ;>=========================================================

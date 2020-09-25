@@ -4,6 +4,6 @@ Scriptname DM_SandowPPSkillUp extends Quest
 DM_SandowPPMain property SandowPP auto
 
 function OnStoryIncreaseSkill(string aSkill)
-    SandowPP.Train(aSkill)
+    SandowPP.TrainSkill(aSkill)
     Stop()
 endFunction

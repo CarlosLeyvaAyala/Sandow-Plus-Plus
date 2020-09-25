@@ -122,6 +122,12 @@ function bhv_mgr.getMcmData(data)
     return currBhv(data).getMcmData(data) or data
 end
 
+--- Some calculations need to be done at real time, like Bruce Lee's losses,
+--- training decay on PI/BL...
+function bhv_mgr.realTimeCalc(data)
+    return currBhv(data).realTimeCalc(data) or data
+end
+
 -- ;>========================================================
 -- ;>===                TREE GENERATION                 ===<;
 -- ;>========================================================

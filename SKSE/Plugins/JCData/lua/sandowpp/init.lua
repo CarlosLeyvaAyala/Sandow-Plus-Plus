@@ -38,6 +38,7 @@ sandowpp.installAddons = addon_mgr.installAll
 sandowpp.repositionWidget = reportWidget.mCalcPositions
 sandowpp.onSleep = bhv_mgr.onSleep
 sandowpp.onReport = bhv_mgr.onReport
+sandowpp.realTimeCalc = bhv_mgr.realTimeCalc
 sandowpp.getMcmData = bhv_mgr.getMcmData
 sandowpp.changeHAlign = reportWidget.changeHAlign
 sandowpp.changeVAlign = reportWidget.changeVAlign

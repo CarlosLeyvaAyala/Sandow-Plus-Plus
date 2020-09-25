@@ -58,9 +58,9 @@ DM_SandowPP_ReportMeterBase[] _meters
     EndFunction
 
     Function Report(int data)
-        ; If Visible
+        If Visible
             _ForceReport(data)
-        ; EndIf
+        EndIf
     EndFunction
 
     ; Caches data to apply it as synchronically as possible.
@@ -97,40 +97,40 @@ DM_SandowPP_ReportMeterBase[] _meters
 ;>===                 UPDATING CICLE                 ===<;
 ;>========================================================
     Function _Kickstart()
-        If Visible
-            Owner.ReportPlayer()
-        EndIf
-        RegisterForSingleUpdate(\
-            JValue.solveFlt(Owner.GetDataTree(),\
-            "preset.widget.refreshRate",\
-            5)\
-        )
+        ; If Visible
+        ;     Owner.ReportPlayer()
+        ; EndIf
+        ; ; RegisterForSingleUpdate(\
+        ;     JValue.solveFlt(Owner.GetDataTree(),\
+        ;     "preset.widget.refreshRate",\
+        ;     5)\
+        ; )
     EndFunction
 
-    State Running
-        Event OnUpdate()
-            _Kickstart()
-        EndEvent
-    EndState
+    ; State Running
+    ;     Event OnUpdate()
+    ;         _Kickstart()
+    ;     EndEvent
+    ; EndState
 
     Event OnUpdate()
         UnregisterForUpdate()
     EndEvent
 
-    Function Pause()
-        GotoState("Paused")
-    EndFunction
+    ; Function Pause()
+    ;     GotoState("Paused")
+    ; EndFunction
 
-    Function Resume()
-        GotoState("Running")
-    EndFunction
+    ; Function Resume()
+    ;     GotoState("Running")
+    ; EndFunction
 
 ;>========================================================
 ;>===                   APPEARANCE                   ===<;
 ;>========================================================
 
     Function _Hide()
-        Pause()
+        ; Pause()
         int i = 0
         While IterateMeters(i)
             _meters[i].FadeTo(0, 0.35)
@@ -143,7 +143,6 @@ DM_SandowPP_ReportMeterBase[] _meters
         int i = 0
         int d = Owner.GetDataTree()
         float a = JValue.solveFlt(d, ".preset.widget.opacity", 100.0)
-        ; float t = JValue.solveFlt(d, ".preset.widget.transT", 1.0)
         While IterateMeters(i)
             If _meters[i].IsVisible()
                 _meters[i].FadeTo(a, 0.35)
@@ -151,7 +150,7 @@ DM_SandowPP_ReportMeterBase[] _meters
             i += 1
         EndWhile
         Utility.Wait(0.4)
-        Resume()
+        ; Resume()
         _Kickstart()
     EndFunction
 
@@ -160,7 +159,7 @@ DM_SandowPP_ReportMeterBase[] _meters
         If Visible
             _Show()
         EndIf
-        Owner.ReportPlayer()
+        Owner.RealTimeCalculations()
     EndFunction
 
 ;>========================================================
