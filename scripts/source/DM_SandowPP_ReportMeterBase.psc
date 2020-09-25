@@ -104,6 +104,7 @@ EndFunction
 
     Function _TryFlash()
         If FlashColor >= 0
+            FlashColor = _CorrectFlash()
             Flash()
         EndIf
     EndFunction
@@ -123,6 +124,12 @@ EndFunction
 ;>========================================================
 ;>===                  CALCULATIONS                  ===<;
 ;>========================================================
+
+    ; For some reason we need to do this, otherwise the bar flashes
+    ; the primary color and not the intended color.
+    int Function _CorrectFlash()
+        return FlashColor
+    EndFunction
 
     int Function _LighterCol(int c)
         int r = Math.RightShift(Math.LogicalAnd(c, 0xFF0000), 16)

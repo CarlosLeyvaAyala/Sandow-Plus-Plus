@@ -14,7 +14,7 @@ local bhvBruce = {}
 local trainRatio = 0.1
 local capSleep = l.forceMax(10)
 local allowedAwakenHrs = 30
-local allowedInactivity = 36
+local allowedInactivity = 24
 local name = c.bhv.name.bruce
 
 local _storedWGP = bhv_all.internalProp(name, "_storedWGP")
@@ -48,12 +48,10 @@ local capLeanness
 -- ;>========================================================
 
 --- Calculates how much training (WGP) will decay for inactivity.
----
 ---     `trainDecay(Hours inactive)`
----
----     `Hours inactive ∈ [30, 72]`
+---     `Hours inactive ∈ [allowedInactivity, 72]`
 local trainDecay = l.pipe(
-    l.expCurve(0.057762265046665, {x=allowedInactivity, y=0.05}, {x=72, y=0.4}),
+    l.expCurve(0.028881132523326, {x=allowedInactivity, y=0.2}, {x=72, y=0.8}),
     l.forceMax(0.4)
 )
 
@@ -98,9 +96,9 @@ local function canLose(data)
     if not bhv_all.canLose(data) then return false end
     local state = data.state
     local byInactivity = canPunishInactivity(state.hoursInactive)
-    -- local bySleep = canPunishSleep(state.hoursAwaken)
+    local bySleep = canPunishSleep(state.hoursAwaken)
     -- ;TODO: Lose for bad eating
-    return byInactivity --or bySleep
+    return byInactivity or bySleep
 end
 
 --- Decays training and returns if there was decay.
@@ -153,8 +151,6 @@ local function losses(data)
     local inactive = inactivityPenaltyBase(state.hoursInactive)
     local sleep = sleepPenaltyBase(state.hoursAwaken)
     local lo = inactive + sleep
-    if inactive > 0 then wgp = 0 end
-    if sleep > 0 then wgp = wgp * 0.5 end
     -- ; ;TODO: not eating properly
     lo = lo * weightPenaltyMult(state.weight)
     return l.forcePositve(training(data) - lo), l.forcePositve(wgp)

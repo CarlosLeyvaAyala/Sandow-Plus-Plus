@@ -3,9 +3,9 @@
 --- Use this to ensure exponential curves pass by a certain milestone.
 local shapeFinder = {}
 
-local p1 = {x=36, y=0.05}
-local p2 = {x=72, y=0.4}
-local desired = {x=48, y=0.1}
+local p1 = {x=24, y=0.2}
+local p2 = {x=72, y=0.8}
+local desired = {x=48, y=0.4}
 local t, iter = 0.00000000000001, 0
 
 local function expCurve(shape)
