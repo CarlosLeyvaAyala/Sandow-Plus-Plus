@@ -302,3 +302,4 @@ TSWLatexianTemp*
 *_temp.tex
 *.synctex.gz
 SKSE/Plugins/JCData/lua/sandowpp/serpent.lua
+docs/programmer/diagrams/pngquant.exe

@@ -50,6 +50,8 @@ TextureSet Property LizFemW100 Auto
 TextureSet Property LizMalW0 Auto
 TextureSet Property LizMalW100 Auto
 
+bool _textureWasSet = false
+
 ;TODO: Delete
 Function Debug(Actor akTarget)
 EndFunction
@@ -60,26 +62,26 @@ EndFunction
 
 ;> Use these functions when you want to enable muscle definition.
 
-Function MakePlayerRipped()
-    MakeRipped(Player)
+; `forceSet = false` is used to avoid flickering when a texture was already set.
+Function MakePlayerRipped(bool forceSet = false)
+    MakeRipped(Player, forceSet)
 EndFunction
 
 ; Method is left somewhat generalized in the unlikely case NiOverride works for NPCs.
-Function MakeRipped(Actor akTarget)
+Function MakeRipped(Actor akTarget, bool forceSet = false)
     string m = _GetAlphaOptions(akTarget)
     If m == "$None"
         Clear(akTarget)
         return
     EndIf
-    int tx = _GetTextures(akTarget)
-    If tx == 0
-        ; Race not supported
-        return
+    float alpha = _GetAlpha(akTarget, m)
+    ; Avoid flickering  when a texture was already set.
+    If forceSet || !_textureWasSet
+        _textureWasSet = _ForceTextureSet(akTarget, alpha)
+    Else
+        _SetTexAlpha(akTarget, 1.0, "Body [Ovl0]")
+        _SetTexAlpha(akTarget, alpha)
     EndIf
-    ; Set least ripped texture to always visible
-    _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 0) as TextureSet, 1.0, "Body [Ovl0]")
-    ; Sets most ripped texture as a blend.
-    _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 1) as TextureSet, _GetAlpha(akTarget, m))
 EndFunction
 
 Function Clear(Actor akTarget)
@@ -88,25 +90,30 @@ Function Clear(Actor akTarget)
     _SetTextureSetAndAlpha(akTarget, None, 0.0, "Body [Ovl0]")
     ; Most ripped texture
     _SetTextureSetAndAlpha(akTarget, None, 0.0)
+    _textureWasSet = false
 EndFunction
-
 
 ;>========================================================
-;>===                    HELPERS                     ===<;
+;>===                      CORE                      ===<;
 ;>========================================================
 
-; It seems GetSex won't work if used inside a Global function; it can't be added to a library.
-bool Function _IsFemale(Actor akTarget)
-    return akTarget.GetLeveledActorBase().GetSex() == 1
+; Tries to force a texture set on an actor. Returns wether it could do it.
+bool Function _ForceTextureSet(Actor akTarget, float alpha)
+    int tx = _GetTextures(akTarget)
+    If tx == 0
+        ; Race not supported
+        return false
+    EndIf
+    ; Set least ripped texture to always visible
+    _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 0) as TextureSet, 1.0, "Body [Ovl0]")
+    ; Sets most ripped texture as a blend.
+    _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 1) as TextureSet, alpha)
+    return true
 EndFunction
 
-; Gets the race for an actor as a string.
-string Function _GetRace(Actor akTarget)
-    return MiscUtil.GetActorRaceEditorID(akTarget)
-EndFunction
-
-float Function _PlayerWeight()
-    return SPP.GetPlayerWeight() / 100
+Function _SetTextureSetAndAlpha(Actor akTarget, TextureSet tx, float alpha, string node = "Body [Ovl1]")
+    _SetTextureSet(akTarget, tx, node)
+    _SetTexAlpha(akTarget, alpha, node)
 EndFunction
 
 ;>========================================================
@@ -167,7 +174,6 @@ float Function _AlphaFromSkills(Actor akTarget)
     return alpha
 EndFunction
 
-
 ; Sets how much ripped an actor will look.
 ;
 ; "Node" can go from "Body [Ovl0]" to "Body [Ovl5]. Higher layers get applied over lower ones."
@@ -215,21 +221,16 @@ bool Function _SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body 
     ; Get the skin tint color of the Actor to reapply it soon
     int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
     ; Add the texture set we want to show and make it invisible
-    ; WARNING: NiOverride.AddNodeOverrideTextureSet only works for [Body Ovl5], but
+    ; WARNING: NiOverride.AddNodeOverrideTextureSet only works for [Body Ovl5].
     ; WARNING: NetImmerse.SetNodeTextureSet works for [Body Ovl0..5],
     ; WARNING: but it needs to be reapplied at game reload.
-    ;~~NiOverride.AddNodeOverrideTextureSet(akTarget, isFemale, node, 6, irrelevant, tx, true)
+    ;~~NiOverride.AddNodeOverrideTextureSet(akTarget, isFemale, node, 6, irrelevant, tx, true)~~
     NetImmerse.SetNodeTextureSet(akTarget, node, tx, false)
     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, irrelevant, 0.0, true)
     ; Last operation resets the skin tint color to white, making the character's body pale. Restore the color we got earlier.
     NiOverride.AddNodeOverrideInt(akTarget, isFemale, node, 7, irrelevant, skinColor, true)
     ; Profit! Have a nice day.
     return true
-EndFunction
-
-Function _SetTextureSetAndAlpha(Actor akTarget, TextureSet tx, float alpha, string node = "Body [Ovl1]")
-    _SetTextureSet(akTarget, tx, node)
-    _SetTexAlpha(akTarget, alpha, node)
 EndFunction
 
 ; Gets textures associated to some race.
@@ -241,6 +242,25 @@ int Function _GetTextures(Actor akTarget)
         map = _GenMalTex()
     EndIf
     return JMap.getInt(map, _GetRace(akTarget))
+EndFunction
+
+
+;>========================================================
+;>===                    HELPERS                     ===<;
+;>========================================================
+
+; It seems GetSex won't work if used inside a Global function; it can't be added to a library.
+bool Function _IsFemale(Actor akTarget)
+    return akTarget.GetLeveledActorBase().GetSex() == 1
+EndFunction
+
+; Gets the race for an actor as a string.
+string Function _GetRace(Actor akTarget)
+    return MiscUtil.GetActorRaceEditorID(akTarget)
+EndFunction
+
+float Function _PlayerWeight()
+    return SPP.GetPlayerWeight() / 100
 EndFunction
 
 

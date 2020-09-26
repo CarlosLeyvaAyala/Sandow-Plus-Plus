@@ -30,10 +30,6 @@ local training = bhv_all.internalProp(name, "training")
 ---      weight ∈ [0..100]
 local daysToMaxLeanness
 
---- Penalty for inactivity. This number is an addition.
----      hoursInactive:      Real hours, not game hours
-local inactivityPenaltyBase
-
 --- Avoids perpetually gaining leanness.
 --- @param training number
 local capLeanness
@@ -48,27 +44,18 @@ local flashDown
 --- The more you weight, the less harsh the penalty is (because muscles give
 --- you some room to caloric expenditure IRL).
 ---      weight ∈ [0..100]
-local weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.5})
-
---- Calculates how much training (WGP) will decay for inactivity.
----     `trainDecay(Hours inactive)`
----     `Hours inactive ∈ [allowedInactivity, 72]`
-local trainDecay = l.pipe(
-    l.expCurve(0.028881132523326, {x=allowedInactivity, y=0.2}, {x=72, y=0.8}),
-    l.forceMax(0.4)
-)
+local weightPenaltyMult = l.expCurve(0.02, {x=0, y=1}, {x=100, y=0.7})
 
 local function canPunishInactivity(hoursInactive) return hoursInactive >= allowedInactivity end
 
---- Rate of decay for muscle definiton. Base number, not multiplier.
+--- Penalty for inactivity. This number is an addition.
 ---
----      `hoursInactive`:      Real hours, not game hours
----
---- This formula punishes up to 96 hours (4 in game days).
-local inactivityPenaltyCurve = l.pipe(
-    l.expCurve(0.04, {x=allowedInactivity, y=0.5}, {x=96, y=12}),
-    l.forceMax(12)
-)
+---      `hoursInactive`:      Player hours, not game hours
+local function inactivityPenaltyBase(hoursInactive)
+    if canPunishInactivity(hoursInactive) then return 2
+    else return 0
+    end
+end
 
 --- Danger levels for not sleeping.
 local function sleepDanger(hoursAwaken)
@@ -82,8 +69,8 @@ end
 --- Not a multiplier, but a base number.
 local function sleepPenaltyBase(hoursAwaken)
     return l.case(sleepDanger(hoursAwaken), {
-            [c.dangerLevels.Critical] = l.forceMax(1.2)(hoursAwaken / 100),
-            [c.dangerLevels.Danger] = hoursAwaken / 120,
+            [c.dangerLevels.Critical] = 0.25,
+            [c.dangerLevels.Danger] = 0.1,
         }, 0
     )
 end
@@ -107,20 +94,14 @@ end
 --- Decays training and returns if there was decay.
 local function decayTraining(data)
     local s, inactive = data.state, data.state.hoursInactive
-    if not canPunishInactivity(inactive) then return false end
-
-    local oldWGP = s.WGP
-    local v = s.WGP * s.decay * trainDecay(inactive)
+    if not canPunishInactivity(inactive) or s.WGP <= 0 then return false end
+    -- Each day without training drains 1 training day
+    local v = s.decay -- * 1  <--- decay ratio
     s.WGP = l.forcePositve(s.WGP - v)
-    return oldWGP ~= s.WGP
+    return true
 end
 
-local function decayAndReportTrain(data)
-    if decayTraining(data) then
-        flashDown("meter2")
-        -- reportWidget.mFlash(data, "meter2", reportWidget.flashCol.down)
-    end
-end
+local function decayAndReportT(data) if decayTraining(data) then flashDown("meter2") end end
 
 -- ;>========================================================
 -- ;>===                      CORE                      ===<;
@@ -129,7 +110,6 @@ end
 -- Defines functions based on current values.
 local function closeFuncs(data)
     daysToMaxLeanness = l.expCurve(0.02, {x=0, y=rip.daysForMin(data)}, {x=100, y=rip.daysForMax(data)})
-    inactivityPenaltyBase = l.boolBase(inactivityPenaltyCurve, canPunishInactivity(data.state.hoursInactive))
     capLeanness = function (training) return l.forceMax(daysToMaxLeanness(data.state.weight) * 1.03)(training) end
     flashDown = function (meterName) reportWidget.mFlash(data, meterName, reportWidget.flashCol.down) end
 end
@@ -151,13 +131,13 @@ end
 
 --- Calculates losses.
 local function losses(data)
-    local state, wgp = data.state, data.state.WGP
+    local state = data.state
     local inactive = inactivityPenaltyBase(state.hoursInactive)
     local sleep = sleepPenaltyBase(state.hoursAwaken)
     local lo = inactive + sleep
     -- ;TODO: not eating properly
-    lo = lo * weightPenaltyMult(state.weight) * state.decay
-    return l.forcePositve(training(data) - lo), l.forcePositve(wgp)
+    lo = lo * state.decay * weightPenaltyMult(state.weight)
+    return l.forcePositve(training(data) - lo)
 end
 
 --- Calculates gains.
@@ -195,6 +175,7 @@ end
 
 --- Returns processed data and which color should the main bar flash.
 function bhvBruce.onSleep(data)
+    if data.state.hoursAwaken <= 5 then return data, -1 end
     local train, flash = prepareBeforeProcess(data), -1
     print("start ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
     -- Core calculations
@@ -208,18 +189,16 @@ function bhvBruce.init(data)
 end
 
 local function lossSeq(data)
-    if not canLose(data) then return end
-    local train = prepareBeforeProcess(data)
-    local oldT = train
-    train, data.state.WGP = losses(data)
-    if oldT ~= train then flashDown("meter1") end
-    updateTrainAndLean(data, train)
+    if not canLose(data) or training(data) == 0 then return end
+    prepareBeforeProcess(data)
+    updateTrainAndLean(data, losses(data))
+    flashDown("meter1")
 end
 
 --- All loses are done in real time.
 function bhvBruce.realTimeCalc(data)
     lossSeq(data)
-    decayAndReportTrain(data)
+    decayAndReportT(data)
     return data
 end
 

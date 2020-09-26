@@ -4,7 +4,7 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPPMain.psc",
 			"bookmarks": [
 				-1,
-				424,
+				422,
 				240,
 				-1,
 				-1,
@@ -17,7 +17,7 @@
 				-1,
 				-1,
 				216,
-				298
+				297
 			]
 		},
 		{
@@ -43,9 +43,9 @@
 			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_TextureMngr.psc",
 			"bookmarks": [
 				-1,
-				136,
 				-1,
-				117,
+				116,
+				124,
 				-1,
 				-1,
 				-1,
@@ -196,8 +196,8 @@
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhvBruce.lua",
 			"bookmarks": [
 				-1,
-				210,
-				274,
+				191,
+				96,
 				-1,
 				-1,
 				-1,
@@ -205,7 +205,7 @@
 				-1,
 				-1,
 				-1,
-				177
+				157
 			]
 		},
 		{

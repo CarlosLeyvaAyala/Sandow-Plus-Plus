@@ -248,7 +248,6 @@ EndFunction
 
 ; Checks every 4 cycles if player muscle definition has changed in real time.
 Function _CheckRipped()
-    Trace("Changing ripped tex " + _cycle)
     If _IsNthCycle(4)
         texMngr.MakePlayerRipped()
     EndIf
@@ -421,7 +420,6 @@ EndFunction
 
 State Running
     Event OnUpdate()
-        Trace("Loop " + _cycle)
         RealTimeCalculations()
         _AdvCycle()
         _Loop()

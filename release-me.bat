@@ -19,7 +19,7 @@
 ::
 :: You also need to download 7-zip for this to work.
 
-ECHO OFF
+@ECHO OFF
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Mod variables
