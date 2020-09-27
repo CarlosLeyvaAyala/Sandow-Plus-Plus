@@ -150,6 +150,7 @@ Function OnGameReload()
     _LoadDefaults()
     ; Since switching to Lua, we need to do this. Don't know why.
     ReportWidget.EnsureVisibility()
+    texMngr.MakePlayerRipped(true)
     ; JValue.solveFltSetter(GetMCMConfig(), ".widget.refreshRate", 2)
     ; SavePreset("preset")
     ;

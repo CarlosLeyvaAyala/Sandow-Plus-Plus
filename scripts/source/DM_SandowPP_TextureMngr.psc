@@ -49,6 +49,7 @@ TextureSet Property LizFemW0 Auto
 TextureSet Property LizFemW100 Auto
 TextureSet Property LizMalW0 Auto
 TextureSet Property LizMalW100 Auto
+TextureSet Property HumFemHands Auto
 
 bool _textureWasSet = false
 
@@ -75,14 +76,63 @@ Function MakeRipped(Actor akTarget, bool forceSet = false)
         return
     EndIf
     float alpha = _GetAlpha(akTarget, m)
-    ; MiscUtil.PrintConsole(m + " "+ alpha)
     ; Avoid flickering  when a texture was already set.
-    If forceSet || !_textureWasSet
-        _textureWasSet = _ForceTextureSet(akTarget, alpha)
-    Else
-        _SetTexAlpha(akTarget, 1.0, "Body [Ovl0]")
-        _SetTexAlpha(akTarget, alpha)
-    EndIf
+    ; If forceSet || !_textureWasSet
+    ;     _textureWasSet = _ForceTextureSet(akTarget, alpha)
+    ; Else
+    ;     _SetTexAlpha(akTarget, 1.0, "Body [Ovl0]")
+    ;     _SetTexAlpha(akTarget, alpha)
+    ; EndIf
+
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "NiNode")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSTriShape")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "NiSkinData")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "NiSkinPartition")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSShaderTextureSet")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSTriShape")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSLightingShaderProperty")
+    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSShaderTexture")
+    T(akTarget, "Body [Ovl0]")
+    ; T(akTarget, "Body [Ovl1]")
+EndFunction
+
+Function T(Actor akTarget, string node)
+    bool isFemale = _IsFemale(akTarget)
+    Trace(node)
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 0, -1))
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 1, -1))
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 2, -1))
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 3, -1))
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 4, -1))
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 5, -1))
+    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 6, -1))
+    ; int index = 0
+    ; While (index <= 8)
+    ;     Trace(index + " " + NiOverride.GetNodePropertyString(akTarget, false, node, 9, index))
+    ;     index += 1
+    ; EndWhile
+    ; NiOverride.AddSkinOverrideTextureSet(Player, true, false, 0x04, 6, -1, HumFemW100, true)
+
+    ;@Hint: THIS WORKS
+    NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, 1, "data/TEXTURES/actors/character/female/femalebody_03_highX_msn.dds", true)
+    ; NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, 1, "data\\TEXTURES\\actors\\character\\female\\femalebody_03_highX_msn.dds", true)
+
+    int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
+    NiOverride.AddNodeOverrideTextureSet(Player, true, "Hands [SOvl]", 6, -1, HumFemHands, true)
+    NiOverride.AddNodeOverrideInt(Player, true, "Hands [SOvl]", 7, -1, skinColor, true)
+    ; NiOverride.AddNodeOverrideTextureSet(Player, true, "Hands [Ovl0]", 6, -1, HumFemHands, true)
+    ; NiOverride.AddNodeOverrideInt(akTarget, isFemale, "Hands [Ovl0]", 7, -1, skinColor, true)
+
+
+    ; WetFunctionEffect
+    ; "data\TEXTURES\actors\character\female\femalebody_03_highX_msn.dds"
+    ; NiOverride.AddNodeOverrideString(act, fem, node, nifTextureKey, nifTextureIndex, requestedTex, false)
+
+;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 0, 0.0, true)
+;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 1, 0.0, true)
+;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 3, 0.0, true)
+;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 4, 0.0, true)
+;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 5, 0.0, true)
 EndFunction
 
 Function Clear(Actor akTarget)
@@ -220,7 +270,7 @@ bool Function _SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body 
     ; Index is irrelevant for all these specific operations. It's **somewhat** documented in the NiOverride source code.
     int irrelevant = -1
     ; Get the skin tint color of the Actor to reapply it soon
-    int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
+    int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 0x04, 7, -1)
     ; Add the texture set we want to show and make it invisible
     ; WARNING: NiOverride.AddNodeOverrideTextureSet only works for [Body Ovl5].
     ; WARNING: NetImmerse.SetNodeTextureSet works for [Body Ovl0..5],

@@ -31,6 +31,7 @@
         <Import>@MO\SkyUI\scripts\source</Import>
         <Import>@MO\SkyUI_5.1_SDK\Scripts\source</Import>
         <Import>@MO\SexLabFrameworkSE v163 BETA8\scripts\</Import>
+        <Import>@MO\WetFunctionRedux\Scripts\Source</Import>
         <Import>@lib\Source</Import>
     </Imports>
     <Folders>
