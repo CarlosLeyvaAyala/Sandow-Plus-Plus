@@ -75,6 +75,7 @@ Function MakeRipped(Actor akTarget, bool forceSet = false)
         return
     EndIf
     float alpha = _GetAlpha(akTarget, m)
+    ; MiscUtil.PrintConsole(m + " "+ alpha)
     ; Avoid flickering  when a texture was already set.
     If forceSet || !_textureWasSet
         _textureWasSet = _ForceTextureSet(akTarget, alpha)
@@ -136,7 +137,7 @@ EndFunction
 
 float Function _GetPlayerAlpha(string m)
     float min = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "minAlpha")
-    float max = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "maxAlpha", 1) / 100.0
+    float max = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "maxAlpha", 1)
 
     If m == "$Constant"
         return JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "currDef")

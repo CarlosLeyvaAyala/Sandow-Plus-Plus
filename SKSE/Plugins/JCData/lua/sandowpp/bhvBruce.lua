@@ -189,8 +189,8 @@ function bhvBruce.init(data)
 end
 
 local function lossSeq(data)
-    if not canLose(data) or training(data) == 0 then return end
     prepareBeforeProcess(data)
+    if not canLose(data) or training(data) == 0 then return end
     updateTrainAndLean(data, losses(data))
     flashDown("meter1")
 end
@@ -199,6 +199,7 @@ end
 function bhvBruce.realTimeCalc(data)
     lossSeq(data)
     decayAndReportT(data)
+    -- updateTrainAndLean(data, 300)
     return data
 end
 

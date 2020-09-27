@@ -1,11 +1,11 @@
 ---
 html:
-  embed_local_images: true
+  embed_local_images: false
   embed_svg: true
   offline: true
   toc: true
 
-print_background: false
+print_background: true
 
 toc:
   depth_from: 1
@@ -14,7 +14,7 @@ toc:
 ---
 
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=4 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
@@ -27,6 +27,12 @@ toc:
   - [Weight gaining/getting ripped for pure mages](#weight-gaininggetting-ripped-for-pure-mages)
   - [What's the deal with the head resizing thing?](#whats-the-deal-with-the-head-resizing-thing)
   - [Could you add ripped textures for \<insert name here\> body/texture pack?](#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack)
+  - [I've got neck/wrist/ankle seams and weird artifacts](#ive-got-neckwristankle-seams-and-weird-artifacts)
+  - [Is this compatible with...?](#is-this-compatible-with)
+    - [Known compatible mods](#known-compatible-mods)
+    - [Known incompatible mods](#known-incompatible-mods)
+    - [Not confirmed, but should work](#not-confirmed-but-should-work)
+    - [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)
 - [The basics](#the-basics)
 - [Behaviors](#behaviors)
   - [The Pumping Iron Behavior](#the-pumping-iron-behavior)
@@ -39,10 +45,22 @@ toc:
     - [Summary](#summary-1)
     - [Mechanics in depth](#mechanics-in-depth-1)
       - [Fatigue](#fatigue)
+  - [The Bruce Lee Behavior](#the-bruce-lee-behavior)
+    - [Overview](#overview-1)
+    - [Mechanics in depth](#mechanics-in-depth-2)
+      - [Punishments](#punishments)
+- [Everything about getting ripped](#everything-about-getting-ripped)
+  - [Requirements (read before using this)](#requirements-read-before-using-this)
+      - [For Men](#for-men)
+      - [For CBBE](#for-cbbe)
+      - [For UNP](#for-unp)
+  - [Downsides](#downsides)
+    - [How does the player get ripped](#how-does-the-player-get-ripped)
+      - [What this means for Ripped bodies users](#what-this-means-for-ripped-bodies-users)
 
 <!-- /code_chunk_output -->
 
-@import "help.less"
+<!-- @import "help.less" -->
 
 # Overview
 Thanks for using Sandow Plus Plus! \
@@ -154,20 +172,54 @@ Fun fact: did you know that, compared to most of the Skyrim player base, we may 
 Sadly, normal textures to make characters look ripped aren't easy to come by.
 Granted, it's not the same desolate panorama it was 6 years ago, but it's still a long way from ideal.
 
-When I search for some texture set, I shit you not, the very first thing I look for is for it having ripped textures. So, the textures I've supplied are the best of the best: they are **great texture sets that happen to have many levels of muscle definition**.
+When I search for some texture set, I shit you not, the very first thing I look for is for it having ripped textures. So, [the textures I've supplied](#texture-sets) are the best of the best: they are **great texture sets that happen to have many levels of muscle definition**.
 Even so, they're not always suitable to be used for this mod.
 
 Take for example, Leyenda. They are my favorite textures ever and they've got many ripped options... but their options don't transition too well from not ripped to ripped (what this mod actually needs), so I had to manually alter them using ==Fitness Body== (yeah, it's for LE) so they could correctly blend from zero to hero... something I can't do for UNP, since Fitness Body only comes with textures for CBBE.
 
 <figure>
-<img src="img/normal.gif"/>
+<!-- <img src="img/normal.gif"/> -->
+<video width="300" height="300" src="img/normal.mp4" preload="none" autoplay="autoplay" loop="loop">
+  Dude... if you can't watch this is because you are still using Internet Explorer... in 2020!
+  </video>
 <figcaption>Your textures must blend like this to be useful for this mod.</figcaption>
 </figure>
 
 The take on: if you know about **a texture set that already includes some levels of muscle definition** I still can see what I can do. If not, forget about it.
-Please keep this in mind before asking me to add support for all your furry races.
+Please keep this in mind before asking me to add support for your furries.
 
 You and I are weird compared to most Skyrim players. We are short on options, anyway.
+
+## I've got neck/wrist/ankle seams and weird artifacts
+That's because you aren't using the correct [the texture sets](#texture-sets).
+
+## Is this compatible with...?
+
+If your mod isn't here, you could try and tell us.
+No way I can try every single mod.
+
+### Known compatible mods
+
+* Wet Function Redux. Fuck yeah! Getting ripped does't interfere at all with this.
+
+* [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632). Of course it this; I made it myself.
+  You still need to download the textures for both, even if they are pretty much the same. [See here why](#how-does-the-player-get-ripped).
+
+### Known incompatible mods
+* Pumping Iron... obviously (see [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)).
+
+
+### Not confirmed, but should work
+* Any custom race.
+
+* Any mod that does something based on your weight (but doesn't actually change it).
+
+### Not confirmed, but shouldn't work
+* Any mod that changes your body weight.
+  **Even CTDs where reported** when using this and Pumping Iron at the same time.
+
+* Any mod using Racemenu's body overlay layers 0 and 1 [when you are using any method for getting ripped](#downsides) from this mod.
+  You should see your character's body flickering because both mods are setting their own textures.
 
 # The basics
 - Every time a certain skill goes up, you get `Training`, which transforms to weight/muscle definition when you sleep.
@@ -182,16 +234,6 @@ The basics are quite simple, so now let's talk about the complex stuff.
 # Behaviors
 @import "html/bhv-table.html"
 
-<!-- | | Sandow Plus Plus| Pumping Iron | Bruce Lee | Bulk & Cut |
-|-|-|-|-|-|
-|**Type**| weight gaining| weight gaining | Getting ripped without gaining weight| Cycles between weight gaining and getting ripped|
-|**Philosophy**| <ul><li>Fatigue managment.</li><li>Relaxed weight gaining.</li></ul> | <ul><li>Timed sleeping sessions.</li><li>Constant training.</li></ul>  | <ul><li>Constant training.</li><li>It's harder to get ripped/lose your gains when you are muscular.</li></ul> | <ul><li>Bulking is relaxed training.</li><li>Cutting is constant training.</li></ul>
-| **How does it feel to play?** | *"It's natural for an adventurer to be muscular"*. | *"No pain, no gain"*. Gym grind. | *"Getting ripped is an uphill battle"*. | *"Don't push yourself too hard all the time"*. Ebb and flow.  |
-| **Rewards you when you...** |<ul><li>Sleep and train however you want. Just get enough of both.</li></ul>| <ul><li>Constantly train.</li><li>Keep a constant sleeping schedule.</li></ul> | <ul><li>Train... a lot.</li></ul> | <ul><li>Play by whichever rules you need to follow at the moment.</li></ul> |
-|**Punsihes when you...**| <ul><li>Don't sleep enough.</li><li>Don't train for 3 days.</li><li>Overtrain.</li></ul> | <ul><li>Don't train constantly.</li></ul><small>You are always losing a little weight Gain Potential, so you are, as a matter of fact, always been punished. Punishments are not as harsh as Sandow Plus Plus, though.</small> |<ul><li>Don't train daily.</li></ul>|<ul><li>Don't follow current rules.</li></ul>|
-|**Overview**| Easygoing and natural way to play, but a harsh misstress. It's hard to get punished, but you'll regret it if that happens.<br>Gameplay is ideal for people that just want to grow. |Mod name is accurate. It feels like you are always going for the pump.<br> Gameplay is ideal for people who really want to pay their dues with blood and sweat.|Getting ripped in real life while mantaining your muscles is a hard endeavor. Get a little virtual taste of it. | When bulking it uses Sandow Plus Plus rules, when cutting, Bruce Lee's.| -->
-<!-- <ul><li></li></ul> -->
-
 Behaviors are rules to play this mod. The game feels quite different depending on which you choose.
 
 To change the current Behavior, just select one from the MCM.
@@ -204,14 +246,7 @@ When selecting this, you will get the exact same functionality you would expect 
 [^thanks_Gopher]: Thanks to Gopher for graciously giving me permission for using his method!
 
 ### Summary
-| |  Pumping Iron |
-|-|-|-|
-|**Type**| weight gaining |
-|**Philosophy**| <ul><li>Timed sleeping sessions.</li><li>Constant training.</li></ul> |
-| **How does it feel to play?** |  *"No pain, no gain"*. Gym grind. |
-| **Rewards you when you...** | <ul><li>Constantly train.</li><li>Keep a constant sleeping schedule.</li></ul>
-|**Punsihes when you...**| <ul><li>Don't train constantly.</li></ul><small>You are always losing a little weight Gain Potential, so you are, as a matter of fact, always been punished. Punishments are not as harsh as Sandow Plus Plus, though.</small>
-|**Overview**| Mod name is accurate. It feels like you are always going for the pump.<br> Gameplay is ideal for people who really want to pay their dues with blood and sweat.|
+@import "html/bhv-pi.html"
 
 ### Mechanics in depth
 Train, then go to sleep when the time is right. \
@@ -265,6 +300,11 @@ When it fills up to max and starts flashing it means you can now go to sleep.
 Meters 1, 2 and 4 do the same for Sandow Plus Plus and Pumping Iron.
 
 ## The Sandow Plus Plus Behavior
+
+This is the behavior I originally created to use instead of [Pumping Iron](#the-pumping-iron-behavior).
+
+The idea here is to naturally gain weight without worrying too much about not reaching the training requirements to go from 0% to 100% weight.
+
 ### Summary
 
 | | Sandow Plus Plus|
@@ -297,3 +337,114 @@ Always remember that **weight gaining depends on your WGP, how much you sleep an
 Fatigue builds two ways: over time and by leveling up skills.
 Every single second awaken (in game time) you are getting fatigued. Also, each time you level up a skill that gives you WGP you get fatigued.
 That means you'll get fatigued faster after a hard workout day compared to a shopping spree day.
+
+## The Bruce Lee Behavior
+
+In this behavior your weight won't change at all, but your muscle definition will.
+Before using it, make sure to read [its requirements](#requirements-read-before-using-this) and [downsides](#downsides).
+
+### Overview
+The general idea here is to get a sample taste of what a chore it is to be ripped in real life[^annoying_ripped].
+[^annoying_ripped]: But it's not as hard and annoying as real life, though.
+
+Like in real life, **you must be active at all times** to get ripped and [you will be punished in real time](#punishments), unlike weight gaining methods, where you are only punished at sleeping time.
+
+As usual, you will get your gains after sleeping and they are capped after 10 hours of sleeping.
+Ten hours sleeping converts to 1% training to muscle definition. Four hours sleeping converts 0.4% training to muscle definition.
+
+Unlike other behaviors, your gains depend on how much do you weight; with lower weights gaining more muscle definition for the same amount of training... but lower weights are also punished harder[^irl_ripped_loss].
+
+[^irl_ripped_loss]: That was made to simulate the fact that in real life having muscles makes ***QUITE*** difficult to get ripped (at least, without losing them in the process... why do you think steroids are so popular?) but also give you some leeway to eat and train like shit because they are expending calories just for being there.
+
+### Mechanics in depth
+
+#### Punishments
+Inactivity and lack of sleep will both punish you; both in real time.
+
+What does that mean? That if you are being punished you will actually see the ==Widget== flashing red[^red_widget_lossing] and you may even watch how your hard gained abs are disappearing while playing!
+
+[^red_widget_lossing]: Which is always a signal that you are losing something.
+
+==That's a completely different approach to how weight gainind methods work, which apply calculations only when sleeping.
+On those behaviors you can always reach the inactivity time but also avoid losses if you train just before sleeping, and that's because losses are actually calculated <u>after sleeping</u>, but now **you are really compelled to be active at all times**.== <-- Thinking about correcting that...
+
+
+# Everything about getting ripped
+
+## Requirements (read before using this)
+PapyrusUtil and Racemenu are required. [I don't know how to separate NiOverride from RaceMenu](#racemenupapyrusutil), but if you know how, maybe you can use this with ECE.
+
+### Texture sets {ignore=true}
+
+You will need these textures sets, otherwise you will get [seams and weird artifacts](#ive-got-neckwristankle-seams-and-weird-artifacts).
+
+#### For Men
+* [Tempered Skins for Males](https://www.nexusmods.com/skyrimspecialedition/mods/7902).
+* [Masculine Khajiit Textures](https://www.nexusmods.com/skyrimspecialedition/mods/186) (for [SOS](https://www.nexusmods.com/skyrim/mods/70481)). Select `Abs textures` when installing.
+* [Masculine Argonian Textures](https://www.nexusmods.com/skyrimspecialedition/mods/185) (for [SOS](https://www.nexusmods.com/skyrim/mods/70164)). Select `Heavy Scales textures` when installing.
+
+SOS Light not supported.
+
+#### For CBBE
+* [Leyenda Skin](https://www.nexusmods.com/skyrimspecialedition/mods/10306).
+* [Feminine Khajiit Textures](https://www.nexusmods.com/skyrimspecialedition/mods/183). Select `Abs textures` when installing.
+* [Feminine Argonian Textures](https://www.nexusmods.com/skyrimspecialedition/mods/184). Select `Heavy Scales textures` when installing.
+
+#### For UNP
+* [Tempered Skins for Females](https://www.nexusmods.com/skyrimspecialedition/mods/8505).
+* [Feminine Khajiit Textures](https://www.nexusmods.com/skyrimspecialedition/mods/183). Select `Abs textures` when installing.
+* [Feminine Argonian Textures](https://www.nexusmods.com/skyrimspecialedition/mods/184). Select `Heavy Scales textures` when installing.
+
+[Read this](#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack) if you want to know why only these are supported.
+
+All credits to their wonderful authors, who graciously gave me permission to distribute their hard work.
+
+* [HeroedeLeyenda](https://www.nexusmods.com/skyrimspecialedition/users/7960590).
+* [MONSTERaider](https://www.nexusmods.com/skyrimspecialedition/users/1630457).
+* [traa108](https://www.nexusmods.com/skyrimspecialedition/users/9916407).
+  **Honorable mention**. He went the extra mile and even gave me a file and method to modify muscle definition.
+
+## Downsides
+These are known unavoidable issues you should read before getting too excited about this features:
+
+* Racemenu's `NiOverride` is used. Specifically, `body overlay layers 0` and `1`. ***There's no other way around***.
+  This means this is incompatible with any mods that use those layers themselves or tattoos you are using on those layers.
+
+You can easily solve the body tattoos issue by applying them on other layers, but the other one is just impossible to solve.
+
+If you really want to use whatever mod that irremediably conflicts with this[^slave_tattoos], make sure not to use [the Bruce Lee Behavior](#the-bruce-lee-behavior) and not using any of the ==options to make the player ripped==.
+
+[^slave_tattoos]: I don't know about any. Maybe Slave Tattoos, but I don't personally use it.
+
+* You need to use textures. ['Nuff said](#texture-sets).
+
+* Doesn't work on NPCs and there's no way to do it because `NiOverride` doesn't work to well on them (remember it's still in alpha stage for SE).
+  If you want ripped NPCs you may want to try using [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632), by yours trully. It's way less complex than this, but gets the job beautifully done and [it's fully compatible](#known-compatible-mods) with this mod.
+
+* Everytime you un/equip your armor your character will briefly flicker and you may even see a purple texture flash. Again, no way to avoid this.
+
+### How does the player get ripped
+With scripts.
+
+<figure>
+<video width="500" height="213" src="img/worst-acting.mp4" preload="none" autoplay="autoplay" loop="loop">
+  Dude... if you can't watch this is because you are still using Internet Explorer... in 2020!
+  </video>
+<!-- <img src="img/worst-acting-opt.gif"/> -->
+<figcaption>Heh...you just pissed on your pants.</figcaption>
+</figure>
+
+
+These scripts find which race the player is and then applies  textures associated with it... if such race is known for the script, of course.
+**Only two textures are used**: the least and the most ripped.
+
+The least ripped texture is set on `Body Overlay Layer 0`, while the most ripped one is set on `Body Overlay Layer 1` with some transparency.
+This transparency is the one thing that controls how ripped you look. At 0% you will look like the `Body Overlay Layer 0`. At 100% you will totally look like `Body Overlay Layer 1`.
+
+#### What this means for Ripped bodies users
+Sandow Plus Plus only needs 2 textures, while [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632) uses 6.
+I won't bore you with technical details; just accept the fact that more textures are needed when not using scripts.
+
+The thing is, even though both mods mostly use the same set of textures, but I'm a bit indecisive on using exactly the same installation for both, and here's why.
+
+@import "html/pro-con-textures.html"

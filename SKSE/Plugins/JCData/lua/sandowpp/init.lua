@@ -49,8 +49,9 @@ function sandowpp.getDefaults(data)
         bhv_mgr.default,
         skills.default
     )
+    data = p(data)
     data.defaultsInit = true
-    return p(data)
+    return data
 end
 
 --- Registers a training point gained by the player.

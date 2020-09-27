@@ -165,13 +165,13 @@ EndFunction
 
     ;region: Initialization
         Function _InitSequence()
-            ReportWidget.Visible = false
+            _Pause()
             _InitVars40()
             _InitDataTree()
             _LoadAddons()
             _LoadDefaults()
-            ; TestSave()
             _Resume()
+            ReportWidget.Visible = false
         EndFunction
 
         Function _InitVars40()
@@ -304,7 +304,6 @@ Function _SetDecay(float ratio = 1.0)
     string s = ".state."
     JValue.solveFltSetter(data, s + "decay", (Now() - ld) * ratio)
     JValue.solveFltSetter(data, s + "lastDecay", Now())
-    TestSave(203)
 EndFunction
 
 ; Returns player weight. Weight ∈ [0, 100]

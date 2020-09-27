@@ -25,7 +25,7 @@ It's required for all the new features related to being ripped.
 **IT'S REQUIRED** for all the new features related to being ripped. __No need to have it if you don't want to use my *"getting ripped"* features__, though.
 
 * You will need ***some textures to look ripped***.\
-May I suggest *cough* [the ones I got permission to distribute/modify?](https://www.nexusmods.com/skyrimspecialedition/mods/34632)
+May I suggest, *cough*, the ones I got permission to distribute/modify?
 
 ## Features dropped
 * ***All report methods***, except Widget.
