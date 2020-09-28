@@ -36,25 +36,23 @@ Import DM_Utils
 
 DM_SandowPPMain Property SPP Auto
 Actor property Player auto
-; Racial textures
-TextureSet Property HumFemW0 Auto
-TextureSet Property HumFemW100 Auto
-TextureSet Property HumMalW0 Auto
-TextureSet Property HumMalW100 Auto
-TextureSet Property CatFemW0 Auto
-TextureSet Property CatFemW100 Auto
-TextureSet Property CatMalW0 Auto
-TextureSet Property CatMalW100 Auto
-TextureSet Property LizFemW0 Auto
-TextureSet Property LizFemW100 Auto
-TextureSet Property LizMalW0 Auto
-TextureSet Property LizMalW100 Auto
-TextureSet Property HumFemHands Auto
 
+TextureSet Property HumFemHands Auto
+TextureSet Property HumMalHands Auto
+TextureSet Property KhaFemHands Auto
+TextureSet Property KhaMalHands Auto
+TextureSet Property SaxFemHands Auto
+TextureSet Property SaxMalHands Auto
+; TextureSet Property FemHands Auto
+; TextureSet Property MalHands Auto
+
+
+; TODO: Delete
 bool _textureWasSet = false
 
 ;TODO: Delete
 Function Debug(Actor akTarget)
+    ApplyToNPCs()
 EndFunction
 
 ;>========================================================
@@ -62,6 +60,11 @@ EndFunction
 ;>========================================================
 
 ;> Use these functions when you want to enable muscle definition.
+Function InitData()
+    int r = JValue.readFromFile("data/SKSE/Plugins/Sandow Plus Plus/config/ripped-races.json")
+    JMap.setObj(SPP.GetDataTree(), "rippedRaces", r)
+    ; SPP.TestSave(344545)
+EndFunction
 
 ; `forceSet = false` is used to avoid flickering when a texture was already set.
 Function MakePlayerRipped(bool forceSet = false)
@@ -73,99 +76,134 @@ Function MakeRipped(Actor akTarget, bool forceSet = false)
     string m = _GetAlphaOptions(akTarget)
     If m == "$None"
         Clear(akTarget)
-        return
+    Else
+        If akTarget != Player
+            NiOverride.AddOverlays(akTarget)
+        EndIf
+        _MakeRippedByMode(akTarget, m)
     EndIf
-    float alpha = _GetAlpha(akTarget, m)
-    ; Avoid flickering  when a texture was already set.
-    ; If forceSet || !_textureWasSet
-    ;     _textureWasSet = _ForceTextureSet(akTarget, alpha)
-    ; Else
-    ;     _SetTexAlpha(akTarget, 1.0, "Body [Ovl0]")
-    ;     _SetTexAlpha(akTarget, alpha)
-    ; EndIf
+EndFunction
 
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "NiNode")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSTriShape")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "NiSkinData")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "NiSkinPartition")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSShaderTextureSet")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSTriShape")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSLightingShaderProperty")
-    ; _SetTextureSetAndAlpha(akTarget, HumFemW100, 1.0, "BSShaderTexture")
-    T(akTarget, "Body [Ovl0]")
-    ; T(akTarget, "Body [Ovl1]")
+Function _MakeRippedByMode(Actor akTarget, string mode)
+    ; Get race
+    int r = JMap.getObj(SPP.GetDataTree(), "rippedRaces")
+    string aRace = JMap.getStr(r, _GetRace(akTarget))
+    Trace("====" +  akTarget.getLeveledActorBase().getName() + "====")
+    ; Check if race is supported
+    If aRace
+        bool isFemale = _IsFemale(akTarget)
+        _SetHandsOverride(akTarget, aRace, isFemale)
+        _SetBodyOverride(akTarget, aRace, isFemale, mode)
+        If akTarget != Player
+            akTarget.QueueNiNodeUpdate()
+        EndIf
+    EndIf
+EndFunction
+
+Function _SetBodyOverride(Actor akTarget, string aRace, bool isFemale, string mode)
+    string alpha = _GetAlpha(akTarget, mode)
+    string sex
+    If isFemale
+        sex = "Fem"
+    Else
+        sex = "Mal"
+    EndIf
+    ; generate filename
+    string raceTex = aRace + sex + "W" + alpha
+    string tx = "data/textures/actors/character/SandowPP/" + raceTex + ".dds"
+    NiOverride.AddSkinOverrideString(akTarget, isFemale, false, 0x04, 9, 1, tx, true)
+EndFunction
+
+Function _SetHandsOverride(Actor akTarget, string aRace, bool isFemale)
+    TextureSet tx = _GetHandsTextures(aRace, isFemale)
+    string node = "Hands [Ovl0]"
+    int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 0x04, 7, -1)
+    NiOverride.AddNodeOverrideTextureSet(akTarget, isFemale, node, 6, -1, tx, true)
+    NiOverride.AddNodeOverrideInt(akTarget, isFemale, node, 7, -1, skinColor, true)
+EndFunction
+
+TextureSet Function _GetHandsTextures(string aRace, bool isFemale)
+    If isFemale
+        If aRace == "Hum"
+            return HumFemHands
+        ElseIf aRace == "Kha"
+            return KhaFemHands
+        ElseIf aRace == "Sax"
+            return SaxFemHands
+        EndIf
+    Else
+        If aRace == "Hum"
+            return HumMalHands
+        ElseIf aRace == "Kha"
+            return KhaMalHands
+        ElseIf aRace == "Sax"
+            return SaxMalHands
+        EndIf
+    EndIf
+    return None
 EndFunction
 
 Function T(Actor akTarget, string node)
-    bool isFemale = _IsFemale(akTarget)
-    Trace(node)
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 0, -1))
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 1, -1))
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 2, -1))
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 3, -1))
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 4, -1))
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 5, -1))
-    ; Trace(NiOverride.GetNodeOverrideString(akTarget, isFemale, node, 6, -1))
-    ; int index = 0
-    ; While (index <= 8)
-    ;     Trace(index + " " + NiOverride.GetNodePropertyString(akTarget, false, node, 9, index))
-    ;     index += 1
-    ; EndWhile
-    ; NiOverride.AddSkinOverrideTextureSet(Player, true, false, 0x04, 6, -1, HumFemW100, true)
-
     ;@Hint: THIS WORKS
-    NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, 1, "data/TEXTURES/actors/character/female/femalebody_03_highX_msn.dds", true)
-    ; NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, 1, "data\\TEXTURES\\actors\\character\\female\\femalebody_03_highX_msn.dds", true)
+    string raceTex = "HumFemW100"
+    string tx = "data/textures/actors/character/SandowPP/" + raceTex + ".dds"
+    NiOverride.AddSkinOverrideString(Player, true, false, 0x04, 9, 1, tx, true)
 
     int skinColor = NiOverride.GetSkinPropertyInt(akTarget, false, 4, 7, -1)
-    NiOverride.AddNodeOverrideTextureSet(Player, true, "Hands [SOvl]", 6, -1, HumFemHands, true)
-    NiOverride.AddNodeOverrideInt(Player, true, "Hands [SOvl]", 7, -1, skinColor, true)
-    ; NiOverride.AddNodeOverrideTextureSet(Player, true, "Hands [Ovl0]", 6, -1, HumFemHands, true)
-    ; NiOverride.AddNodeOverrideInt(akTarget, isFemale, "Hands [Ovl0]", 7, -1, skinColor, true)
-
-
-    ; WetFunctionEffect
-    ; "data\TEXTURES\actors\character\female\femalebody_03_highX_msn.dds"
-    ; NiOverride.AddNodeOverrideString(act, fem, node, nifTextureKey, nifTextureIndex, requestedTex, false)
-
-;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 0, 0.0, true)
-;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 1, 0.0, true)
-;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 3, 0.0, true)
-;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 4, 0.0, true)
-;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale, node, 8, 5, 0.0, true)
+    NiOverride.AddNodeOverrideTextureSet(Player, true, "Hands [Ovl0]", 6, -1, HumFemHands, true)
+    NiOverride.AddNodeOverrideInt(Player, true, "Hands [Ovl0]", 7, -1, skinColor, true)
 EndFunction
 
+; TODO : Fix
 Function Clear(Actor akTarget)
     Trace("---------- Clearing textures")
-    ; Ripped texture
-    _SetTextureSetAndAlpha(akTarget, None, 0.0, "Body [Ovl0]")
-    ; Most ripped texture
-    _SetTextureSetAndAlpha(akTarget, None, 0.0)
     _textureWasSet = false
 EndFunction
+
+Function ApplyToNPCs(bool forceUpdate = false)
+    Trace("ApplyToNPCs()")
+    Actor[] npcs = MiscUtil.ScanCellNPCs(Player, 2048.0, None, false)
+    int i = npcs.length
+    Trace("NPCs found: " + i)
+    While i > 0
+        i -= 1
+        If npcs[i] != Player
+            Trace("Applying to: " + npcs[i] + npcs[i].getLeveledActorBase().getName())
+            MakeRipped(npcs[i])
+    ; return  ; FIXME: Delete this
+            ; TestOverride(npcs[i])
+            ; If forceUpdate
+            ;     InitializeActor(npcs[i])
+            ; Else
+            ;     ApplyToNPC(npcs[i])
+            ; EndIf
+        EndIf
+     EndWhile
+EndFunction
+
+; Function ApplyToNPC(Actor akTarget)
+;     {Applies ripped settings to one NPC only if its lacks a mark or it has expired.}
+;     Trace("ApplyToNPC() " + akTarget)
+;     If !akTarget.HasMagicEffect(NPCRippedFx)
+;         InitializeActor(akTarget)
+;         ResetNPCSpell(akTarget)
+;     EndIf
+; EndFunction
+
+
+; Function ResetNPCSpell(Actor akTarget)
+;     {Blindly sets a texture set to a target.}
+;     {Resets the spell telling the NPC has already been processed.}
+;     If akTarget.HasSpell(NPCRippedSpell)
+;         akTarget.RemoveSpell(NPCRippedSpell)
+;     EndIf
+;     akTarget.AddSpell(NPCRippedSpell)
+; EndFunction
 
 ;>========================================================
 ;>===                      CORE                      ===<;
 ;>========================================================
 
-; Tries to force a texture set on an actor. Returns wether it could do it.
-bool Function _ForceTextureSet(Actor akTarget, float alpha)
-    int tx = _GetTextures(akTarget)
-    If tx == 0
-        ; Race not supported
-        return false
-    EndIf
-    ; Set least ripped texture to always visible
-    _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 0) as TextureSet, 1.0, "Body [Ovl0]")
-    ; Sets most ripped texture as a blend.
-    _SetTextureSetAndAlpha(akTarget, JArray.getForm(tx, 1) as TextureSet, alpha)
-    return true
-EndFunction
-
-Function _SetTextureSetAndAlpha(Actor akTarget, TextureSet tx, float alpha, string node = "Body [Ovl1]")
-    _SetTextureSet(akTarget, tx, node)
-    _SetTexAlpha(akTarget, alpha, node)
-EndFunction
 
 ;>========================================================
 ;>===                  CORE - ALPHA                  ===<;
@@ -174,15 +212,22 @@ string _cfg = ".addons.ripped."
 string Function _GetAlphaOptions(Actor akTarget)
     If akTarget == Player
         return JValue.solveStr(SPP.GetMCMConfig(), _cfg + "mode", "$None")
+    Else
+        return "Coolio"
     EndIf
     return "$None"
 EndFunction
 
-float function _GetAlpha(Actor akTarget, string mode)
+; Returns the number of the texture set corresponding to an alpha.
+; `[000, 010, 020, ..., 090, 100]`
+string function _GetAlpha(Actor akTarget, string mode)
+    float a = 99           ; Return an unexistent texture set to make to failure obvious
     If akTarget == Player
-        return _GetPlayerAlpha(mode)
+        a = _GetPlayerAlpha(mode)
+    Else
+        a = 1
     EndIf
-    return 0
+    return JValue.evalLuaStr(0, "return string.format('%.3d', math.floor(" + a + " * 10) * 10)")
 EndFunction
 
 float Function _GetPlayerAlpha(string m)
@@ -201,9 +246,6 @@ float Function _GetPlayerAlpha(string m)
         ; When nothing else matches, let's assume we are using a behavior.
         ; So we'll take the value directly from the addon settings.
         float val = JValue.solveFlt(SPP.GetMCMConfig(), _cfg + "currDef")
-        ; Trace("Training " + val)
-        ; Trace("Lerp " + Lerp(min, max, val))
-        ; Trace("Min, max " + min + ", " + max)
         return Lerp(min, max, val)
     EndIf
 EndFunction
@@ -228,30 +270,30 @@ EndFunction
 ; Sets how much ripped an actor will look.
 ;
 ; "Node" can go from "Body [Ovl0]" to "Body [Ovl5]. Higher layers get applied over lower ones."
-bool Function _SetTexAlpha(Actor akTarget, float alpha, string node = "Body [Ovl1]")
-    ; trace("SetAlpha " + akTarget.getLeveledActorBase().getName() + " " + alpha)
-    If !NiOverrideExists()
-        return false
-    EndIf
-    alpha = ConstrainF(alpha, 0.0, 1.0)
-    bool isFemale = _IsFemale(akTarget)
+; bool Function _SetTexAlpha(Actor akTarget, float alpha, string node = "Body [Ovl1]")
+;     ; trace("SetAlpha " + akTarget.getLeveledActorBase().getName() + " " + alpha)
+;     If !NiOverrideExists()
+;         return false
+;     EndIf
+;     alpha = ConstrainF(alpha, 0.0, 1.0)
+;     bool isFemale = _IsFemale(akTarget)
 
-    ; This call needs some explanation.
-    ; ref, isFemale, value and persist are self-explanatory.
+;     ; This call needs some explanation.
+;     ; ref, isFemale, value and persist are self-explanatory.
 
-    ; Node is which "layer?" we want to change. The only way to
-    ; change normal maps is using whole texture sets, and the only
-    ; node in which texture sets are shown is "Body [Ovl5]" if using
-    ; NiOverride.AddNodeOverrideTextureSet.
-    ; Using NetImmerse.SetNodeTextureSet seems to work for all layers.
-    ; This limitation makes this mod incompatible with mods that use body
-    ; overlay layers 0 and 1 (body tatoos and such).
+;     ; Node is which "layer?" we want to change. The only way to
+;     ; change normal maps is using whole texture sets, and the only
+;     ; node in which texture sets are shown is "Body [Ovl5]" if using
+;     ; NiOverride.AddNodeOverrideTextureSet.
+;     ; Using NetImmerse.SetNodeTextureSet seems to work for all layers.
+;     ; This limitation makes this mod incompatible with mods that use body
+;     ; overlay layers 0 and 1 (body tatoos and such).
 
-    ; Key = 8 is used to tell NiOverride to change the alpha channel value.
-    ; Index is irrelevant to this operation, so -1 it is.
-    NiOverride.AddNodeOverrideFloat(akTarget, isFemale,  node, 8, -1, alpha, true)
-    return true
-EndFunction
+;     ; Key = 8 is used to tell NiOverride to change the alpha channel value.
+;     ; Index is irrelevant to this operation, so -1 it is.
+;     NiOverride.AddNodeOverrideFloat(akTarget, isFemale,  node, 8, -1, alpha, true)
+;     return true
+; EndFunction
 
 ;>========================================================
 ;>===                CORE - TEXTURES                 ===<;
@@ -284,17 +326,6 @@ bool Function _SetTextureSet(Actor akTarget, TextureSet tx, string node = "Body 
     return true
 EndFunction
 
-; Gets textures associated to some race.
-int Function _GetTextures(Actor akTarget)
-    int map
-    If _IsFemale(akTarget)
-        map = _GenFemTex()
-    Else
-        map = _GenMalTex()
-    EndIf
-    return JMap.getInt(map, _GetRace(akTarget))
-EndFunction
-
 
 ;>========================================================
 ;>===                    HELPERS                     ===<;
@@ -312,65 +343,4 @@ EndFunction
 
 float Function _PlayerWeight()
     return SPP.GetPlayerWeight() / 100
-EndFunction
-
-
-;>========================================================
-;>===                  RACE SUPPORT                  ===<;
-;>========================================================
-
-;> Add more races here if needed
-
-int Function _GenMalTex()
-    int m = JMap.object()
-    _GenHumanoids(m, HumMalW0, HumMalW100)
-    _GenKhajiit(m, CatMalW0, CatMalW100)
-    _GenArgonian(m, LizMalW0, LizMalW100)
-    return m
-EndFunction
-
-int Function _GenFemTex()
-    int m = JMap.object()
-    _GenHumanoids(m, HumFemW0, HumFemW100)
-    _GenKhajiit(m, CatFemW0, CatFemW100)
-    _GenArgonian(m, LizFemW0, LizFemW100)
-    return m
-EndFunction
-
-Function _GenHumanoids(int m, TextureSet tex0, TextureSet tex100)
-    int hum = JArray.object()
-    JArray.addForm(hum, tex0)
-    JArray.addForm(hum, tex100)
-    JMap.setInt(m, "BretonRace", hum)
-    JMap.setInt(m, "BretonRaceVampire", hum)
-    JMap.setInt(m, "DarkElfRace", hum)
-    JMap.setInt(m, "DarkElfRaceVampire", hum)
-    JMap.setInt(m, "HighElfRace", hum)
-    JMap.setInt(m, "HighElfRaceVampire", hum)
-    JMap.setInt(m, "ImperialRace", hum)
-    JMap.setInt(m, "ImperialRaceVampire", hum)
-    JMap.setInt(m, "NordRace", hum)
-    JMap.setInt(m, "NordRaceVampire", hum)
-    JMap.setInt(m, "OrcRace", hum)
-    JMap.setInt(m, "OrcRaceVampire", hum)
-    JMap.setInt(m, "RedguardRace", hum)
-    JMap.setInt(m, "RedguardRaceVampire", hum)
-    JMap.setInt(m, "WoodElfRace", hum)
-    JMap.setInt(m, "WoodElfRaceVampire", hum)
-EndFunction
-
-Function _GenKhajiit(int m, TextureSet tex0, TextureSet tex100)
-    int cat = JArray.object()
-    JArray.addForm(cat, tex0)
-    JArray.addForm(cat, tex100)
-    JMap.setInt(m, "KhajiitRace", cat)
-    JMap.setInt(m, "KhajiitRaceVampire", cat)
-EndFunction
-
-Function _GenArgonian(int m, TextureSet tex0, TextureSet tex100)
-    int liz = JArray.object()
-    JArray.addForm(liz, tex0)
-    JArray.addForm(liz, tex100)
-    JMap.setInt(m, "ArgonianRace", liz)
-    JMap.setInt(m, "ArgonianRaceVampire", liz)
 EndFunction

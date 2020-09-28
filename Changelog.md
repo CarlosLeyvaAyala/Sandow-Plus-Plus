@@ -5,15 +5,6 @@ V4.0
 This may be the biggest release yet.\
 Not only it adds too much new functionality, but I also basically rewrote all what I could in Lua.
 
-*"Rewriting this mod in Lua"* may not tell you much if you aren't a programmer, but that basically means more flexibility to make more awesome things more easily (I'll finally get to implement the food system because it will be less of a chore, for starters).
-
-For example, the new `Bruce Lee Behavior` is a cascade of exponential curves working together that took around 200 lines of effective code.\
-A first (and quite buggy) approach using Papyrus took 130 lines and it wasn't even half finished and not as easy to maintain and debug! It was most likely bound to be at least 350 lines of real code.\
-In fact, it was its bugginess what pushed me to try using Lua instead of Papyrus.
-
-All of this sounds great, but there are always trade-offs, and it this case, the trade-off is this new implementation irremediably breaks everything I did before.\
-This version took so much time to be released just because of that rewriting.
-
 ## New requirements (NON OPTIONAL)
 * ***JContainers***.\
 This mod was rewritten in Lua and **NEEDS JContainers to work**.

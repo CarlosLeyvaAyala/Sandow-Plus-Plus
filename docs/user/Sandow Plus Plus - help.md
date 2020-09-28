@@ -57,6 +57,8 @@ toc:
   - [Downsides](#downsides)
     - [How does the player get ripped](#how-does-the-player-get-ripped)
       - [What this means for Ripped bodies users](#what-this-means-for-ripped-bodies-users)
+- [Random thoughts](#random-thoughts)
+  - [I love JContainers :heart:](#i-love-jcontainers-heart)
 
 <!-- /code_chunk_output -->
 
@@ -87,6 +89,17 @@ I always appreciate when authors take their time to explain how to use their mod
 So, let me emphasize again: **Sandow Plus Plus is complex** and you should really read this document.\
 If you ever have a problem, I've most likely talked about it in this help file.
 
+ ### This help file has too much links!
+... you ungrateful swine ==>:v==
+
+It's totally done on purpose. I don't expect you to read it all sequentially.
+I want to take you to the point as fast as I can, not writing the next great russian novel.
+
+<figure>
+<img src="img/wake-up.jpg"/>
+<figcaption><i>Chapter 1, page 293</i>:<br>And then, after pondering about the great unfathomable tragic passing of time by the intrinsecally futile altar of human ambition, Czwxnqstazky gets up so he can finally start doing some shit for today.</figcaption>
+</figure>
+
 # Requirements
 Boring stuff, but necessary if you don't want me to ask you to enable debugging and tracing just for you to be greeted by a message telling you [***DO YOU EVEN READ, BRO?***](https://knowyourmeme.com/memes/do-you-even-lift).
 
@@ -96,7 +109,7 @@ Boring stuff, but necessary if you don't want me to ask you to enable debugging 
 </figure>
 
 ## SKSE + SkyUI  {ignore=true}
-A must have for most mods, anyway.
+Required for most *must have* mods, anyway.
 
 ## JContainers  {ignore=true}
 ***THIS IS NOT OPTIONAL***. I repeat: **THIS IS NOT OPTIONAL**.
@@ -104,13 +117,18 @@ A must have for most mods, anyway.
 Starting from v4.0 and on, this mod relies on the Lua programming language; and the only way to get Lua working in Skyrim is using ==JContainers==.
 
 Long story short: this mod will simply fail to work if you don't use JContainers.
+If you want to know the long story behind this, [read here](#i-love-jcontainers-heart).
 
 ## RaceMenu/PapyrusUtil  {ignore=true}
 These are required only if you want to use any feature related to getting ripped using this mod.
 Sorry, ECE users, there's no way around this.
 
 BUUUUUT... theorethically, this mod only uses the `NiOverride` part of RaceMenu (at least, that's what I programmed it for), so if you know how to use `NiOverride` without using the whole of RaceMenu, you might want to try using those *getting ripped* features and see what happens.
-**Don't ask me how to do that**, though. I don't know how and that's why doing so it's not oficially supported.
+
+**Don't ask me how to do that**, though. I don't know how, I don't want to search for it[^nioverride_tired] and that's why doing so it's not oficially supported.
+
+[^nioverride_tired]: Believe me. I've got enough of `NiOverride` just trying to get it work for this mod.
+It was ***WAY WORSE*** than trying to learn how to make the Widget.
 
 PapyrusUtil is still required and you will most likely have it anyway, since many mods use it because it's awesome.
 
@@ -169,10 +187,11 @@ Fun fact: did you know that, compared to most of the Skyrim player base, we may 
 <figcaption>This is what the average Skyrim player actually finds sexy.</figcaption>
 </figure>
 
-Sadly, normal textures to make characters look ripped aren't easy to come by.
+Sadly, [normal textures](https://en.wikipedia.org/wiki/Normal_mapping) to make characters look ripped aren't easy to come by.
 Granted, it's not the same desolate panorama it was 6 years ago, but it's still a long way from ideal.
 
-When I search for some texture set, I shit you not, the very first thing I look for is for it having ripped textures. So, [the textures I've supplied](#texture-sets) are the best of the best: they are **great texture sets that happen to have many levels of muscle definition**.
+When I search for some texture set, I shit you not, the very first thing I look for is for it having ripped textures.
+So, [the textures I've supplied](#texture-sets) are the best of the best: they all are **great texture sets that happen to have many levels of muscle definition**.
 Even so, they're not always suitable to be used for this mod.
 
 Take for example, Leyenda. They are my favorite textures ever and they've got many ripped options... but their options don't transition too well from not ripped to ripped (what this mod actually needs), so I had to manually alter them using ==Fitness Body== (yeah, it's for LE) so they could correctly blend from zero to hero... something I can't do for UNP, since Fitness Body only comes with textures for CBBE.
@@ -196,30 +215,43 @@ That's because you aren't using the correct [the texture sets](#texture-sets).
 ## Is this compatible with...?
 
 If your mod isn't here, you could try and tell us.
-No way I can try every single mod.
+No way I can try every single mod in existence. I want to play this game too!
 
 ### Known compatible mods
 
-* Wet Function Redux. Fuck yeah! Getting ripped does't interfere at all with this.
+* [Wet Function Redux](https://www.loverslab.com/files/file/9467-wet-function-redux-se/). Mostly.
+  Hands will never look wet, but the rest of the body will look alright and **that's a price I'm totally willng to pay**[^wet_funct_fact].
 
-* [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632). Of course it this; I made it myself.
-  You still need to download the textures for both, even if they are pretty much the same. [See here why](#how-does-the-player-get-ripped).
+  [^wet_funct_fact]: Little fun story time:
+  After more than 2 months working (daily) on getting ripped I had at last a fully working method for it, but then I realized it totally conflicted with this mod.
+  Since this is one of my favorite mods ever, I had to found a workaround; that lead me to the current -more compatible- method.
+  I thought I could never make the NPCs ripped, but thanks to this new method now I can!
+
+* [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632). It is, but this mod made it completely irrelevant.
+  No need to use both.
+<!-- Of course it this; I made it myself.
+  You still need to download the textures for both, even if they are pretty much the same. [See here why](#how-does-the-player-get-ripped). -->
 
 ### Known incompatible mods
-* Pumping Iron... obviously (see [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)).
+* [Pumping Iron](https://www.nexusmods.com/skyrimspecialedition/mods/13434)... obviously (see [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)).
 
 
 ### Not confirmed, but should work
-* Any custom race.
+* Any custom race should work right off the bat for weight gaining.
+  When it comes  to getting ripped, [it's not as simple](#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack).
 
 * Any mod that does something based on your weight (but doesn't actually change it).
 
 ### Not confirmed, but shouldn't work
 * Any mod that changes your body weight.
-  **Even CTDs where reported** when using this and Pumping Iron at the same time.
+  **Even CTDs where reported** when using this and Pumping Iron both together.
 
-* Any mod using Racemenu's body overlay layers 0 and 1 [when you are using any method for getting ripped](#downsides) from this mod.
-  You should see your character's body flickering because both mods are setting their own textures.
+* **Many mods that change textures on character's bodies** are expected to conflict with this mod.
+Hopefully nothing game breaking, but certainly getting both them and mine fighting over who sets which textures, ending up with funny looking characters.
+  I can't anticipate which mods will and which woh't work. Please test them and tell us.
+
+* ==Any mod using Racemenu's body overlay layers 0 and 1 [when you are using any method for getting ripped](#downsides) from this mod.
+  You should see your character's body flickering because both mods are setting their own textures.==
 
 # The basics
 - Every time a certain skill goes up, you get `Training`, which transforms to weight/muscle definition when you sleep.
@@ -448,3 +480,23 @@ I won't bore you with technical details; just accept the fact that more textures
 The thing is, even though both mods mostly use the same set of textures, but I'm a bit indecisive on using exactly the same installation for both, and here's why.
 
 @import "html/pro-con-textures.html"
+
+# Random thoughts
+
+## I love JContainers :heart:
+
+Version1 4.0 is one of my favorites because it adds way too much functionality, drops unnecessary shit that was bloating this mod and **it also was quite a challenge**.
+Not only it adds too much new functionality, but I also basically rewrote all what I could in Lua thanks to JContainers.
+
+
+*"Rewriting this mod in Lua"* may not tell you much if you aren't a programmer, but that basically means more flexibility to make more awesome things more easily (I'll finally get to implement the food system because it will be less of a chore, for starters).
+
+For example, the [Bruce Lee Behavior](#the-bruce-lee-behavior) is a cascade of exponential curves working together that took around 200 lines of effective code.
+A first (and quite buggy) approach using Papyrus took 130 lines and it wasn't even half finished and not as easy to maintain and debug! It was most likely bound to be at least 350 lines of real code.
+In fact, it was its bugginess what pushed me to try using Lua instead of Papyrus.
+
+All of that sounds great, but there are always trade-offs, and it this case, the trade-off is that new implementation irremediably breaked everything I did before.
+That's why that version took so much time to be released.
+
+Anyway, from now on I think I'll release all my mods with JContainers as a requirement.
+It's such a smooth motherfucker.

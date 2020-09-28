@@ -151,6 +151,7 @@ Function OnGameReload()
     ; Since switching to Lua, we need to do this. Don't know why.
     ReportWidget.EnsureVisibility()
     texMngr.MakePlayerRipped(true)
+    texMngr.Debug(Player)
     ; JValue.solveFltSetter(GetMCMConfig(), ".widget.refreshRate", 2)
     ; SavePreset("preset")
     ;
@@ -190,6 +191,7 @@ EndFunction
 
         Function _LoadDefaults()
             ExecuteLua("return sandowpp.getDefaults(jobject)")
+            texMngr.InitData()
             ; UpdateDataTree(JValue.evalLuaObj(GetDataTree(), "return sandowpp.getDefaults(jobject)"))
         EndFunction
 

@@ -1,3 +1,11 @@
+local a = 0.1000005421
+print(a)
+a = string.format("%.3d", math.floor(a * 10) * 10)
+print(a)
+
+a = 0xff0000
+print(string.format("%x", a))
+
 local maxT, b = 2 * 24, 0.1
 local hInactive = 24
 local p1 = {x=hInactive, y=2}
