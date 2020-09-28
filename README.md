@@ -70,6 +70,8 @@ These aren't mandatory per se, but highly suggested. This project has configurat
     Said task is found in `.vscode\tasks.json`.
 
     Either way, remember to update all your paths on both `skyrimse.ppj` and/or `.vscode\tasks.json` or you will get errors.
+* [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced) is a must have for generating this mod's documentation. [Reference](https://shd101wyy.github.io/markdown-preview-enhanced/).\
+    For some reason, [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)  doesn't work for me using this, so I compile Mermaid files separately usnig batch files.
 * [Hightlight](https://marketplace.visualstudio.com/items?itemName=fabiospampinato.vscode-highlight). This extension is **highly suggested**. There are comments and remarks all over the place that get highlighted when you install this.
 * [Fold Plus](https://marketplace.visualstudio.com/items?itemName=dakara.dakara-foldplus)
 * [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).

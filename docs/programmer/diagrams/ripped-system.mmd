@@ -1,0 +1,25 @@
+sequenceDiagram
+participant A as Alias quest
+participant M as Sandow++
+participant P as Player<br>Character
+participant T as Texture manager
+participant N as NPC
+Note over M: MCM asked to make<br>Player ripped.
+M-->>P: Adds ripped spell
+loop Ripped spell
+    P->>T: Hey, set my muscle definition.<br/>I got this number you gave me last time.
+    T->>P: MCM says your method doesn't need<br>real time calculations.<br/>I'll give you this alpha. Remember it.
+    Note over P: Remembers assigned number.
+end
+loop Scans for NPCs to make ripped via spell
+    A->>P: I'll look around you for NPCs
+    A-->>N: Found you! -Adds ripped spell-
+end
+loop Ripped spell
+    N->>T: Hey, set my muscle definition.<br/>I got this number you gave me last time.
+    T->>N: MCM says your method doesn't need<br>real time calculations.<br/>I'll give you this alpha. Remember it.
+    Note over N: Remembers assigned number.
+end
+Note over T: MCM asked to remove<br> muscle definition.
+T->>P: The player doesn't want you ripped<br>anymore. I'll remove your spell.
+T->>N: The player doesn't want you ripped<br>anymore. I'll remove your spell.

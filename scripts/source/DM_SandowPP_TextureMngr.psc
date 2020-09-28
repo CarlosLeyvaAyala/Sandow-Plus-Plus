@@ -37,6 +37,9 @@ Import DM_Utils
 DM_SandowPPMain Property SPP Auto
 Actor property Player auto
 
+int property IsInvalid = -2 AutoReadOnly
+int property NeedsRecalc = -1 AutoReadOnly
+
 TextureSet Property HumFemHands Auto
 TextureSet Property HumMalHands Auto
 TextureSet Property KhaFemHands Auto
@@ -63,10 +66,8 @@ EndFunction
 Function InitData()
     int r = JValue.readFromFile("data/SKSE/Plugins/Sandow Plus Plus/config/ripped-races.json")
     JMap.setObj(SPP.GetDataTree(), "rippedRaces", r)
-    ; SPP.TestSave(344545)
 EndFunction
 
-; `forceSet = false` is used to avoid flickering when a texture was already set.
 Function MakePlayerRipped(bool forceSet = false)
     MakeRipped(Player, forceSet)
 EndFunction
@@ -88,7 +89,6 @@ Function _MakeRippedByMode(Actor akTarget, string mode)
     ; Get race
     int r = JMap.getObj(SPP.GetDataTree(), "rippedRaces")
     string aRace = JMap.getStr(r, _GetRace(akTarget))
-    Trace("====" +  akTarget.getLeveledActorBase().getName() + "====")
     ; Check if race is supported
     If aRace
         bool isFemale = _IsFemale(akTarget)
@@ -170,13 +170,6 @@ Function ApplyToNPCs(bool forceUpdate = false)
         If npcs[i] != Player
             Trace("Applying to: " + npcs[i] + npcs[i].getLeveledActorBase().getName())
             MakeRipped(npcs[i])
-    ; return  ; FIXME: Delete this
-            ; TestOverride(npcs[i])
-            ; If forceUpdate
-            ;     InitializeActor(npcs[i])
-            ; Else
-            ;     ApplyToNPC(npcs[i])
-            ; EndIf
         EndIf
      EndWhile
 EndFunction

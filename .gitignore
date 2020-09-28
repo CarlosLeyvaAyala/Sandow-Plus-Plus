@@ -303,3 +303,4 @@ TSWLatexianTemp*
 *.synctex.gz
 SKSE/Plugins/JCData/lua/sandowpp/serpent.lua
 docs/programmer/diagrams/pngquant.exe
+.vscode/numbered-bookmarks.json

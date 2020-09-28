@@ -1,10 +1,25 @@
-local a = 0.1000005421
-print(a)
-a = string.format("%.3d", math.floor(a * 10) * 10)
-print(a)
-
-a = 0xff0000
-print(string.format("%x", a))
+local m = 20
+local hard = {}
+local function summa(n) return (n * (n + 1)) / 2 end
+for i = 1, m do table.insert(hard, i) end       -- Días difíciles
+local function diffTbl(t, v) local d = {}; for i = 1, m do table.insert(d, math.abs(summa(t[i]) - v)) end; return d end
+local function fMin(t)
+    local idx, val = 1, t[1]
+    for i = 2, #t do if t[i] < val then idx, val = i, t[i] end end
+    return idx
+end
+local function closestLadder(t, reps) return fMin(diffTbl(t, reps)) end
+local function genDays(h, ratio)
+    local r = {}
+    for _, v in pairs(h) do table.insert(r, closestLadder(h, summa(v) * ratio)) end
+    return r
+end
+local easy = genDays(hard, 0.3333333)
+local medium = genDays(hard, 0.6666666)
+for i = 1, #hard do
+    print(hard[i], easy[i], medium[i], summa(hard[i]), summa(easy[i]), summa(medium[i]))
+end
+-- closestLadder(hard, summa(16) * 0.4)
 
 local maxT, b = 2 * 24, 0.1
 local hInactive = 24
