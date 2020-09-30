@@ -54,6 +54,15 @@ string Function ModVersion() Global
     Return ModMajorVersion() + "." + ModMinorVersion() + "." + ModPatchVersion()
 EndFunction
 
+string Function ActorRealName(Actor act) Global
+    return act.getLeveledActorBase().getName()
+EndFunction
+
+; Trace actor.
+Function TraceA(Actor act, string aMsg, int aSeverity = 0) Global
+    Trace(act + " " + ActorRealName(act) + ": " + aMsg, aSeverity)
+EndFunction
+
 Function OpenLog() Global
     Debug.OpenUserLog("Sandow Plus Plus")
     Trace("Sandow++ v" + ModVersion())

@@ -1,3 +1,15 @@
+local s = "actors\\character\\Bijin Warmaidens 00\\femalehands_1_s.dds"
+s = [[actors\character\Bijin Warmaidens 00\femalehands_1_s.dds]]
+-- print(s)
+-- s = string.gsub(s, "\\", "/")
+-- print(string.match(s, "^.+/(.+)$"))
+-- print(string.find(s, 'hands'))
+
+--- Given a file name with path, returns the file name with extension
+local function getFileName(f) return string.match(string.gsub(f, "\\", "/"), "^.+/(.+)$") end
+s = getFileName(s)
+print(string.find(s, 'hands'))
+
 local m = 20
 local hard = {}
 local function summa(n) return (n * (n + 1)) / 2 end
@@ -16,10 +28,9 @@ local function genDays(h, ratio)
 end
 local easy = genDays(hard, 0.3333333)
 local medium = genDays(hard, 0.6666666)
-for i = 1, #hard do
-    print(hard[i], easy[i], medium[i], summa(hard[i]), summa(easy[i]), summa(medium[i]))
-end
--- closestLadder(hard, summa(16) * 0.4)
+-- for i = 1, #hard do
+--     print(hard[i], easy[i], medium[i], summa(hard[i]), summa(easy[i]), summa(medium[i]))
+-- end
 
 local maxT, b = 2 * 24, 0.1
 local hInactive = 24

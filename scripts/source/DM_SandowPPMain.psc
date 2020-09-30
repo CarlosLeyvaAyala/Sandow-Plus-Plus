@@ -17,9 +17,12 @@ Spell Property rippedSpell Auto
 DM_SandowPP_TextureMngr Property texMngr Auto
 {Texture manager that applies ripped textures to actors}
 
+DM_SandowPP_HeightChanger Property HeightChanger Auto
+DM_SandowPP_ReportWidget Property ReportWidget Auto
+
+; TODO: Delete
 DM_SandowPP_Config Property Config auto
 DM_SandowPP_State Property CurrentState Auto
-DM_SandowPP_HeightChanger Property HeightChanger Auto
 
 ; Design patterns
 DM_SandowPP_PresetMngrNone Property PresetMngrNone Auto
@@ -31,7 +34,6 @@ DM_SandowPP_PresetManager property PresetManager
     EndFunction
 EndProperty
 
-DM_SandowPP_ReportWidget Property ReportWidget Auto
 
 DM_SandowPP_AlgorithmPause Property AlgoPause Auto
 {Paused Behavior}
@@ -55,6 +57,7 @@ DM_SandowPP_AlgorithmData Property AlgorithmData Auto
 ; Internal variables used to keep track of this mod state
 float _goneToSleepAt
 
+; TODO: Delete
 DM_SandowPP_PresetManager _presetManager
 ; DM_SandowPP_Report _report
 DM_SandowPP_Algorithm _algorithm
@@ -79,7 +82,8 @@ Event OnKeyDown(Int KeyCode)
         ReportWidget.Visible = !ReportWidget.Visible
     EndIf
     If KeyCode == 200
-        TestSave(38)
+        texMngr.Debug(Player)
+        ; TestSave(38)
         ; ReportWidget.Visible = !ReportWidget.Visible
     EndIf
 EndEvent
@@ -87,10 +91,10 @@ EndEvent
 Event OnInit()
     OpenLog()
     Trace("$Gen_Init")
-    _InitSequence()
     ResetVariables()
     RegisterForSleep()
     RegisterEvents()
+    _InitSequence()
 
     ; Config.PresetManager = DefaultPresetManager()
     ; ; Load preset #1 if it exists. This was done to save the player time.
@@ -137,24 +141,27 @@ EndFunction
 
 ; Setup things again after reloading a save. Mostly registering events again.
 Function OnGameReload()
+    ; If !Initialized
+    ;     Trace("Trying to reload without init")
+    ;     return
+    ; EndIf
     OpenLog()
     Trace("Reloading a saved game")
     InitVars()
     RegisterAgainHotkeys()
     RegisterEvents()
     HeightChanger.ReapplyHeight()
-    texMngr.MakePlayerRipped()
-    ; texMngr.Debug(Player)
     RegisterForKey(200)
     _LoadAddons()
     _LoadDefaults()
     ; Since switching to Lua, we need to do this. Don't know why.
     ReportWidget.EnsureVisibility()
-    texMngr.MakePlayerRipped(true)
-    texMngr.Debug(Player)
-    ; JValue.solveFltSetter(GetMCMConfig(), ".widget.refreshRate", 2)
-    ; SavePreset("preset")
-    ;
+
+    ; texMngr.Debug(Player)
+    ; texMngr.MakePlayerRipped()
+    ; Player.RemoveSpell(rippedSpell)
+    Player.AddSpell(rippedSpell, false)
+
 EndFunction
 
 ;>=========================================================
@@ -166,7 +173,11 @@ EndFunction
     string Property jDBRoot =   "sandow++" AutoReadOnly Hidden
 
     ;region: Initialization
+        bool property Initialized = false Auto
         Function _InitSequence()
+            If Initialized
+                return
+            EndIf
             _Pause()
             _InitVars40()
             _InitDataTree()
@@ -174,6 +185,8 @@ EndFunction
             _LoadDefaults()
             _Resume()
             ReportWidget.Visible = false
+            ; Initialized = true
+            Trace("Finish init")
         EndFunction
 
         Function _InitVars40()
@@ -192,7 +205,6 @@ EndFunction
         Function _LoadDefaults()
             ExecuteLua("return sandowpp.getDefaults(jobject)")
             texMngr.InitData()
-            ; UpdateDataTree(JValue.evalLuaObj(GetDataTree(), "return sandowpp.getDefaults(jobject)"))
         EndFunction
 
         ; Creates the addon data tree in memory, so this mod can be used.
@@ -392,7 +404,7 @@ EndFunction
 
 ; Registers a new hotkey.
 Function RegisterHotkey(int aOldKey, int aNewKey)
-    Trace("Main.RegisterHotkey(" + aOldKey + ", " + aNewKey + ")")
+    ; Trace("Main.RegisterHotkey(" + aOldKey + ", " + aNewKey + ")")
     UnRegisterForKey(aOldKey)
     RegisterForKey(aNewKey)
 EndFunction
@@ -481,30 +493,30 @@ EndFunction
 
 
 Function ChangeAlgorithm()
-    { Change mod Behavior }
-    Trace("Main.ChangeAlgorithm(" + Config.Behavior + ")")
-    Trace("Current: " + Algorithm.Signature())
-    DM_SandowPP_Algorithm newAlgo
-    If Config.IsPumpingIron()
-        newAlgo = AlgoWCPumping
-    ElseIf Config.IsPaused()
-        newAlgo = AlgoPause
-    ElseIf Config.IsBruce()
-        Trace("Is Bruce " + Config.bhBruce)
-        ; newAlgo = AlgoBFBruce
-    Else
-        newAlgo = AlgoWCSandow
-    EndIf
-    Trace("Expected: " + newAlgo.Signature())
+    ; { Change mod Behavior }
+    ; Trace("Main.ChangeAlgorithm(" + Config.Behavior + ")")
+    ; Trace("Current: " + Algorithm.Signature())
+    ; DM_SandowPP_Algorithm newAlgo
+    ; If Config.IsPumpingIron()
+    ;     newAlgo = AlgoWCPumping
+    ; ElseIf Config.IsPaused()
+    ;     newAlgo = AlgoPause
+    ; ElseIf Config.IsBruce()
+    ;     Trace("Is Bruce " + Config.bhBruce)
+    ;     ; newAlgo = AlgoBFBruce
+    ; Else
+    ;     newAlgo = AlgoWCSandow
+    ; EndIf
+    ; Trace("Expected: " + newAlgo.Signature())
 
-    ; Change only if switched algorithms
-    If _algorithm.Signature() != newAlgo.Signature()
-        Trace("Switching algorithms")
-        _algorithm.OnExitAlgorithm(AlgorithmData)
-        _algorithm = newAlgo
-        _algorithm.OnEnterAlgorithm(AlgorithmData)
-    EndIf
-    Trace("Ending Main.ChangeAlgorithm()")
+    ; ; Change only if switched algorithms
+    ; If _algorithm.Signature() != newAlgo.Signature()
+    ;     Trace("Switching algorithms")
+    ;     _algorithm.OnExitAlgorithm(AlgorithmData)
+    ;     _algorithm = newAlgo
+    ;     _algorithm.OnEnterAlgorithm(AlgorithmData)
+    ; EndIf
+    ; Trace("Ending Main.ChangeAlgorithm()")
 EndFunction
 
 ; Registers again events for hotkeys that have already been set up.
@@ -514,7 +526,7 @@ EndFunction
 
 Function RegisterAgainHotkey(int oldKey)
     { Registers again events for ONE hotkey that have already been set up }
-    Trace("Main.RegisterAgainHotkey(oldKey = " + oldKey + ")")
+    ; Trace("Main.RegisterAgainHotkey(oldKey = " + oldKey + ")")
 
     if oldKey != -1
         RegisterForKey(oldKey)
