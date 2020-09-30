@@ -141,10 +141,10 @@ EndFunction
 
 ; Setup things again after reloading a save. Mostly registering events again.
 Function OnGameReload()
-    ; If !Initialized
-    ;     Trace("Trying to reload without init")
-    ;     return
-    ; EndIf
+    If !Initialized
+        Trace("Trying to reload without init")
+        return
+    EndIf
     OpenLog()
     Trace("Reloading a saved game")
     InitVars()
@@ -175,18 +175,21 @@ EndFunction
     ;region: Initialization
         bool property Initialized = false Auto
         Function _InitSequence()
-            If Initialized
-                return
-            EndIf
+            ; If Initialized
+            ;     return
+            ; EndIf
             _Pause()
             _InitVars40()
             _InitDataTree()
             _LoadAddons()
             _LoadDefaults()
+            ;TODO: Wait before fully initializing to avoid some issues with texture seams?
             _Resume()
             ReportWidget.Visible = false
-            ; Initialized = true
+            Initialized = true
             Trace("Finish init")
+            ; FIXME: Delete this ------------------------------------------------
+            Player.AddSpell(rippedSpell, false)
         EndFunction
 
         Function _InitVars40()
@@ -258,14 +261,6 @@ Function RealTimeCalculations()
     ExecuteLua("return sandowpp.realTimeCalc(jobject)")
     ExecuteLua("return sandowpp.onReport(jobject)")
     ReportWidget.Report(GetDataTree())
-    _CheckRipped()
-EndFunction
-
-; Checks every 4 cycles if player muscle definition has changed in real time.
-Function _CheckRipped()
-    If _IsNthCycle(4)
-        texMngr.MakePlayerRipped()
-    EndIf
 EndFunction
 
 Function UpdateMcmData()
@@ -400,7 +395,6 @@ EndFunction
             texMngr.MakePlayerRipped()
             ChangeHeadSize()
         EndFunction
-
 
 ; Registers a new hotkey.
 Function RegisterHotkey(int aOldKey, int aNewKey)

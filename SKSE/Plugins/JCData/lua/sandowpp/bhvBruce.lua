@@ -199,7 +199,7 @@ end
 function bhvBruce.realTimeCalc(data)
     lossSeq(data)
     decayAndReportT(data)
-    updateTrainAndLean(data, 150)
+    updateTrainAndLean(data, 3000)
     return data
 end
 
