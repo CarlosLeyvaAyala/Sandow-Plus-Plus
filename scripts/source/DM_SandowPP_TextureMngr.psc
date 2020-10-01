@@ -38,8 +38,10 @@ Import NiOverride
 
 DM_SandowPPMain Property SPP Auto
 Actor property Player auto
+Spell Property rippedSpell Auto
+{Spell to make the player ripped}
 
-int property IsInvalid = -2 AutoReadOnly
+; int property IsInvalid = -1 AutoReadOnly
 ; int property NeedsRecalc = -1 AutoReadOnly
 
 string _bodN0 = "Body [Ovl0]"
@@ -57,31 +59,40 @@ EndFunction
 ;>===                     PUBLIC                     ===<;
 ;>========================================================
 
-;> Use these functions when you want to enable muscle definition.
+;> Use these functions to enable muscle definition.
 
+; Initialize data needed for this system to work.
 Function InitData()
     int r = readFromFile("data/SKSE/Plugins/Sandow Plus Plus/config/ripped-races.json")
     JMap.setObj(SPP.GetDataTree(), "rippedRaces", r)
 EndFunction
 
+; Enable muscle definition for the player.
 Function MakePlayerRipped()
-    MakeRipped(Player, -1)
+    MakeRipped(Player)
 EndFunction
 
+; Clear muscle definition for an actor.
 Function Clear(Actor aAct)
-    TraceA(aAct, "Clear textures")
+    TraceA(aAct, "Clear muscle definition")
+    aAct.RemoveSpell(rippedSpell)
     bool isFem = _IsFemale(aAct)
     RemoveNodeOverride(aAct, isFem, _bodN0, 6, -1)
     RemoveNodeOverride(aAct, isFem, _bodN1, 6, -1)
 EndFunction
 
-; Sets ripped level for an actor
-float Function MakeRipped(Actor aAct, float knownAlpha = -1.0)
+; Enable muscle definition for an actor.
+float Function MakeRipped(Actor aAct)
+    aAct.AddSpell(rippedSpell, false)
+EndFunction
+
+; Set muscle definition for an actor.
+bool Function CalcMuscleDefinition(Actor aAct)
     string r = _GetRacePrefix(aAct)
     If r
-        return _ProcessActor(aAct, knownAlpha, r)
+        return _ProcessActor(aAct, r)
     Else
-        return IsInvalid
+        return false
     EndIf
 EndFunction
 
@@ -89,14 +100,9 @@ EndFunction
 ;>===                CORE - TEXTURES                 ===<;
 ;>========================================================
 
-; `knownAlpha`is left to easily plug in NPCs when the time comes.
-float Function _ProcessActor(Actor aAct, float knownAlpha, string aRace)
+float Function _ProcessActor(Actor aAct, string aRace)
     TraceA(aAct, "Set ripped textures to valid actor.")
     string mode = _GetRippedMode(aAct)
-    If mode == "$None"
-        Clear(aAct)
-        return 0    ; Tell the mode is constant to avoid spamming polls. Apply when NPCs are supported.
-    EndIf
     bool isFemale = _IsFemale(aAct)
     float alpha = _CalcAlpha(aAct, mode, aRace, isFemale)
     _SetTextures(aAct, _bodN0, 1.0, aRace, isFemale, "W000")
@@ -196,18 +202,18 @@ Function _TransferOverrides(Actor aAct, string node, bool isFem, bool persist)
     _TransferOvIdx(aAct, node, isFem, 0, persist)       ; Diffuse map
     ; Index 1 is normal map. We don't want to transfer that, because that's the on this mod sets.
     _TransferOvIdx(aAct, node, isFem, 2, persist)       ; Environment mask / subsurface tint map
-    _TransferOvIdx(aAct, node, isFem, 3, persist)       ; Glow / detail map
-    _TransferOvIdx(aAct, node, isFem, 4, persist)       ; Height map
-    _TransferOvIdx(aAct, node, isFem, 5, persist)       ; Environment map
-    _TransferOvIdx(aAct, node, isFem, 6, persist)       ; Multilayer map
+    ; _TransferOvIdx(aAct, node, isFem, 3, persist)       ; Glow / detail map
+    ; _TransferOvIdx(aAct, node, isFem, 4, persist)       ; Height map
+    ; _TransferOvIdx(aAct, node, isFem, 5, persist)       ; Environment map
+    ; _TransferOvIdx(aAct, node, isFem, 6, persist)       ; Multilayer map
     _TransferOvIdx(aAct, node, isFem, 7, persist)       ; Backlight mask / specular map
-    _TransferOvIdx(aAct, node, isFem, 8, persist)       ; ???
-    _TransferOvFloat(aAct, node, isFem, 1, persist)     ; Emissive power
+    ; _TransferOvIdx(aAct, node, isFem, 8, persist)       ; ???
+    ; _TransferOvFloat(aAct, node, isFem, 1, persist)     ; Emissive power
     _TransferOvFloat(aAct, node, isFem, 2, persist)     ; Glossiness power
     _TransferOvFloat(aAct, node, isFem, 3, persist)     ; Specular power
-    _TransferOvFloat(aAct, node, isFem, 4, persist)     ; Light fx 1
-    _TransferOvFloat(aAct, node, isFem, 5, persist)     ; Light fx 2
-    _TransferOvInt(aAct, node, isFem, 0, persist)       ; Emissive color
+    ; _TransferOvFloat(aAct, node, isFem, 4, persist)     ; Light fx 1
+    ; _TransferOvFloat(aAct, node, isFem, 5, persist)     ; Light fx 2
+    ; _TransferOvInt(aAct, node, isFem, 0, persist)       ; Emissive color
     _TransferOvInt(aAct, node, isFem, 7, persist)       ; Skin color
 EndFunction
 

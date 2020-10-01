@@ -5,40 +5,14 @@ getRace[Get race]
 knownRace{Known race?}
 getSex[Get sex]
 rippedMode[Get ripped mode<br>from Lua]
-needsRecalc{Needs recalculation?}
 calcAlpha[Calculate alpha]
-calcAlpha2[Calculate alpha]
-useKnown[Use known alpha]
-alphaKnown{Alpha known?}
-setTextures[Set textures]
-setTextures2[Set textures]
-rrecalc[Return <recalculate>]
-ralpha[Return <alpha>]
+setLyr[Set Override Layers]
+rValid[Return <valid>]
 rinvalid[Return <invalid>]
 stop((End))
 
 
 start --> getRace --> knownRace
 knownRace -->|no| rinvalid
-knownRace -->|yes| getSex --> rippedMode --> needsRecalc
-needsRecalc -->|no| alphaKnown
-alphaKnown -->|yes| useKnown --> setTextures --> ralpha
-alphaKnown -->|no| calcAlpha2 --> setTextures
-needsRecalc --> |yes| calcAlpha -->setTextures2 --> rrecalc
-
-rrecalc --> stop
-ralpha --> stop
+knownRace -->|yes| rippedMode --> getSex --> calcAlpha -->setLyr --> rValid --> stop
 rinvalid --> stop
-
-subgraph setTex[Set textures]
-    stStart((start))
-    stHands[Set hands]
-    stBody[Set body]
-    stIsPlayer{Is actor player?}
-    stEnd((end))
-    stNinode[QueueNiNodeUpdate]
-
-    stStart --> stHands-->stBody --> stIsPlayer
-    stIsPlayer -->|yes| stEnd
-    stIsPlayer -->|no| stNinode --> stEnd
-end

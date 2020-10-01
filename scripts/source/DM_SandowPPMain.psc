@@ -12,8 +12,6 @@ Import JValue
 DM_SandowPP_WeightTraining Property WeightTraining Auto
 DM_SandowPP_Items Property Items Auto
 
-Spell Property rippedSpell Auto
-{Spell to make the player ripped}
 DM_SandowPP_TextureMngr Property texMngr Auto
 {Texture manager that applies ripped textures to actors}
 
@@ -142,7 +140,7 @@ EndFunction
 ; Setup things again after reloading a save. Mostly registering events again.
 Function OnGameReload()
     If !Initialized
-        Trace("Trying to reload without init")
+        Trace("Trying to reload without having initialized")
         return
     EndIf
     OpenLog()
@@ -156,12 +154,7 @@ Function OnGameReload()
     _LoadDefaults()
     ; Since switching to Lua, we need to do this. Don't know why.
     ReportWidget.EnsureVisibility()
-
     ; texMngr.Debug(Player)
-    ; texMngr.MakePlayerRipped()
-    ; Player.RemoveSpell(rippedSpell)
-    Player.AddSpell(rippedSpell, false)
-
 EndFunction
 
 ;>=========================================================
@@ -189,7 +182,7 @@ EndFunction
             Initialized = true
             Trace("Finish init")
             ; FIXME: Delete this ------------------------------------------------
-            Player.AddSpell(rippedSpell, false)
+            texMngr.MakePlayerRipped()
         EndFunction
 
         Function _InitVars40()

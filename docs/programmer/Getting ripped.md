@@ -1,17 +1,10 @@
 # System interaction
+![](diagrams/ripped-system.png)
 
-@import "diagrams/ripped-system.png"
+# Texture Manager calculates muscle definition
+![](diagrams/ripped-txtmgr-makeripped.png)
 
-
-# Texture Manager sets a texture set
-
-@import "diagrams/ripped-txtmgr-makeripped.png"
-
-# Ripped spell cycle
-@import "diagrams/ripped-spell-cycle.png"
-
-
-```mermaid
+<!-- ```mermaid
 graph TD
 e
-```
+``` -->

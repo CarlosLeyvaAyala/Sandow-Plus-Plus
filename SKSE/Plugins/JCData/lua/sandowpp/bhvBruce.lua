@@ -175,7 +175,8 @@ end
 
 --- Returns processed data and which color should the main bar flash.
 function bhvBruce.onSleep(data)
-    if data.state.hoursAwaken <= 5 then return data, -1 end
+    -- ;TODO:  transfer this check to behavior manager
+    if (data.state.hoursAwaken <= 5) or (bhvBruce.currLeanness(data) >= 1) then return data, -1 end
     local train, flash = prepareBeforeProcess(data), -1
     print("start ", training(data), bhvBruce.currLeanness(data), data.state.WGP)
     -- Core calculations

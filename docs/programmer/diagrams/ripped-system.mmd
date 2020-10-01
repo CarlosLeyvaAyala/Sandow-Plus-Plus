@@ -1,26 +1,13 @@
 sequenceDiagram
-participant A as Alias quest
-participant M as Sandow++
-participant P as Player<br>Character (PC)
+participant M as MCM
+participant P as Player
 participant T as Texture manager
-participant N as NPC
-Note over M: MCM asked to make<br>Player ripped.
-M-->>P: Adds ripped spell
+M->>T: Hey, make Player ripped
+T-->>P: Adds ripped spell
 loop Ripped spell
-    P->>T: Hey, set my muscle definition.<br/>I got this number you gave me last time.
-    T->>P: I'll give you this alpha. Remember it.
-    Note over P: Remembers assigned number.
+    P->>T: Hey, set my muscle definition
+    P->>P: Wait before asking again
 end
-loop Scans for NPCs to make ripped via spell
-    A->>P: I'll look around you for NPCs
-    A-->>N: Found you! -Adds ripped spell-
-end
-loop Ripped spell
-    N->>T: Hey, set my muscle definition.<br/>I got this number you gave me last time.
-    T->>N: I'll give you this alpha. Remember it.
-    Note over N: Remembers assigned number.
-end
-Note over M: MCM asked to make<br>PC not ripped.
-M-->>P: Removes ripped spell
-M->>T: Hey, clear PC textures.
-T-->>P: Clear()
+M->>T: Hey, make Player not ripped
+T-->>P: Clear ()
+Note left of T: Removes ripped spell
