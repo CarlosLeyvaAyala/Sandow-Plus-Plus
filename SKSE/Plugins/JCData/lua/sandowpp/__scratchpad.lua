@@ -1,14 +1,6 @@
-local s = "actors\\character\\Bijin Warmaidens 00\\femalehands_1_s.dds"
-s = [[actors\character\Bijin Warmaidens 00\femalehands_1_s.dds]]
--- print(s)
--- s = string.gsub(s, "\\", "/")
--- print(string.match(s, "^.+/(.+)$"))
--- print(string.find(s, 'hands'))
-
---- Given a file name with path, returns the file name with extension
-local function getFileName(f) return string.match(string.gsub(f, "\\", "/"), "^.+/(.+)$") end
-s = getFileName(s)
-print(string.find(s, 'hands'))
+local c = 16777215
+c = 410
+print(string.format("%.6X", c))
 
 local m = 20
 local hard = {}

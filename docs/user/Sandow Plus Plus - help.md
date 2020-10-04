@@ -20,19 +20,21 @@ toc:
 
 - [Overview](#overview)
   - [Really; read this document. I promise I tried my best not to be boring](#really-read-this-document-i-promise-i-tried-my-best-not-to-be-boring)
+  - [This file has too many links!](#this-file-has-too-many-links)
 - [Requirements](#requirements)
   - [Integrations](#integrations)
 - [FAQ](#faq)
-  - [My fatigue is over 9000!!!](#my-fatigue-is-over-9000)
-  - [Weight gaining/getting ripped for pure mages](#weight-gaininggetting-ripped-for-pure-mages)
-  - [What's the deal with the head resizing thing?](#whats-the-deal-with-the-head-resizing-thing)
-  - [Could you add ripped textures for \<insert name here\> body/texture pack?](#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack)
-  - [I've got neck/wrist/ankle seams and weird artifacts](#ive-got-neckwristankle-seams-and-weird-artifacts)
   - [Is this compatible with...?](#is-this-compatible-with)
     - [Known compatible mods](#known-compatible-mods)
     - [Known incompatible mods](#known-incompatible-mods)
     - [Not confirmed, but should work](#not-confirmed-but-should-work)
     - [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)
+  - [This messes my CBBE 3BBB colors!](#this-messes-my-cbbe-3bbb-colors)
+  - [My fatigue is over 9000!!!](#my-fatigue-is-over-9000)
+  - [Weight gaining/getting ripped for pure mages](#weight-gaininggetting-ripped-for-pure-mages)
+  - [What's the deal with the head resizing thing?](#whats-the-deal-with-the-head-resizing-thing)
+  - [Could you add ripped textures for \<insert name here\> body / race / texture pack?](#could-you-add-ripped-textures-for-insert-name-here-body-race-texture-pack)
+  - [I've got neck/wrist/ankle seams and weird artifacts](#ive-got-neckwristankle-seams-and-weird-artifacts)
 - [The basics](#the-basics)
 - [Behaviors](#behaviors)
   - [The Pumping Iron Behavior](#the-pumping-iron-behavior)
@@ -86,10 +88,10 @@ This mod only runs when you ask it to do so, and when it does, it's by performin
 ## Really; read this document. I promise I tried my best not to be boring
 I always appreciate when authors take their time to explain how to use their mods and... let us be honest: I hate when they don't bother to explain how to play their complex mods and such, so here we are.
 
-So, let me emphasize again: **Sandow Plus Plus is complex** and you should really read this document.\
+So, let me emphasize again: **Sandow Plus Plus is complex** and you should really read this document.
 If you ever have a problem, I've most likely talked about it in this help file.
 
- ### This help file has too much links!
+## This file has too many links!
 ... you ungrateful swine ==>:v==
 
 It's totally done on purpose. I don't expect you to read it all sequentially.
@@ -97,7 +99,7 @@ I want to take you to the point as fast as I can, not writing the next great rus
 
 <figure>
 <img src="img/wake-up.jpg"/>
-<figcaption><i>Chapter 1, page 293</i>:<br>And then, after pondering about the great unfathomable tragic passing of time by the intrinsecally futile altar of human ambition, Czwxnqstazky gets up so he can finally start doing some shit for today.</figcaption>
+<figcaption><i>Chapter 1, page 293</i>:<br>And then, after pondering about the great unfathomable tragic passing of time by the intrinsecally futile altar of human ambition, Czwxnqstazky gets up so he can finally start doing some shit for today or something.</figcaption>
 </figure>
 
 # Requirements
@@ -108,8 +110,8 @@ Boring stuff, but necessary if you don't want me to ask you to enable debugging 
 <figcaption>Why, of course I'm not joking!</figcaption>
 </figure>
 
-## SKSE + SkyUI  {ignore=true}
-Required for most *must have* mods, anyway.
+## SKSE + SkyUI + PapyrusUtil {ignore=true}
+Required for most *must-have* mods, anyway.
 
 ## JContainers  {ignore=true}
 ***THIS IS NOT OPTIONAL***. I repeat: **THIS IS NOT OPTIONAL**.
@@ -119,7 +121,7 @@ Starting from v4.0 and on, this mod relies on the Lua programming language; and 
 Long story short: this mod will simply fail to work if you don't use JContainers.
 If you want to know the long story behind this, [read here](#i-love-jcontainers-heart).
 
-## RaceMenu/PapyrusUtil  {ignore=true}
+## RaceMenu  {ignore=true}
 These are required only if you want to use any feature related to getting ripped using this mod.
 Sorry, ECE users, there's no way around this.
 
@@ -128,9 +130,8 @@ BUUUUUT... theorethically, this mod only uses the `NiOverride` part of RaceMenu 
 **Don't ask me how to do that**, though. I don't know how, I don't want to search for it[^nioverride_tired] and that's why doing so it's not oficially supported.
 
 [^nioverride_tired]: Believe me. I've got enough of `NiOverride` just trying to get it work for this mod.
-It was ***WAY WORSE*** than trying to learn how to make the Widget.
+It was ***WAY WORSE*** than trying to learn how to make the damn Widget.
 
-PapyrusUtil is still required and you will most likely have it anyway, since many mods use it because it's awesome.
 
 ## Integrations
 ### SexLab ( ͡° ͜ʖ ͡°)  {ignore=true}
@@ -143,6 +144,62 @@ For now...
 # FAQ
 This section is actually composed of links to other parts of the document, and yes: I put it here on purpose because I know most of you won't bother to read the full guide[^prose].
 [^prose]: Your loss. You won't be able to bask in my sublime prose.
+## Is this compatible with...?
+
+If your mod isn't here, you could try and tell us.
+No way I can try every single mod in existence. I want to play this game too!
+
+### Known compatible mods
+
+* [Wet Function Redux](https://www.loverslab.com/files/file/9467-wet-function-redux-se/). Fuck yeah! [^wet_funct_fact].
+
+  [^wet_funct_fact]: Little fun story time:
+  After more than 2 months working (daily) on getting ripped I had at last a fully working method for it, but then I realized it totally conflicted with this mod.
+  Since this is one of my favorite mods ever, I had to found a workaround... that lead me to the current -more compatible- method.
+
+* [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632). Of course it this; I made it myself as a companion mod for this one.
+  You still need to download the textures for both Sandow Plus Plus and Ripped Bodies, even if they are pretty much the same. [See here why](#how-does-the-player-get-ripped).
+
+  If NiOverride ever fixes NPC overlays problems, you bet Ripped Bodies will become irrelevant, but for the time being both are needed for making player and NPCs ripped.
+
+### Known incompatible mods
+* [Pumping Iron](https://www.nexusmods.com/skyrimspecialedition/mods/13434)... obviously (see [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)).
+
+
+### Not confirmed, but should work
+* Any custom race should work right off the bat for weight gaining.
+  When it comes  to getting ripped, ==[it's not as simple](#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack).==
+
+* Any mod that does something based on your weight (but doesn't actually change it).
+
+### Not confirmed, but shouldn't work
+* Any mod that changes your body weight.
+  **Even CTDs where reported** when using this and Pumping Iron both together.
+
+* **Many mods that change textures on character's bodies** are expected to conflict with this mod.
+Hopefully nothing game breaking, but certainly getting both them and mine fighting over who sets which textures, ending up with funny looking characters.
+  I can't anticipate which mods will and which won't work. If you find one of those, please tell us all.
+
+* Any mod using Racemenu's body overlay layers 0 and 1 [when you are using any method for getting ripped](#downsides) from this mod.
+  You should see your character's body flickering because both mods are setting their own textures or mine simply overriding changes made by others.
+
+## This messes my CBBE 3BBB colors!
+
+That's not a question >:v
+
+Anyway, **when** this happens:
+
+<figure>
+<img class="hImg" src="img/3BBB-discoloration.jpg"/>
+<figcaption>Wetness was added because I was testing this mod properly worked along Wet Function Redux</figcaption>
+</figure>
+
+You should open the console, write `Showracemenu`[^change_of_face] and then reset your skin color.
+
+
+[^change_of_face]: Or even better, just use [A Change of Face](https://www.nexusmods.com/skyrimspecialedition/mods/10508).
+
+Don't worry though. ==This only happens when starting a new game==.
 
 
 ## My fatigue is over 9000!!!
@@ -179,7 +236,7 @@ I totally expect people[^boob_asking] asking me to make boobs and glutes bigger 
 
 [^boob_asking]: That could be even you!
 
-## Could you add ripped textures for \<insert name here\> body/texture pack?
+## Could you add ripped textures for \<insert name here\> body / race / texture pack?
 Fun fact: did you know that, compared to most of the Skyrim player base, we may be as well be considered some fetishist weirdos?
 
 <figure>
@@ -212,46 +269,6 @@ You and I are weird compared to most Skyrim players. We are short on options, an
 ## I've got neck/wrist/ankle seams and weird artifacts
 That's because you aren't using the correct [the texture sets](#texture-sets).
 
-## Is this compatible with...?
-
-If your mod isn't here, you could try and tell us.
-No way I can try every single mod in existence. I want to play this game too!
-
-### Known compatible mods
-
-* [Wet Function Redux](https://www.loverslab.com/files/file/9467-wet-function-redux-se/). Mostly.
-  Hands will never look wet, but the rest of the body will look alright and **that's a price I'm totally willng to pay**[^wet_funct_fact].
-
-  [^wet_funct_fact]: Little fun story time:
-  After more than 2 months working (daily) on getting ripped I had at last a fully working method for it, but then I realized it totally conflicted with this mod.
-  Since this is one of my favorite mods ever, I had to found a workaround; that lead me to the current -more compatible- method.
-  I thought I could never make the NPCs ripped, but thanks to this new method now I can!
-
-* [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632). It is, but this mod made it completely irrelevant.
-  No need to use both.
-<!-- Of course it this; I made it myself.
-  You still need to download the textures for both, even if they are pretty much the same. [See here why](#how-does-the-player-get-ripped). -->
-
-### Known incompatible mods
-* [Pumping Iron](https://www.nexusmods.com/skyrimspecialedition/mods/13434)... obviously (see [Not confirmed, but shouldn't work](#not-confirmed-but-shouldnt-work)).
-
-
-### Not confirmed, but should work
-* Any custom race should work right off the bat for weight gaining.
-  When it comes  to getting ripped, [it's not as simple](#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack).
-
-* Any mod that does something based on your weight (but doesn't actually change it).
-
-### Not confirmed, but shouldn't work
-* Any mod that changes your body weight.
-  **Even CTDs where reported** when using this and Pumping Iron both together.
-
-* **Many mods that change textures on character's bodies** are expected to conflict with this mod.
-Hopefully nothing game breaking, but certainly getting both them and mine fighting over who sets which textures, ending up with funny looking characters.
-  I can't anticipate which mods will and which woh't work. Please test them and tell us.
-
-* ==Any mod using Racemenu's body overlay layers 0 and 1 [when you are using any method for getting ripped](#downsides) from this mod.
-  You should see your character's body flickering because both mods are setting their own textures.==
 
 # The basics
 - Every time a certain skill goes up, you get `Training`, which transforms to weight/muscle definition when you sleep.

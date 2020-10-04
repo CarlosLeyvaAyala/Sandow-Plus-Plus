@@ -26,11 +26,13 @@
         <Import>@Skyrim\Data\Scripts\Source</Import>
         <Import>@MO\FileAccess Interface for Skyrim SE Scripts - FISSES\scripts\source</Import>
         <Import>@MO\PapyrusUtil SE - Modders Scripting Utility Functions\Scripts\Source</Import>
-        <Import>@MO\\JContainers SE\scripts\source</Import>
-        <Import>@MO\RaceMenu\scripts\source</Import>
+        <Import>@MO\JContainers SE\scripts\source</Import>
+        <Import>@MO\Racemenu-src\scripts\source</Import>
         <Import>@MO\SkyUI\scripts\source</Import>
         <Import>@MO\SkyUI_5.1_SDK\Scripts\source</Import>
-        <Import>@MO\SexLabFrameworkSE v163 BETA8\scripts\</Import>
+        <Import>@MO\SexLabFrameworkSE v163 BETA8\scripts\Source\</Import>
+        <Import>@MO\Fores New Idles in Skyrim SE - FNIS SE\source\scripts\</Import>
+        <Import>@MO\FNIS Creature Pack SE 7.0\source\scripts\</Import>
         <Import>@MO\WetFunctionRedux\Scripts\Source</Import>
         <Import>@lib\Source</Import>
     </Imports>

@@ -27,6 +27,7 @@ EndEvent
 
 Function _CheckValidRace(bool isValid)
     If !isValid
+        TraceA(_self, "Race is not valid. Disabling muscle definition.")
         Dispel()
     EndIf
 EndFunction

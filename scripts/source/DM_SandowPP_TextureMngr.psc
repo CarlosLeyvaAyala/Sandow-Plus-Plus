@@ -43,10 +43,23 @@ Spell Property rippedSpell Auto
 
 ; int property IsInvalid = -1 AutoReadOnly
 ; int property NeedsRecalc = -1 AutoReadOnly
+TextureSet Property HumFemBod0 Auto
+TextureSet Property HumMalBod0 Auto
+TextureSet Property KhaFemBod0 Auto
+TextureSet Property KhaMalBod0 Auto
+TextureSet Property SaxFemBod0 Auto
+TextureSet Property SaxMalBod0 Auto
+TextureSet Property HumFemBod1 Auto
+TextureSet Property HumMalBod1 Auto
+TextureSet Property KhaFemBod1 Auto
+TextureSet Property KhaMalBod1 Auto
+TextureSet Property SaxFemBod1 Auto
+TextureSet Property SaxMalBod1 Auto
 
 string _bodN0 = "Body [Ovl0]"
 string _bodN1 = "Body [Ovl1]"
 int _bodM = 0x04
+int _skinCol = 0xffffff
 
 ; https://www.creationkit.com/index.php?title=Slot_Masks_-_Armor
 
@@ -65,6 +78,7 @@ EndFunction
 Function InitData()
     int r = readFromFile("data/SKSE/Plugins/Sandow Plus Plus/config/ripped-races.json")
     JMap.setObj(SPP.GetDataTree(), "rippedRaces", r)
+    _InitTexSets()
 EndFunction
 
 ; Enable muscle definition for the player.
@@ -88,9 +102,11 @@ EndFunction
 
 ; Set muscle definition for an actor.
 bool Function CalcMuscleDefinition(Actor aAct)
+    TraceA(aAct, "Calculate muscle definition")
     string r = _GetRacePrefix(aAct)
     If r
-        return _ProcessActor(aAct, r)
+        _ProcessActor(aAct, r)
+        return true
     Else
         return false
     EndIf
@@ -99,6 +115,30 @@ EndFunction
 ;>========================================================
 ;>===                CORE - TEXTURES                 ===<;
 ;>========================================================
+
+; Initializes textures used to create override layers.
+; Keys must use the normal map file name convention used by this mod.
+Function _InitTexSets()
+    int t = JMap.object()
+    JMap.setForm(t, "HumFemW000", HumFemBod0)
+    JMap.setForm(t, "HumFemW100", HumFemBod1)
+    JMap.setForm(t, "HumMalW000", HumMalBod0)
+    JMap.setForm(t, "HumMalW100", HumMalBod1)
+    JMap.setForm(t, "KhaFemW000", KhaFemBod0)
+    JMap.setForm(t, "KhaFemW100", KhaFemBod1)
+    JMap.setForm(t, "KhaMalW000", KhaMalBod0)
+    JMap.setForm(t, "KhaMalW100", KhaMalBod1)
+    JMap.setForm(t, "SaxFemW000", SaxFemBod0)
+    JMap.setForm(t, "SaxFemW100", SaxFemBod1)
+    JMap.setForm(t, "SaxMalW000", SaxMalBod0)
+    JMap.setForm(t, "SaxMalW100", SaxMalBod1)
+    JMap.setObj(SPP.GetDataTree(), "rippedTexSets", t)
+EndFunction
+
+; Generates the filename of the normal texture that will be used.
+string Function _GetTextureName(string aRace, bool isFemale, string txSuffix)
+    return aRace + _SexToTexName(isFemale) + txSuffix
+EndFunction
 
 float Function _ProcessActor(Actor aAct, string aRace)
     TraceA(aAct, "Set ripped textures to valid actor.")
@@ -110,12 +150,24 @@ float Function _ProcessActor(Actor aAct, string aRace)
     return alpha
 EndFunction
 
+TextureSet Function _TxRaces(string aRace, bool isFemale, string txSuffix)
+    string tx = _GetTextureName(aRace, isFemale, txSuffix)
+    int t = JMap.getObj(SPP.GetDataTree(), "rippedTexSets")
+    return  JMap.getForm(t, tx) as TextureSet
+    ; If txSuffix == "W000"
+    ;     return HumFemBod0
+    ; else
+    ;     return HumFemBod1
+    ; EndIf
+EndFunction
+
 Function _SetTextures(Actor aAct, string node, float alpha, string aRace, bool isFemale, string txSuffix)
+    _SetTextureSet(aAct, node, aRace, isFemale, txSuffix)
     _TransferOverrides(aAct, node, isFemale, true)
     ; Sets alpha
     AddNodeOverrideFloat(aAct, isFemale, node, 8, -1, alpha, true)
     ; Sets body normal
-    _SetBodyOverride(aAct, node, aRace, isFemale, txSuffix)
+    _SetNormalOverride(aAct, node, aRace, isFemale, txSuffix)
 EndFunction
 
 string Function _GetRacePrefix(Actor aAct)
@@ -123,9 +175,16 @@ string Function _GetRacePrefix(Actor aAct)
     return  JMap.getStr(r, _GetRace(aAct))
 EndFunction
 
-Function _SetBodyOverride(Actor aAct, string node, string aRace, bool isFemale, string txSuffix)
+; Sets a texture set on some override layer. This is used to ensure maximum compatibility
+; with some armor mods and the 3BBB body.
+Function _SetTextureSet(Actor aAct, string node, string aRace, bool isFemale, string txSuffix)
+    TextureSet base = _TxRaces(aRace, isFemale, txSuffix)
+    AddNodeOverrideTextureSet(aAct, isFemale, node, 6, -1, base, true)
+EndFunction
+
+Function _SetNormalOverride(Actor aAct, string node, string aRace, bool isFemale, string txSuffix)
     ; generate filename
-    string raceTex = aRace + _SexToTexName(isFemale) + txSuffix
+    string raceTex = _GetTextureName(aRace, isFemale, txSuffix)
     string tx = "data/textures/actors/character/SandowPP/" + raceTex + ".dds"
     AddNodeOverrideString(aAct, isFemale, node, 9, 1, tx, true)
 EndFunction
@@ -199,9 +258,9 @@ EndFunction
 
 ; Transfers to [Body Ovl0] overrides applied to skin
 Function _TransferOverrides(Actor aAct, string node, bool isFem, bool persist)
-    _TransferOvIdx(aAct, node, isFem, 0, persist)       ; Diffuse map
+    ; _TransferOvIdx(aAct, node, isFem, 0, persist)       ; Diffuse map
     ; Index 1 is normal map. We don't want to transfer that, because that's the on this mod sets.
-    _TransferOvIdx(aAct, node, isFem, 2, persist)       ; Environment mask / subsurface tint map
+    ; _TransferOvIdx(aAct, node, isFem, 2, persist)       ; Environment mask / subsurface tint map
     ; _TransferOvIdx(aAct, node, isFem, 3, persist)       ; Glow / detail map
     ; _TransferOvIdx(aAct, node, isFem, 4, persist)       ; Height map
     ; _TransferOvIdx(aAct, node, isFem, 5, persist)       ; Environment map
@@ -214,13 +273,27 @@ Function _TransferOverrides(Actor aAct, string node, bool isFem, bool persist)
     ; _TransferOvFloat(aAct, node, isFem, 4, persist)     ; Light fx 1
     ; _TransferOvFloat(aAct, node, isFem, 5, persist)     ; Light fx 2
     ; _TransferOvInt(aAct, node, isFem, 0, persist)       ; Emissive color
-    _TransferOvInt(aAct, node, isFem, 7, persist)       ; Skin color
+    ; _TransferOvInt(aAct, node, isFem, 7, persist)       ; Skin color
+    _TransferSkinColor(aAct, node, isFem, persist)       ; Skin color
 EndFunction
 
-; Transfers one int property from the body to [Body Ovl0]
+; Transfers skin color from the body to [Body Ovln]
+Function _TransferSkinColor(Actor aAct, string node, bool isFem, bool persist)
+    int v = GetSkinPropertyInt(aAct, false, _bodM, 7, -1)
+    ; Avoid the skin color bug when using 3BBB
+    If v != 0xFFFFFF
+        _skinCol = v
+    Else
+        TraceA(aAct, "Has invalid skin color 0xFFFFFF. Using last valid known color.")
+    EndIf
+    TraceA(aAct, node + ". Last valid skin color: " + ColorToStr(_skinCol))
+    AddNodeOverrideInt(aAct, isFem, node, 7, -1, _skinCol, persist)
+EndFunction
+
 Function _TransferOvInt(Actor aAct, string node, bool isFem, int k, bool persist)
     int v = GetSkinPropertyInt(aAct, false, _bodM, k, -1)
     AddNodeOverrideInt(aAct, isFem, node, k, -1, v, persist)
+    TraceA(aAct, "Current skin color")
 EndFunction
 
 ; Transfers one float property from the body to [Body Ovl0]

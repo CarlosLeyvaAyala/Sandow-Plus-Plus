@@ -156,10 +156,10 @@ DM_SandowPP_ReportMeterBase[] _meters
 
     ; Since switching to Lua, we need to do this at game reload. Don't know why.
     Function EnsureVisibility()
+        Owner.RealTimeCalculations()
         If Visible
             _Show()
         EndIf
-        Owner.RealTimeCalculations()
     EndFunction
 
 ;>========================================================

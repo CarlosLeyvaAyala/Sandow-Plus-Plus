@@ -76,11 +76,11 @@ EndFunction
 bool _t = false
 
 Event OnKeyDown(Int KeyCode)
-    If KeyCode == Config.HkShowStatus
+    If KeyCode == solveInt(GetMCMConfig(), ".widget.hotkey", -1)
         ReportWidget.Visible = !ReportWidget.Visible
     EndIf
     If KeyCode == 200
-        texMngr.Debug(Player)
+        ; texMngr.Debug(Player)
         ; TestSave(38)
         ; ReportWidget.Visible = !ReportWidget.Visible
     EndIf
@@ -176,11 +176,17 @@ EndFunction
             _InitDataTree()
             _LoadAddons()
             _LoadDefaults()
-            ;TODO: Wait before fully initializing to avoid some issues with texture seams?
+            ; FIXME: Delete this ------------------------------------------------
+            Utility.Wait(1)
+            ; FIXME: ------------------------------------------------------------
             _Resume()
-            ReportWidget.Visible = false
+            ; ReportWidget.Visible = false
+            ; FIXME: Delete this ------------------------------------------------
+            ReportWidget.Visible = true
+            ; FIXME: ------------------------------------------------------------
             Initialized = true
-            Trace("Finish init")
+            Trace("Finished initializing")
+            MiscUtil.PrintConsole("[Sandow Plus Plus]: Finished initializing")
             ; FIXME: Delete this ------------------------------------------------
             texMngr.MakePlayerRipped()
         EndFunction
@@ -451,23 +457,20 @@ Function InitVars()
     ; _rippedPlayerAlpha = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
 
+; Sexlab integration.
 Event SexLabEnter(string eventName, string argString, float argNum, form sender)
-    {Sexlab integration}
-    ; sslThreadController c = sender as sslThreadController
-    ; If !c || !c.HasPlayer
-    ;   return
-    ; EndIf
-
-    CurrentState.LastSkillGainTime = Now()
+    sslThreadController c = sender as sslThreadController
+    If c && c.HasPlayer
+        Debug.MessageBox("Player is having sex")
+        Train(0, 0)
+    EndIf
 EndEvent
 
+; Register all events needed for this to work.
 Function RegisterEvents()
-    { Register all events needed for this to work }
     HeightChanger.RegisterEvents()
-    ; If Game.GetModByName("SexLab.esm") != 255
     If SexLabExists()
-        ; SexLab = Game.GetFormFromFile(0x00D62, "SexLab.esm") as Quest
-        ; RegisterForModEvent("AnimationStart", "SexLabEnter")
+        RegisterForModEvent("AnimationStart", "SexLabEnter")
     EndIf
 EndFunction
 
