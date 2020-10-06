@@ -447,6 +447,15 @@ Function _Resume()
     _Loop()
 EndFunction
 
+; Sexlab integration.
+Event SexLabEnter(string eventName, string argString, float argNum, form sender)
+    sslThreadController c = sender as sslThreadController
+    If c && c.HasPlayer
+        Train(0, 0)
+    EndIf
+EndEvent
+
+
 ;>=========================================================
 ;>===                       END                         ===
 ;>=========================================================
@@ -456,15 +465,6 @@ Function InitVars()
     ; _rippedPlayer = texMngr.PlayerSettings
     ; _rippedPlayerAlpha = (_rippedPlayer as Form) as DM_SandowPP_RippedAlphaCalcPlayer
 EndFunction
-
-; Sexlab integration.
-Event SexLabEnter(string eventName, string argString, float argNum, form sender)
-    sslThreadController c = sender as sslThreadController
-    If c && c.HasPlayer
-        Debug.MessageBox("Player is having sex")
-        Train(0, 0)
-    EndIf
-EndEvent
 
 ; Register all events needed for this to work.
 Function RegisterEvents()

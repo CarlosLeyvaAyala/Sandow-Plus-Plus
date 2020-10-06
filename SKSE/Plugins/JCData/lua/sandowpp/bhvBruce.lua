@@ -200,7 +200,7 @@ end
 function bhvBruce.realTimeCalc(data)
     lossSeq(data)
     decayAndReportT(data)
-    updateTrainAndLean(data, 0)
+    -- updateTrainAndLean(data, 4)
     return data
 end
 
@@ -291,7 +291,7 @@ function bhvBruce.getMcmData(data)
     b.mainStatVal = l.floatToPercentStr(bhvBruce.currLeanness(data))
     b.mainStatInf = "$MCM_RippedLblInfo"
     b.trainingLbl = "$Daily training:"
-    b.trainingVal = l.floatToPercentStr(data.state.WGP)
+    b.trainingVal = l.floatToPercentStr(data.state.WGP / 100)
     b.trainingInf = "$MCM_RippedTrainingInfo"
     return data
 end
