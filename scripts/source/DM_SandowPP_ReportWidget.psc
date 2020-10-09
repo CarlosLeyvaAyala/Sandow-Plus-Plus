@@ -14,9 +14,9 @@ bool _visible = false
 bool Property Visible
     Function set(bool val)
         If val
-            _Show()
-        else
-            _Hide()
+            _ShowT(0, 0)
+        Else
+            _HideT(0, 0)
         EndIf
         _visible = val
     EndFunction
@@ -96,69 +96,56 @@ DM_SandowPP_ReportMeterBase[] _meters
 ;>========================================================
 ;>===                 UPDATING CICLE                 ===<;
 ;>========================================================
-    Function _Kickstart()
-        ; If Visible
-        ;     Owner.ReportPlayer()
-        ; EndIf
-        ; ; RegisterForSingleUpdate(\
-        ;     JValue.solveFlt(Owner.GetDataTree(),\
-        ;     "preset.widget.refreshRate",\
-        ;     5)\
-        ; )
-    EndFunction
-
-    ; State Running
-    ;     Event OnUpdate()
-    ;         _Kickstart()
-    ;     EndEvent
-    ; EndState
 
     Event OnUpdate()
         UnregisterForUpdate()
     EndEvent
 
-    ; Function Pause()
-    ;     GotoState("Paused")
-    ; EndFunction
-
-    ; Function Resume()
-    ;     GotoState("Running")
-    ; EndFunction
-
 ;>========================================================
 ;>===                   APPEARANCE                   ===<;
 ;>========================================================
 
-    Function _Hide()
-        ; Pause()
+    Function _HideT(float fadeT, float waitT)
         int i = 0
         While IterateMeters(i)
-            _meters[i].FadeTo(0, 0.35)
+            _meters[i].FadeTo(0, fadeT)
             i += 1
         EndWhile
-        Utility.Wait(0.4)
+        If waitT > 0
+            Utility.Wait(waitT)
+        EndIf
     EndFunction
 
-    Function _Show()
+    Function _ShowT(float fadeT, float waitT)
         int i = 0
         int d = Owner.GetDataTree()
         float a = JValue.solveFlt(d, ".preset.widget.opacity", 100.0)
         While IterateMeters(i)
             If _meters[i].IsVisible()
-                _meters[i].FadeTo(a, 0.35)
+                _meters[i].FadeTo(a, fadeT)
             EndIf
             i += 1
         EndWhile
-        Utility.Wait(0.4)
-        ; Resume()
-        _Kickstart()
+        If waitT > 0
+            Utility.Wait(waitT)
+        EndIf
+    EndFunction
+
+    ; Switch visibility by fading.
+    Function FadeSwitch()
+        If _visible
+            _HideT(0.35, 0.4)
+        Else
+            _ShowT(0.35, 0.4)
+        EndIf
+        _visible = !_visible
     EndFunction
 
     ; Since switching to Lua, we need to do this at game reload. Don't know why.
     Function EnsureVisibility()
         Owner.RealTimeCalculations()
         If Visible
-            _Show()
+            _ShowT(0, 0)
         EndIf
     EndFunction
 

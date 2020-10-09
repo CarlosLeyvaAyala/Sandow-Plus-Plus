@@ -7,6 +7,8 @@ Import JValue
 string _mainStatInf
 string _trainingInf
 string _otherInf
+bool _v = true
+
 
 Function PageMainStats()
     SPP.UpdateMcmData()
@@ -23,7 +25,7 @@ Function PageMainStats()
     ;     count += 1
     ; EndIf
     ; count += _PageMainShowWidget()
-    Toggle("tgMain_ToggleWidget", "$Show widget", SPP.ReportWidget.Visible)
+    Toggle("tgMain_TW", "$Show widget", SPP.ReportWidget.Visible)
     AddEmptyOption()
 EndFunction
 
@@ -68,18 +70,16 @@ EndFunction
         EndEvent
     EndState
 
-    ; FIXME: Doesn't reload page
-    State tgMain_ToggleWidget
+    State tgMain_TW
         Event OnSelectST()
-            SPP.ReportWidget.Visible = !SPP.ReportWidget.Visible
-            SetToggleOptionValueST(SPP.ReportWidget.Visible)
-            ForcePageReset()
+            bool v = !SPP.ReportWidget.Visible
+            SetToggleOptionValueST(v)
+            SPP.ReportWidget.Visible = v
         EndEvent
 
         Event OnDefaultST()
-            SPP.ReportWidget.Visible = False
             SetToggleOptionValueST(False)
-            ForcePageReset()
+            SPP.ReportWidget.Visible = False
         EndEvent
 
         Event OnHighlightST()

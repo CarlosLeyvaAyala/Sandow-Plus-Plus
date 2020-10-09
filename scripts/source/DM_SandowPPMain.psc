@@ -77,10 +77,10 @@ bool _t = false
 
 Event OnKeyDown(Int KeyCode)
     If KeyCode == solveInt(GetMCMConfig(), ".widget.hotkey", -1)
-        ReportWidget.Visible = !ReportWidget.Visible
+        ReportWidget.FadeSwitch()
     EndIf
     If KeyCode == 200
-        ; texMngr.Debug(Player)
+        texMngr.Clear(Player)
         ; TestSave(38)
         ; ReportWidget.Visible = !ReportWidget.Visible
     EndIf

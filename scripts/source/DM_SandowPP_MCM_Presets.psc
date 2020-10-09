@@ -7,6 +7,7 @@ Function PageMainPresets()
     ; SetCursorPosition(pos)
 
     Header("$Presets")
+    Label("LblPre_Name", "$Current preset", "")
     Menu("MN_PresetLoad", "$Load", "")
     AddInputOptionST("IN_PresetSave", "$Save as...", "")
     AddEmptyOption()
