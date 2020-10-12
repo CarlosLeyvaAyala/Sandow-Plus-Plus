@@ -17,11 +17,12 @@ GlobalVariable Property GameHour Auto
 {Points to GameHour global. Used to advance time after training.}
 
 
+; Script core.
 Function Train(float WGP, int aHoursToRest)
-    {Script core}
     If CanTrainAgain()
         ; TODO: Update this
         ; Owner.TrainAndFatigue(WGP, Owner.Config.trainFatigueRate)
+        Owner.Train(0, 0) ; fatigueMul
         LastTrainingTime = Now()
         HoursToRest = aHoursToRest
         AdvanceHours(0.4)

@@ -58,9 +58,19 @@ string Function ActorRealName(Actor act) Global
     return act.getLeveledActorBase().getName()
 EndFunction
 
+; Trace variable.
+Function TraceV(string varName, string aMsg, int aSeverity = 0) Global
+    Trace(varName + " = " + aMsg, aSeverity)
+EndFunction
+
 ; Trace actor.
 Function TraceA(Actor act, string aMsg, int aSeverity = 0) Global
     Trace(act + " " + ActorRealName(act) + ": " + aMsg, aSeverity)
+EndFunction
+
+; Trace actor and variable.
+Function TraceAV(Actor act, string varName, string aMsg, int aSeverity = 0) Global
+    Trace(act + " " + ActorRealName(act) + ": " + varName + " = " + aMsg, aSeverity)
 EndFunction
 
 Function OpenLog() Global

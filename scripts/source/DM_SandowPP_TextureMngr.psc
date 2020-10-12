@@ -41,8 +41,10 @@ Actor property Player auto
 Spell Property rippedSpell Auto
 {Spell to make the player ripped}
 
-; int property IsInvalid = -1 AutoReadOnly
+int property IsInvalid = -1 AutoReadOnly
 ; int property NeedsRecalc = -1 AutoReadOnly
+Armor Property Weight000 Auto
+Armor Property Weight100 Auto
 TextureSet Property HumFemBod0 Auto
 TextureSet Property HumMalBod0 Auto
 TextureSet Property KhaFemBod0 Auto
@@ -56,16 +58,58 @@ TextureSet Property KhaMalBod1 Auto
 TextureSet Property SaxFemBod1 Auto
 TextureSet Property SaxMalBod1 Auto
 
+TextureSet Property HumFemHands Auto
+TextureSet Property HumMalHands Auto
+TextureSet Property KhaFemHands Auto
+TextureSet Property KhaMalHands Auto
+TextureSet Property SaxFemHands Auto
+TextureSet Property SaxMalHands Auto
+; TextureSet Property FemHands Auto
+; TextureSet Property MalHands Auto
+
 string _bodN0 = "Body [Ovl0]"
 string _bodN1 = "Body [Ovl1]"
-int _bodM = 0x04
-int _skinCol = 0xffffff
+string _handN0 = "Hands [Ovl0]"
+; int _bodM = 0x04
+int _handM = 0x08
+; int _skinCol = 0xffffff
 
 ; https://www.creationkit.com/index.php?title=Slot_Masks_-_Armor
 
 ;TODO: Delete
 Function Debug(Actor aAct)
-    Trace("Test")
+    ApplyToNPCs()
+    return
+    float a = Utility.RandomFloat()
+    TraceV("Alpha", a)
+    _SetBodyOverride(aAct, "Hum", true, a)
+    _SetHandsOverride(aAct, "Hum", true)
+EndFunction
+
+Function ApplyToNPCs()
+    Trace("ApplyToNPCs()")
+    Actor[] npcs = MiscUtil.ScanCellNPCs(Player, 4096.0, None, false)
+    int i = npcs.length
+    Trace("NPCs found: " + i)
+    While i > 0
+        i -= 1
+        Actor npc = npcs[i]
+        If npc != Player
+            TraceA(npc, "Applying texture set")
+            float a = Utility.RandomFloat()
+            TraceV("Alpha", a)
+            if !HasOverlays(npc)
+                AddOverlays(npc)
+            endif
+            _SetBodyOverride(npc, "Hum", true, a)
+            _SetHandsOverride(npc, "Hum", true)
+                    ; If forceUpdate
+            ;     InitializeActor(npcs[i])
+            ; Else
+            ;     ApplyToNPC(npcs[i])
+            ; EndIf
+        EndIf
+     EndWhile
 EndFunction
 
 ;>========================================================
@@ -91,8 +135,9 @@ Function Clear(Actor aAct)
     TraceA(aAct, "Clear muscle definition")
     aAct.RemoveSpell(rippedSpell)
     bool isFem = _IsFemale(aAct)
-    RemoveNodeOverride(aAct, isFem, _bodN0, 6, -1)
-    RemoveNodeOverride(aAct, isFem, _bodN1, 6, -1)
+    RemoveNodeOverride(aAct, isFem, _handN0, 6, -1)
+    ; RemoveNodeOverride(aAct, isFem, _bodN1, 6, -1)
+    ApplyNodeOverrides(aAct)
 EndFunction
 
 ; Enable muscle definition for an actor.
@@ -108,6 +153,7 @@ bool Function CalcMuscleDefinition(Actor aAct)
         _ProcessActor(aAct, r)
         return true
     Else
+        TraceA(aAct, "Is not from a race that can get ripped. " + _GetRace(aAct))
         return false
     EndIf
 EndFunction
@@ -116,6 +162,51 @@ EndFunction
 ;>===                CORE - TEXTURES                 ===<;
 ;>========================================================
 
+; Returns the number of the texture set corresponding to an alpha.
+; `[000, 010, 020, ..., 090, 100]`
+string function _AlphaToBin(float a)
+    return JValue.evalLuaStr(0, "return string.format('%.3d', math.floor(" + a + " * 10) * 10)")
+EndFunction
+
+; Set the ripped body normal.
+Function _SetBodyOverride(Actor akTarget, string aRace, bool isFemale, float alpha)
+    ; generate filename
+    string raceTex = _GetTextureName(aRace, isFemale, "W" + _AlphaToBin(alpha))
+    string tx = "data/textures/actors/character/SandowPP/" + raceTex + ".dds"
+    AddSkinOverrideString(akTarget, isFemale, false, 0x04, 9, 1, tx, true)
+    TraceA(akTarget, tx)
+EndFunction
+
+; Set the hands override to hide the bug that applies body normal maps to hands.
+Function _SetHandsOverride(Actor akTarget, string aRace, bool isFemale)
+    TextureSet tx = _GetHandsTextures(aRace, isFemale)
+    AddNodeOverrideTextureSet(akTarget, isFemale, _handN0, 6, -1, tx, true)
+    _TransferOverrides(akTarget, _handN0, isFemale, true)
+EndFunction
+
+; Get the hand texture set that will be used to hide an SKSE/NiOverride? bug.
+TextureSet Function _GetHandsTextures(string aRace, bool isFemale)
+    If isFemale
+        If aRace == "Hum"
+            return HumFemHands
+        ElseIf aRace == "Kha"
+            return KhaFemHands
+        ElseIf aRace == "Sax"
+            return SaxFemHands
+        EndIf
+    Else
+        If aRace == "Hum"
+            return HumMalHands
+        ElseIf aRace == "Kha"
+            return KhaMalHands
+        ElseIf aRace == "Sax"
+            return SaxMalHands
+        EndIf
+    EndIf
+    Debug.Notification("Sandow++: I forgot to add hands for " + aRace)
+EndFunction
+
+; TODO: Delete
 ; Initializes textures used to create override layers.
 ; Keys must use the normal map file name convention used by this mod.
 Function _InitTexSets()
@@ -140,13 +231,29 @@ string Function _GetTextureName(string aRace, bool isFemale, string txSuffix)
     return aRace + _SexToTexName(isFemale) + txSuffix
 EndFunction
 
+; Set ripped textures to valid actor.
 float Function _ProcessActor(Actor aAct, string aRace)
-    TraceA(aAct, "Set ripped textures to valid actor.")
     string mode = _GetRippedMode(aAct)
+    If mode == "$None"
+        Clear(aAct)
+        return IsInvalid
+    Else
+        return _ApplyTextures(aAct, aRace, mode)
+    EndIf
+EndFunction
+
+; Make ripped a valid actor that the player wants to be ripped.
+float Function _ApplyTextures(Actor aAct, string aRace, string mode)
     bool isFemale = _IsFemale(aAct)
     float alpha = _CalcAlpha(aAct, mode, aRace, isFemale)
-    _SetTextures(aAct, _bodN0, 1.0, aRace, isFemale, "W000")
-    _SetTextures(aAct, _bodN1, alpha, aRace, isFemale, "W100")
+    ; _SetTextures(aAct, _bodN0, 1.0, aRace, isFemale, "W000")
+    ; _SetTextures(aAct, _bodN1, alpha, aRace, isFemale, "W100")
+    if !HasOverlays(aAct)
+        AddOverlays(aAct)
+    endif
+    _SetBodyOverride(aAct, aRace, isFemale, alpha)
+    _SetHandsOverride(aAct, aRace, isFemale)
+
     return alpha
 EndFunction
 
@@ -154,11 +261,6 @@ TextureSet Function _TxRaces(string aRace, bool isFemale, string txSuffix)
     string tx = _GetTextureName(aRace, isFemale, txSuffix)
     int t = JMap.getObj(SPP.GetDataTree(), "rippedTexSets")
     return  JMap.getForm(t, tx) as TextureSet
-    ; If txSuffix == "W000"
-    ;     return HumFemBod0
-    ; else
-    ;     return HumFemBod1
-    ; EndIf
 EndFunction
 
 Function _SetTextures(Actor aAct, string node, float alpha, string aRace, bool isFemale, string txSuffix)
@@ -215,6 +317,7 @@ Float Function _CalcAlpha(Actor aAct, string mode, string aRace, bool isFemale)
     return _GetPlayerAlpha(mode)
 EndFunction
 
+; Get player alpha from current options.
 float Function _GetPlayerAlpha(string m)
     float min = solveFlt(SPP.GetMCMConfig(), _cfg + "minAlpha")
     float max = solveFlt(SPP.GetMCMConfig(), _cfg + "maxAlpha", 1)
@@ -252,12 +355,20 @@ float Function _AlphaFromSkills(Actor aAct)
     return alpha
 EndFunction
 
-;>========================================================
-;>===               TRANSFER OVERRIDES               ===<;
-;>========================================================
+; Check if there's something to override.
+; Some armors may completely delete skin geometry. In that case there's nothing to override.
+; We check this by getting a skin color. If it's invalid, we don't proceed any further.
+bool Function _OverrideExists(Actor aAct, bool isFem)
+    int v = GetSkinPropertyInt(aAct, false, _handM, 7, -1)
+    return  v != 0
+EndFunction
 
 ; Transfers to [Body Ovl0] overrides applied to skin
 Function _TransferOverrides(Actor aAct, string node, bool isFem, bool persist)
+    If !_OverrideExists(aAct, isFem)
+        TraceA(aAct, "Has no skin. Stopping override data transfering.")
+        return
+    EndIf
     ; _TransferOvIdx(aAct, node, isFem, 0, persist)       ; Diffuse map
     ; Index 1 is normal map. We don't want to transfer that, because that's the on this mod sets.
     ; _TransferOvIdx(aAct, node, isFem, 2, persist)       ; Environment mask / subsurface tint map
@@ -273,39 +384,46 @@ Function _TransferOverrides(Actor aAct, string node, bool isFem, bool persist)
     ; _TransferOvFloat(aAct, node, isFem, 4, persist)     ; Light fx 1
     ; _TransferOvFloat(aAct, node, isFem, 5, persist)     ; Light fx 2
     ; _TransferOvInt(aAct, node, isFem, 0, persist)       ; Emissive color
+
     ; _TransferOvInt(aAct, node, isFem, 7, persist)       ; Skin color
     _TransferSkinColor(aAct, node, isFem, persist)       ; Skin color
 EndFunction
 
-; Transfers skin color from the body to [Body Ovln]
+; Transfers skin color from the body to some overlay layer.
+; This function is mainly used to avoid the 3BBB bug that discolors NiOverride layers.
 Function _TransferSkinColor(Actor aAct, string node, bool isFem, bool persist)
-    int v = GetSkinPropertyInt(aAct, false, _bodM, 7, -1)
+    int v = GetSkinPropertyInt(aAct, false, _handM, 7, -1)
     ; Avoid the skin color bug when using 3BBB
     If v != 0xFFFFFF
-        _skinCol = v
+        ; TODO: Make this depend on a constant
+        JFormDB.setInt(aAct, ".sandowppforms.skincolor", v)
+        TraceA(aAct, "Set valid color: " + ColorToStr(v))
+        ; _skinCol = v
     Else
-        TraceA(aAct, "Has invalid skin color 0xFFFFFF. Using last valid known color.")
+        ; TODO: Make this depend on a constant
+        TraceA(aAct, "Has invalid skin color: " + ColorToStr(v))
+        v = JFormDB.getInt(aAct, ".sandowppforms.skincolor")
     EndIf
-    TraceA(aAct, node + ". Last valid skin color: " + ColorToStr(_skinCol))
-    AddNodeOverrideInt(aAct, isFem, node, 7, -1, _skinCol, persist)
+    TraceA(aAct, node + ". Last valid skin color: " + ColorToStr(v))
+    AddNodeOverrideInt(aAct, isFem, node, 7, -1, v, persist)
 EndFunction
 
+; Transfers one int property from the body to some overlay layer.
 Function _TransferOvInt(Actor aAct, string node, bool isFem, int k, bool persist)
-    int v = GetSkinPropertyInt(aAct, false, _bodM, k, -1)
+    int v = GetSkinPropertyInt(aAct, false, _handM, k, -1)
     AddNodeOverrideInt(aAct, isFem, node, k, -1, v, persist)
-    TraceA(aAct, "Current skin color")
 EndFunction
 
-; Transfers one float property from the body to [Body Ovl0]
+; Transfers one float property from the body to some overlay layer.
 Function _TransferOvFloat(Actor aAct, string node, bool isFem, int k, bool persist)
-    float v = GetSkinPropertyFloat(aAct, false, _bodM, k, -1)
+    float v = GetSkinPropertyFloat(aAct, false, _handM, k, -1)
     AddNodeOverrideFloat(aAct, isFem, node, k, -1, v, persist)
 EndFunction
 
-; Transfers one indexed property from the body to [Body Ovl0]
+; Transfers one indexed property from the body to some overlay layer.
 Function _TransferOvIdx(Actor aAct, string node, bool isFemale, int idx, bool persist)
-    string tx = GetSkinPropertyString(aAct, false, _bodM, 9, idx)
-    float v = GetSkinPropertyFloat(aAct, false, _bodM, 9, idx)
+    string tx = GetSkinPropertyString(aAct, false, _handM, 9, idx)
+    float v = GetSkinPropertyFloat(aAct, false, _handM, 9, idx)
     AddNodeOverrideString(aAct, isFemale, node, 9, idx, tx, persist)
     AddNodeOverrideFloat(aAct, isFemale, node, 9, idx, v, persist)
     ; Used to prevent setting hands textures on NPCs, but seems it doesn't fail on PCs.

@@ -18,12 +18,12 @@ EndFunction
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
     ; Utility.Wait(0.2)
     If !IsInvalid(akBaseObject)
-        texMgr.MakePlayerRipped(true)
+        texMgr.MakePlayerRipped()
     EndIf
 EndEvent
 
 Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
     If !IsInvalid(akBaseObject)
-        texMgr.MakePlayerRipped(true)
+        texMgr.MakePlayerRipped()
     EndIf
 EndEvent

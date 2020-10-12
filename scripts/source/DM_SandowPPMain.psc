@@ -81,8 +81,10 @@ Event OnKeyDown(Int KeyCode)
     EndIf
     If KeyCode == 200
         texMngr.Clear(Player)
-        ; TestSave(38)
-        ; ReportWidget.Visible = !ReportWidget.Visible
+        ; texMngr.Debug(Player)
+        ; TestSave(777)
+        texMngr.MakePlayerRipped()
+        ; DumpJC()
     EndIf
 EndEvent
 
@@ -187,8 +189,6 @@ EndFunction
             Initialized = true
             Trace("Finished initializing")
             MiscUtil.PrintConsole("[Sandow Plus Plus]: Finished initializing")
-            ; FIXME: Delete this ------------------------------------------------
-            texMngr.MakePlayerRipped()
         EndFunction
 
         Function _InitVars40()
@@ -237,6 +237,10 @@ EndFunction
 
     Function TestSave(int f = 1)
         JValue.writeToFile(GetDataTree(), JContainers.userDirectory() + "spp" + f + ".json")
+    EndFunction
+
+    Function DumpJC()
+        JDB.writeToFile(JContainers.userDirectory() + "dump.json")
     EndFunction
 
 ; Adds WGP/training and fatigue.
