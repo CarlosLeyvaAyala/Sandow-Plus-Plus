@@ -57,7 +57,7 @@ end
 --- Registers a training point gained by the player.
 function sandowpp.train(data, skName)
     local train, fatigue = skills.trainingAndFatigue(data, skName)
-    if train and bhv_mgr.canGainWGP(data) then
+    if train and train > 0 and bhv_mgr.canGainWGP(data) then
         sandowpp.trainAndFatigue(data, train, fatigue)
     end
     return data

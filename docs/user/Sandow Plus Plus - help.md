@@ -56,6 +56,7 @@ toc:
       - [For Men](#for-men)
       - [For CBBE](#for-cbbe)
       - [For UNP](#for-unp)
+      - [About the normal map resolution](#about-the-normal-map-resolution)
   - [Downsides](#downsides)
     - [How does the player get ripped](#how-does-the-player-get-ripped)
       - [What this means for Ripped bodies users](#what-this-means-for-ripped-bodies-users)
@@ -251,7 +252,9 @@ When I search for some texture set, I shit you not, the very first thing I look 
 So, [the textures I've supplied](#texture-sets) are the best of the best: they all are **great texture sets that happen to have many levels of muscle definition**.
 Even so, they're not always suitable to be used for this mod.
 
-Take for example, Leyenda. They are my favorite textures ever and they've got many ripped options... but their options don't transition too well from not ripped to ripped (what this mod actually needs), so I had to manually alter them using ==Fitness Body== (yeah, it's for LE) so they could correctly blend from zero to hero... something I can't do for UNP, since Fitness Body only comes with textures for CBBE.
+Take for example, Leyenda. They are my favorite textures ever and they've got many ripped options... but their options don't transition too well from not ripped to ripped (what this mod actually needs), so I had to manually alter them using ==Fitness Body== (yeah, it's for LE) so they could correctly blend from zero to hero... something I can't do for UNP, since Fitness Body only comes with textures for CBBE[^unp_motiv].
+
+[^unp_motiv]: And you can bet your ass I don't have the motivation to try to do them anyway, since you know... I don't use UNP.
 
 <figure>
 <!-- <img src="img/normal.gif"/> -->
@@ -425,7 +428,7 @@ PapyrusUtil and Racemenu are required. [I don't know how to separate NiOverride 
 
 ### Texture sets {ignore=true}
 
-You will need these textures sets, otherwise you will get [seams and weird artifacts](#ive-got-neckwristankle-seams-and-weird-artifacts).
+You will need these textures sets, otherwise you may get [seams and weird artifacts](#ive-got-neckwristankle-seams-and-weird-artifacts).
 
 #### For Men
 * [Tempered Skins for Males](https://www.nexusmods.com/skyrimspecialedition/mods/7902).
@@ -451,13 +454,20 @@ All credits to their wonderful authors, who graciously gave me permission to dis
 * [HeroedeLeyenda](https://www.nexusmods.com/skyrimspecialedition/users/7960590).
 * [MONSTERaider](https://www.nexusmods.com/skyrimspecialedition/users/1630457).
 * [traa108](https://www.nexusmods.com/skyrimspecialedition/users/9916407).
-  **Honorable mention**. He went the extra mile and even gave me a file and method to modify muscle definition.
+  **Honorable mention**. He went the extra mile and even gave me a file and method to modify muscle definition!
+
+#### About the normal map resolution
+The textures I provide are so *"low resolution"* for performance and size reasons.
+
+It may seem odd to use 1K textures nowadays, when 4k are kinda common place (and some people use even 8K!), but low normal map resolution in this particular kind of textures is not as evident as low diffuse or specular.
+
+So, if you are the kind of person that gets obsessed with texture resolutions, you better download hi res furniture/rocks/terrain/whatever instead of wasting memory and processing time by using large textures that won't look too different to smaller ones anyway.
 
 ## Downsides
 These are known unavoidable issues you should read before getting too excited about this features:
 
-* Racemenu's `NiOverride` is used. Specifically, `body overlay layers 0` and `1`. ***There's no other way around***.
-  This means this is incompatible with any mods that use those layers themselves or tattoos you are using on those layers.
+* Racemenu's `NiOverride` is used. Specifically, `hand overlay layer 0`. ***There's no other way around***.
+  This means this is incompatible with any mods that use that layer themselves or tattoos you are using on those layers (meh... who cares about hand tattoos, anyway?).
 
 You can easily solve the body tattoos issue by applying them on other layers, but the other one is just impossible to solve.
 
@@ -467,10 +477,13 @@ If you really want to use whatever mod that irremediably conflicts with this[^sl
 
 * You need to use textures. ['Nuff said](#texture-sets).
 
-* Doesn't work on NPCs and there's no way to do it because `NiOverride` doesn't work to well on them (remember it's still in alpha stage for SE).
-  If you want ripped NPCs you may want to try using [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632), by yours trully. It's way less complex than this, but gets the job beautifully done and [it's fully compatible](#known-compatible-mods) with this mod.
+* In order to be more compatibile with certain body mods and armors, **you can't use skin colors `FFFFFF` nor `000000`** (ie, totally white nor totally black).
+If you really want to use one of those colors (who the hell does that?), you can use `FFFFFE` or `000001`. Your human eyes won't notice the difference, but your computer does :grin:.
 
-* Everytime you un/equip your armor your character will briefly flicker and you may even see a purple texture flash. Again, no way to avoid this.
+* ~~Doesn't work on NPCs and there's no way to do it because `NiOverride` doesn't work to well on them (remember it's still in alpha stage for SE).
+  If you want ripped NPCs you may want to try using [Ripped Bodies](https://www.nexusmods.com/skyrimspecialedition/mods/34632), by yours trully. It's way less complex than this, but gets the job beautifully done and [it's fully compatible](#known-compatible-mods) with this mod.~~
+
+* ~~Everytime you un/equip your armor your character will briefly flicker and you may even see a purple texture flash. Again, no way to avoid this.~~
 
 ### How does the player get ripped
 With scripts.

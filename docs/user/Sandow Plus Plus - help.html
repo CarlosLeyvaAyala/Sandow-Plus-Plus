@@ -26,6 +26,7 @@
 <li><a href="#overview">Overview</a>
 <ul>
 <li><a href="#really-read-this-document-i-promise-i-tried-my-best-not-to-be-boring">Really; read this document. I promise I tried my best not to be boring</a></li>
+<li><a href="#this-file-has-too-many-links">This file has too many links!</a></li>
 </ul>
 </li>
 <li><a href="#requirements">Requirements</a>
@@ -35,11 +36,6 @@
 </li>
 <li><a href="#faq">FAQ</a>
 <ul>
-<li><a href="#my-fatigue-is-over-9000">My fatigue is over 9000!!!</a></li>
-<li><a href="#weight-gaininggetting-ripped-for-pure-mages">Weight gaining/getting ripped for pure mages</a></li>
-<li><a href="#whats-the-deal-with-the-head-resizing-thing">What&apos;s the deal with the head resizing thing?</a></li>
-<li><a href="#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack">Could you add ripped textures for &lt;insert name here&gt; body/texture pack?</a></li>
-<li><a href="#ive-got-neckwristankle-seams-and-weird-artifacts">I&apos;ve got neck/wrist/ankle seams and weird artifacts</a></li>
 <li><a href="#is-this-compatible-with">Is this compatible with...?</a>
 <ul>
 <li><a href="#known-compatible-mods">Known compatible mods</a></li>
@@ -48,6 +44,12 @@
 <li><a href="#not-confirmed-but-shouldnt-work">Not confirmed, but shouldn&apos;t work</a></li>
 </ul>
 </li>
+<li><a href="#this-messes-my-cbbe-3bbb-colors">This messes my CBBE 3BBB colors!</a></li>
+<li><a href="#my-fatigue-is-over-9000">My fatigue is over 9000!!!</a></li>
+<li><a href="#weight-gaininggetting-ripped-for-pure-mages">Weight gaining/getting ripped for pure mages</a></li>
+<li><a href="#whats-the-deal-with-the-head-resizing-thing">What&apos;s the deal with the head resizing thing?</a></li>
+<li><a href="#could-you-add-ripped-textures-for-insert-name-here-body-race-texture-pack">Could you add ripped textures for &lt;insert name here&gt; body / race / texture pack?</a></li>
+<li><a href="#ive-got-neckwristankle-seams-and-weird-artifacts">I&apos;ve got neck/wrist/ankle seams and weird artifacts</a></li>
 </ul>
 </li>
 <li><a href="#the-basics">The basics</a></li>
@@ -94,6 +96,7 @@
 <li><a href="#for-men">For Men</a></li>
 <li><a href="#for-cbbe">For CBBE</a></li>
 <li><a href="#for-unp">For UNP</a></li>
+<li><a href="#about-the-normal-map-resolution">About the normal map resolution</a></li>
 </ul>
 </li>
 <li><a href="#downsides">Downsides</a>
@@ -143,13 +146,14 @@ This mod is the result of many, <strong>MANY</strong> hours of hard work that so
 <p>I always appreciate when authors take their time to explain how to use their mods and... let us be honest: I hate when they don&apos;t bother to explain how to play their complex mods and such, so here we are.</p>
 <p>So, let me emphasize again: <strong>Sandow Plus Plus is complex</strong> and you should really read this document.<br>
 If you ever have a problem, I&apos;ve most likely talked about it in this help file.</p>
-<h3>This help file has too much links!</h3>
+<h2 class="mume-header" id="this-file-has-too-many-links">This file has too many links!</h2>
+
 <p>... you ungrateful swine <mark>&gt;:v</mark></p>
 <p>It&apos;s totally done on purpose. I don&apos;t expect you to read it all sequentially.<br>
 I want to take you to the point as fast as I can, not writing the next great russian novel.</p>
 <figure>
 <img src="img/wake-up.jpg">
-<figcaption><i>Chapter 1, page 293</i>:<br>And then, after pondering about the great unfathomable tragic passing of time by the intrinsecally futile altar of human ambition, Czwxnqstazky gets up so he can finally start do some shit for today.</figcaption>
+<figcaption><i>Chapter 1, page 293</i>:<br>And then, after pondering about the great unfathomable tragic passing of time by the intrinsecally futile altar of human ambition, Czwxnqstazky gets up so he can finally start doing some shit for today or something.</figcaption>
 </figure>
 <h1 class="mume-header" id="requirements">Requirements</h1>
 
@@ -158,22 +162,21 @@ I want to take you to the point as fast as I can, not writing the next great rus
 <img src="img/brah.png">
 <figcaption>Why, of course I&apos;m not joking!</figcaption>
 </figure>
-<h2 class="mume-header undefined" id="skse-skyui">SKSE + SkyUI</h2>
+<h2 class="mume-header undefined" id="skse-skyui-papyrusutil">SKSE + SkyUI + PapyrusUtil</h2>
 
-<p>Required for most <em>must have</em> mods, anyway.</p>
+<p>Required for most <em>must-have</em> mods, anyway.</p>
 <h2 class="mume-header undefined" id="jcontainers">JContainers</h2>
 
 <p><em><strong>THIS IS NOT OPTIONAL</strong></em>. I repeat: <strong>THIS IS NOT OPTIONAL</strong>.</p>
 <p>Starting from v4.0 and on, this mod relies on the Lua programming language; and the only way to get Lua working in Skyrim is using <mark>JContainers</mark>.</p>
 <p>Long story short: this mod will simply fail to work if you don&apos;t use JContainers.<br>
 If you want to know the long story behind this, <a href="#i-love-jcontainers-heart">read here</a>.</p>
-<h2 class="mume-header undefined" id="racemenupapyrusutil">RaceMenu/PapyrusUtil</h2>
+<h2 class="mume-header undefined" id="racemenu">RaceMenu</h2>
 
 <p>These are required only if you want to use any feature related to getting ripped using this mod.<br>
 Sorry, ECE users, there&apos;s no way around this.</p>
 <p>BUUUUUT... theorethically, this mod only uses the <code>NiOverride</code> part of RaceMenu (at least, that&apos;s what I programmed it for), so if you know how to use <code>NiOverride</code> without using the whole of RaceMenu, you might want to try using those <em>getting ripped</em> features and see what happens.</p>
 <p><strong>Don&apos;t ask me how to do that</strong>, though. I don&apos;t know how, I don&apos;t want to search for it<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup> and that&apos;s why doing so it&apos;s not oficially supported.</p>
-<p>PapyrusUtil is still required and you will most likely have it anyway, since many mods use it because it&apos;s awesome.</p>
 <h2 class="mume-header" id="integrations">Integrations</h2>
 
 <h3 class="mume-header undefined" id="sexlab-%CD%A1-%CD%9C%CA%96-%CD%A1">SexLab ( &#x361;&#xB0; &#x35C;&#x296; &#x361;&#xB0;)</h3>
@@ -185,6 +188,65 @@ For now...</p>
 <h1 class="mume-header" id="faq">FAQ</h1>
 
 <p>This section is actually composed of links to other parts of the document, and yes: I put it here on purpose because I know most of you won&apos;t bother to read the full guide<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>.</p>
+<h2 class="mume-header" id="is-this-compatible-with">Is this compatible with...?</h2>
+
+<p>If your mod isn&apos;t here, you could try and tell us.<br>
+No way I can try every single mod in existence. I want to play this game too!</p>
+<h3 class="mume-header" id="known-compatible-mods">Known compatible mods</h3>
+
+<ul>
+<li>
+<p><a href="https://www.loverslab.com/files/file/9467-wet-function-redux-se/">Wet Function Redux</a>. Fuck yeah! <sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup>.</p>
+</li>
+<li>
+<p><a href="https://www.nexusmods.com/skyrimspecialedition/mods/34632">Ripped Bodies</a>. Of course it this; I made it myself as a companion mod for this one.<br>
+You still need to download the textures for both Sandow Plus Plus and Ripped Bodies, even if they are pretty much the same. <a href="#how-does-the-player-get-ripped">See here why</a>.</p>
+<p>If NiOverride ever fixes NPC overlays problems, you bet Ripped Bodies will become irrelevant, but for the time being both are needed for making player and NPCs ripped.</p>
+</li>
+</ul>
+<h3 class="mume-header" id="known-incompatible-mods">Known incompatible mods</h3>
+
+<ul>
+<li><a href="https://www.nexusmods.com/skyrimspecialedition/mods/13434">Pumping Iron</a>... obviously (see <a href="#not-confirmed-but-shouldnt-work">Not confirmed, but shouldn&apos;t work</a>).</li>
+</ul>
+<h3 class="mume-header" id="not-confirmed-but-should-work">Not confirmed, but should work</h3>
+
+<ul>
+<li>
+<p>Any custom race should work right off the bat for weight gaining.<br>
+When it comes  to getting ripped, <mark><a href="#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack">it&apos;s not as simple</a>.</mark></p>
+</li>
+<li>
+<p>Any mod that does something based on your weight (but doesn&apos;t actually change it).</p>
+</li>
+</ul>
+<h3 class="mume-header" id="not-confirmed-but-shouldnt-work">Not confirmed, but shouldn&apos;t work</h3>
+
+<ul>
+<li>
+<p>Any mod that changes your body weight.<br>
+<strong>Even CTDs where reported</strong> when using this and Pumping Iron both together.</p>
+</li>
+<li>
+<p><strong>Many mods that change textures on character&apos;s bodies</strong> are expected to conflict with this mod.<br>
+Hopefully nothing game breaking, but certainly getting both them and mine fighting over who sets which textures, ending up with funny looking characters.<br>
+I can&apos;t anticipate which mods will and which won&apos;t work. If you find one of those, please tell us all.</p>
+</li>
+<li>
+<p>Any mod using Racemenu&apos;s body overlay layers 0 and 1 <a href="#downsides">when you are using any method for getting ripped</a> from this mod.<br>
+You should see your character&apos;s body flickering because both mods are setting their own textures or mine simply overriding changes made by others.</p>
+</li>
+</ul>
+<h2 class="mume-header" id="this-messes-my-cbbe-3bbb-colors">This messes my CBBE 3BBB colors!</h2>
+
+<p>That&apos;s not a question &gt;:v</p>
+<p>Anyway, <strong>when</strong> this happens:</p>
+<figure>
+<img class="hImg" src="img/3BBB-discoloration.jpg">
+<figcaption>Wetness was added because I was testing this mod properly worked along Wet Function Redux</figcaption>
+</figure>
+<p>You should open the console, write <code>Showracemenu</code><sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup> and then reset your skin color.</p>
+<p>Don&apos;t worry though. <mark>This only happens when starting a new game</mark>.</p>
 <h2 class="mume-header" id="my-fatigue-is-over-9000">My fatigue is over 9000!!!</h2>
 
 <p>Dude... you are an old meme and you were never funny to begin with.</p>
@@ -209,8 +271,8 @@ Brains and brawns have never been mutually exclusive in real life.</p>
 <img class="hImg" src="img/meme-head.jpg">
 </figure>
 <p>Also, opening the door to darkness.<br>
-I totally expect people<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup> asking me to make boobs and glutes bigger by using that marvelous technology.</p>
-<h2 class="mume-header" id="could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack">Could you add ripped textures for &lt;insert name here&gt; body/texture pack?</h2>
+I totally expect people<sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup> asking me to make boobs and glutes bigger by using that marvelous technology.</p>
+<h2 class="mume-header" id="could-you-add-ripped-textures-for-insert-name-here-body-race-texture-pack">Could you add ripped textures for &lt;insert name here&gt; body / race / texture pack?</h2>
 
 <p>Fun fact: did you know that, compared to most of the Skyrim player base, we may be as well be considered some fetishist weirdos?</p>
 <figure>
@@ -236,55 +298,6 @@ Please keep this in mind before asking me to add support for your furries.</p>
 <h2 class="mume-header" id="ive-got-neckwristankle-seams-and-weird-artifacts">I&apos;ve got neck/wrist/ankle seams and weird artifacts</h2>
 
 <p>That&apos;s because you aren&apos;t using the correct <a href="#texture-sets">the texture sets</a>.</p>
-<h2 class="mume-header" id="is-this-compatible-with">Is this compatible with...?</h2>
-
-<p>If your mod isn&apos;t here, you could try and tell us.<br>
-No way I can try every single mod in existence. I want to play this game too!</p>
-<h3 class="mume-header" id="known-compatible-mods">Known compatible mods</h3>
-
-<ul>
-<li>
-<p><a href="https://www.loverslab.com/files/file/9467-wet-function-redux-se/">Wet Function Redux</a>. Mostly.<br>
-Hands will never look wet, but the rest of the body will look alright and <strong>that&apos;s a price I&apos;m totally willng to pay</strong><sup class="footnote-ref"><a href="#fn6" id="fnref6">[6]</a></sup>.</p>
-</li>
-<li>
-<p><a href="https://www.nexusmods.com/skyrimspecialedition/mods/34632">Ripped Bodies</a>. It is, but this mod made it completely irrelevant.<br>
-No need to use both.</p>
-</li>
-</ul>
-<h3 class="mume-header" id="known-incompatible-mods">Known incompatible mods</h3>
-
-<ul>
-<li><a href="https://www.nexusmods.com/skyrimspecialedition/mods/13434">Pumping Iron</a>... obviously (see <a href="#not-confirmed-but-shouldnt-work">Not confirmed, but shouldn&apos;t work</a>).</li>
-</ul>
-<h3 class="mume-header" id="not-confirmed-but-should-work">Not confirmed, but should work</h3>
-
-<ul>
-<li>
-<p>Any custom race should work right off the bat for weight gaining.<br>
-When it comes  to getting ripped, <a href="#could-you-add-ripped-textures-for-insert-name-here-bodytexture-pack">it&apos;s not as simple</a>.</p>
-</li>
-<li>
-<p>Any mod that does something based on your weight (but doesn&apos;t actually change it).</p>
-</li>
-</ul>
-<h3 class="mume-header" id="not-confirmed-but-shouldnt-work">Not confirmed, but shouldn&apos;t work</h3>
-
-<ul>
-<li>
-<p>Any mod that changes your body weight.<br>
-<strong>Even CTDs where reported</strong> when using this and Pumping Iron both together.</p>
-</li>
-<li>
-<p><strong>Many mods that change textures on character&apos;s bodies</strong> are expected to conflict with this mod.<br>
-Hopefully nothing game breaking, but certainly getting both them and mine fighting over who sets which textures, ending up with funny looking characters.<br>
-I can&apos;t anticipate which mods will and which woh&apos;t work. Please test them and tell us.</p>
-</li>
-<li>
-<p><mark>Any mod using Racemenu&apos;s body overlay layers 0 and 1 <a href="#downsides">when you are using any method for getting ripped</a> from this mod.<br>
-You should see your character&apos;s body flickering because both mods are setting their own textures.</mark></p>
-</li>
-</ul>
 <h1 class="mume-header" id="the-basics">The basics</h1>
 
 <ul>
@@ -426,7 +439,7 @@ You should see your character&apos;s body flickering because both mods are setti
 <p>Let us start with the simplest and the one you are most likely accustomed to, since it&apos;s the most popular weight gaining mod in Skyrim.</p>
 <h2 class="mume-header" id="the-pumping-iron-behavior">The Pumping Iron Behavior</h2>
 
-<p>When selecting this, you will get the exact same functionality you would expect from <a href="https://www.nexusmods.com/skyrimspecialedition/mods/13434">Pumping Iron</a><sup class="footnote-ref"><a href="#fn7" id="fnref7">[7]</a></sup>, but you will also get all the <mark>quality of life additions native to this mod</mark>.</p>
+<p>When selecting this, you will get the exact same functionality you would expect from <a href="https://www.nexusmods.com/skyrimspecialedition/mods/13434">Pumping Iron</a><sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup>, but you will also get all the <mark>quality of life additions native to this mod</mark>.</p>
 <h3 class="mume-header" id="summary">Summary</h3>
 
 <div>
@@ -503,16 +516,16 @@ You need to wait 12 hours before you can gain WGP again by sleeping.</p>
 <p>That&apos;s probably what you already know, so let&apos;s see the new additions by this mod.</p>
 <h4 class="mume-header" id="inactivity">Inactivity</h4>
 
-<p>You can lose WGP by inactivity if the option to lose WGP is checked. Right now that&apos;s the only way to lose weight using this Behavior<sup class="footnote-ref"><a href="#fn8" id="fnref8">[8]</a></sup>.<br>
+<p>You can lose WGP by inactivity if the option to lose WGP is checked. Right now that&apos;s the only way to lose weight using this Behavior<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup>.<br>
 The weight loss rate is 1% a day after 42 hours of not leveling up any skill that contributes to your weight.</p>
 <p><em><strong>Be warned</strong></em>: those days are counted starting from the last time you trained. So if you haven&apos;t trained for 42 hours, you will lose 1.75% right off the bat.</p>
 <p>Yeah, the inactivity window before you start to see losses is quite short.<br>
-weight loss didn&apos;t exist in the original Pumping Iron, so I tweaked the time expecting to stay true to the feeling of playing Pumping Iron<sup class="footnote-ref"><a href="#fn9" id="fnref9">[9]</a></sup>.</p>
+weight loss didn&apos;t exist in the original Pumping Iron, so I tweaked the time expecting to stay true to the feeling of playing Pumping Iron<sup class="footnote-ref"><a href="#fn10" id="fnref10">[10]</a></sup>.</p>
 <h4 class="mume-header" id="skill-configuration">Skill configuration</h4>
 
-<p>You can&apos;t configure your skill contribution to WGP because there&apos;s nothing stopping you from cranking everything up to max and make this a really boring mod<sup class="footnote-ref"><a href="#fn10" id="fnref10">[10]</a></sup>.<br>
+<p>You can&apos;t configure your skill contribution to WGP because there&apos;s nothing stopping you from cranking everything up to max and make this a really boring mod<sup class="footnote-ref"><a href="#fn11" id="fnref11">[11]</a></sup>.<br>
 You will still get training from <mark>Sneak, Alteration and Restoration, though</mark>.</p>
-<p>Still, this Behavior&apos;s gains can be tweaked using the <mark>o&#xE7;&#xE7;ueauuaouadiudeeidud</mark> so this Behavior can become even harder<sup class="footnote-ref"><a href="#fn11" id="fnref11">[11]</a></sup> or you can get the easy route and set it up to gain up to 300% a day.<br>
+<p>Still, this Behavior&apos;s gains can be tweaked using the <mark>o&#xE7;&#xE7;ueauuaouadiudeeidud</mark> so this Behavior can become even harder<sup class="footnote-ref"><a href="#fn12" id="fnref12">[12]</a></sup> or you can get the easy route and set it up to gain up to 300% a day.<br>
 That option was added so you could better differentiate how much time it takes men to be a mountain of muscles and women to have <s>bigger tits</s> way less muscle development, not to cheat... but I won&apos;t blame you if you want to use it to cheat in this Behavior.</p>
 <p>Because of its mechanics, in the original Pumping Iron mod it was already difficult going from zero to hero even as a pure warrior; going as a mage was simply impossible.<br>
 This mod added <mark>training sacks</mark>, so even mages can get proper training.<br>
@@ -592,17 +605,17 @@ That means you&apos;ll get fatigued faster after a hard workout day compared to 
 Before using it, make sure to read <a href="#requirements-read-before-using-this">its requirements</a> and <a href="#downsides">downsides</a>.</p>
 <h3 class="mume-header" id="overview-1">Overview</h3>
 
-<p>The general idea here is to get a sample taste of what a chore it is to be ripped in real life<sup class="footnote-ref"><a href="#fn12" id="fnref12">[12]</a></sup>.</p>
+<p>The general idea here is to get a sample taste of what a chore it is to be ripped in real life<sup class="footnote-ref"><a href="#fn13" id="fnref13">[13]</a></sup>.</p>
 <p>Like in real life, <strong>you must be active at all times</strong> to get ripped and <a href="#punishments">you will be punished in real time</a>, unlike weight gaining methods, where you are only punished at sleeping time.</p>
 <p>As usual, you will get your gains after sleeping and they are capped after 10 hours of sleeping.<br>
 Ten hours sleeping converts to 1% training to muscle definition. Four hours sleeping converts 0.4% training to muscle definition.</p>
-<p>Unlike other behaviors, your gains depend on how much do you weight; with lower weights gaining more muscle definition for the same amount of training... but lower weights are also punished harder<sup class="footnote-ref"><a href="#fn13" id="fnref13">[13]</a></sup>.</p>
+<p>Unlike other behaviors, your gains depend on how much do you weight; with lower weights gaining more muscle definition for the same amount of training... but lower weights are also punished harder<sup class="footnote-ref"><a href="#fn14" id="fnref14">[14]</a></sup>.</p>
 <h3 class="mume-header" id="mechanics-in-depth-2">Mechanics in depth</h3>
 
 <h4 class="mume-header" id="punishments">Punishments</h4>
 
 <p>Inactivity and lack of sleep will both punish you; both in real time.</p>
-<p>What does that mean? That if you are being punished you will actually see the <mark>Widget</mark> flashing red<sup class="footnote-ref"><a href="#fn14" id="fnref14">[14]</a></sup> and you may even watch how your hard gained abs are disappearing while playing!</p>
+<p>What does that mean? That if you are being punished you will actually see the <mark>Widget</mark> flashing red<sup class="footnote-ref"><a href="#fn15" id="fnref15">[15]</a></sup> and you may even watch how your hard gained abs are disappearing while playing!</p>
 <p><mark>That&apos;s a completely different approach to how weight gainind methods work, which apply calculations only when sleeping.<br>
 On those behaviors you can always reach the inactivity time but also avoid losses if you train just before sleeping, and that&apos;s because losses are actually calculated <u>after sleeping</u>, but now <strong>you are really compelled to be active at all times</strong>.</mark> &lt;-- Thinking about correcting that...</p>
 <h1 class="mume-header" id="everything-about-getting-ripped">Everything about getting ripped</h1>
@@ -612,7 +625,7 @@ On those behaviors you can always reach the inactivity time but also avoid losse
 <p>PapyrusUtil and Racemenu are required. <a href="#racemenupapyrusutil">I don&apos;t know how to separate NiOverride from RaceMenu</a>, but if you know how, maybe you can use this with ECE.</p>
 <h3 class="mume-header undefined" id="texture-sets">Texture sets</h3>
 
-<p>You will need these textures sets, otherwise you will get <a href="#ive-got-neckwristankle-seams-and-weird-artifacts">seams and weird artifacts</a>.</p>
+<p>You will need these textures sets, otherwise you may get <a href="#ive-got-neckwristankle-seams-and-weird-artifacts">seams and weird artifacts</a>.</p>
 <h4 class="mume-header" id="for-men">For Men</h4>
 
 <ul>
@@ -641,27 +654,36 @@ On those behaviors you can always reach the inactivity time but also avoid losse
 <li><a href="https://www.nexusmods.com/skyrimspecialedition/users/7960590">HeroedeLeyenda</a>.</li>
 <li><a href="https://www.nexusmods.com/skyrimspecialedition/users/1630457">MONSTERaider</a>.</li>
 <li><a href="https://www.nexusmods.com/skyrimspecialedition/users/9916407">traa108</a>.<br>
-<strong>Honorable mention</strong>. He went the extra mile and even gave me a file and method to modify muscle definition.</li>
+<strong>Honorable mention</strong>. He went the extra mile and even gave me a file and method to modify muscle definition!</li>
 </ul>
+<h4 class="mume-header" id="about-the-normal-map-resolution">About the normal map resolution</h4>
+
+<p>The textures I provide are so <em>&quot;low resolution&quot;</em> for performance and size reasons.</p>
+<p>It may seem odd to use 1K textures nowadays, when 4k are kinda common place (and some people use even 8K!), but low normal map resolution in this particular kind of textures is not as evident as low diffuse or specular.</p>
+<p>So, if you are the kind of person that gets obsessed with texture resolutions, you better download hi res furniture/rocks/terrain/whatever instead of wasting memory and processing time by using large textures that won&apos;t look too different to smaller ones anyway.</p>
 <h2 class="mume-header" id="downsides">Downsides</h2>
 
 <p>These are known unavoidable issues you should read before getting too excited about this features:</p>
 <ul>
-<li>Racemenu&apos;s <code>NiOverride</code> is used. Specifically, <code>body overlay layers 0</code> and <code>1</code>. <em><strong>There&apos;s no other way around</strong></em>.<br>
-This means this is incompatible with any mods that use those layers themselves or tattoos you are using on those layers.</li>
+<li>Racemenu&apos;s <code>NiOverride</code> is used. Specifically, <code>hand overlay layer 0</code>. <em><strong>There&apos;s no other way around</strong></em>.<br>
+This means this is incompatible with any mods that use that layer themselves or tattoos you are using on those layers (meh... who cares about hand tattoos, anyway?).</li>
 </ul>
 <p>You can easily solve the body tattoos issue by applying them on other layers, but the other one is just impossible to solve.</p>
-<p>If you really want to use whatever mod that irremediably conflicts with this<sup class="footnote-ref"><a href="#fn15" id="fnref15">[15]</a></sup>, make sure not to use <a href="#the-bruce-lee-behavior">the Bruce Lee Behavior</a> and not using any of the <mark>options to make the player ripped</mark>.</p>
+<p>If you really want to use whatever mod that irremediably conflicts with this<sup class="footnote-ref"><a href="#fn16" id="fnref16">[16]</a></sup>, make sure not to use <a href="#the-bruce-lee-behavior">the Bruce Lee Behavior</a> and not using any of the <mark>options to make the player ripped</mark>.</p>
 <ul>
 <li>
 <p>You need to use textures. <a href="#texture-sets">&apos;Nuff said</a>.</p>
 </li>
 <li>
-<p>Doesn&apos;t work on NPCs and there&apos;s no way to do it because <code>NiOverride</code> doesn&apos;t work to well on them (remember it&apos;s still in alpha stage for SE).<br>
-If you want ripped NPCs you may want to try using <a href="https://www.nexusmods.com/skyrimspecialedition/mods/34632">Ripped Bodies</a>, by yours trully. It&apos;s way less complex than this, but gets the job beautifully done and <a href="#known-compatible-mods">it&apos;s fully compatible</a> with this mod.</p>
+<p>In order to be more compatibile with certain body mods and armors, <strong>you can&apos;t use skin colors <code>FFFFFF</code> nor <code>000000</code></strong> (ie, totally white nor totally black).<br>
+If you really want to use one of those colors (who the hell does that?), you can use <code>FFFFFE</code> or <code>000001</code>. Your human eyes won&apos;t notice the difference, but your computer does &#x1F601;.</p>
 </li>
 <li>
-<p>Everytime you un/equip your armor your character will briefly flicker and you may even see a purple texture flash. Again, no way to avoid this.</p>
+<p><s>Doesn&apos;t work on NPCs and there&apos;s no way to do it because <code>NiOverride</code> doesn&apos;t work to well on them (remember it&apos;s still in alpha stage for SE).<br>
+If you want ripped NPCs you may want to try using <a href="https://www.nexusmods.com/skyrimspecialedition/mods/34632">Ripped Bodies</a>, by yours trully. It&apos;s way less complex than this, but gets the job beautifully done and <a href="#known-compatible-mods">it&apos;s fully compatible</a> with this mod.</s></p>
+</li>
+<li>
+<p><s>Everytime you un/equip your armor your character will briefly flicker and you may even see a purple texture flash. Again, no way to avoid this.</s></p>
 </li>
 </ul>
 <h3 class="mume-header" id="how-does-the-player-get-ripped">How does the player get ripped</h3>
@@ -743,34 +765,35 @@ It&apos;s such a smooth motherfucker.</p>
 This mod only runs when you ask it to do so, and when it does, it&apos;s by performing simple mathematical formulas. <a href="#fnref2" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
 <li id="fn3" class="footnote-item"><p>Believe me. I&apos;ve got enough of <code>NiOverride</code> just trying to get it work for this mod.<br>
-It was <em><strong>WAY WORSE</strong></em> than trying to learn how to make the Widget. <a href="#fnref3" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+It was <em><strong>WAY WORSE</strong></em> than trying to learn how to make the damn Widget. <a href="#fnref3" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
 <li id="fn4" class="footnote-item"><p>Your loss. You won&apos;t be able to bask in my sublime prose. <a href="#fnref4" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn5" class="footnote-item"><p>That could be even you! <a href="#fnref5" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
-</li>
-<li id="fn6" class="footnote-item"><p>Little fun story time:<br>
+<li id="fn5" class="footnote-item"><p>Little fun story time:<br>
 After more than 2 months working (daily) on getting ripped I had at last a fully working method for it, but then I realized it totally conflicted with this mod.<br>
-Since this is one of my favorite mods ever, I had to found a workaround; that lead me to the current -more compatible- method.<br>
-I thought I could never make the NPCs ripped, but thanks to this new method now I can! <a href="#fnref6" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+Since this is one of my favorite mods ever, I had to found a workaround... that lead me to the current -more compatible- method. <a href="#fnref5" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn7" class="footnote-item"><p>Thanks to Gopher for graciously giving me permission for using his method! <a href="#fnref7" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn6" class="footnote-item"><p>Or even better, just use <a href="https://www.nexusmods.com/skyrimspecialedition/mods/10508">A Change of Face</a>. <a href="#fnref6" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn8" class="footnote-item"><p>You don&apos;t want more ways to lose weight; going from 0% to 100% is already quite hard. <a href="#fnref8" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn7" class="footnote-item"><p>That could be even you! <a href="#fnref7" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn9" class="footnote-item"><p>That is, feeling like all gym rats feel when they want to kill themselves because skipping just one training day could set back their gains. <a href="#fnref9" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn8" class="footnote-item"><p>Thanks to Gopher for graciously giving me permission for using his method! <a href="#fnref8" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn10" class="footnote-item"><p>In the Sandow Plus Plus behavior doing that would lead to overtraining, but not here. <a href="#fnref10" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn9" class="footnote-item"><p>You don&apos;t want more ways to lose weight; going from 0% to 100% is already quite hard. <a href="#fnref9" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn11" class="footnote-item"><p>Why would anyone want THAT??? <a href="#fnref11" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn10" class="footnote-item"><p>That is, feeling like all gym rats feel when they want to kill themselves because skipping just one training day could set back their gains. <a href="#fnref10" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn12" class="footnote-item"><p>But it&apos;s not as hard and annoying as real life, though. <a href="#fnref12" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn11" class="footnote-item"><p>In the Sandow Plus Plus behavior doing that would lead to overtraining, but not here. <a href="#fnref11" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn13" class="footnote-item"><p>That was made to simulate the fact that in real life having muscles makes <em><strong>QUITE</strong></em> difficult to get ripped (at least, without losing them in the process... why do you think steroids are so popular?) but also give you some leeway to eat and train like shit because they are expending calories just for being there. <a href="#fnref13" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn12" class="footnote-item"><p>Why would anyone want THAT??? <a href="#fnref12" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn14" class="footnote-item"><p>Which is always a signal that you are losing something. <a href="#fnref14" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn13" class="footnote-item"><p>But it&apos;s not as hard and annoying as real life, though. <a href="#fnref13" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
-<li id="fn15" class="footnote-item"><p>I don&apos;t know about any. Maybe Slave Tattoos, but I don&apos;t personally use it. <a href="#fnref15" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+<li id="fn14" class="footnote-item"><p>That was made to simulate the fact that in real life having muscles makes <em><strong>QUITE</strong></em> difficult to get ripped (at least, without losing them in the process... why do you think steroids are so popular?) but also give you some leeway to eat and train like shit because they are expending calories just for being there. <a href="#fnref14" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+</li>
+<li id="fn15" class="footnote-item"><p>Which is always a signal that you are losing something. <a href="#fnref15" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
+</li>
+<li id="fn16" class="footnote-item"><p>I don&apos;t know about any. Maybe Slave Tattoos, but I don&apos;t personally use it. <a href="#fnref16" class="footnote-backref">&#x21A9;&#xFE0E;</a></p>
 </li>
 </ol>
 </section>

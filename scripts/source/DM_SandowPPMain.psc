@@ -391,8 +391,18 @@ EndFunction
             ExecuteLua("return sandowpp.onSleep(jobject)")
             _SleepPostprocess()
             RealTimeCalculations()
+            _SleepReport()
             _Resume()
         endEvent
+
+        Function _SleepReport()
+            UpdateMcmData()
+            int d = GetDataTree()
+            string p = ".bhv."
+            string mainLbl = solveStr(d, p + "mainStatLbl")
+            string mainVal = solveStr(d, p + "mainStatVal")
+            Debug.Notification(mainLbl + " " + mainVal)
+        EndFunction
 
         Function _SleepPostprocess()
             texMngr.MakePlayerRipped()
