@@ -108,21 +108,6 @@
 			]
 		},
 		{
-			"fsPath": "$ROOTPATH$\\scripts\\source\\DM_SandowPP_AlgoWCSandow.psc",
-			"bookmarks": [
-				-1,
-				80,
-				222,
-				-1,
-				-1,
-				-1,
-				-1,
-				-1,
-				-1,
-				-1
-			]
-		},
-		{
 			"fsPath": "$ROOTPATH$\\Scripts\\Source\\DM_SandowPP_Config.psc",
 			"bookmarks": [
 				-1,
@@ -218,7 +203,7 @@
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhvBruce.lua",
 			"bookmarks": [
 				-1,
-				178,
+				179,
 				96,
 				-1,
 				-1,
@@ -234,8 +219,8 @@
 			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhv_mgr.lua",
 			"bookmarks": [
 				-1,
-				114,
-				127,
+				122,
+				135,
 				-1,
 				-1,
 				-1,
@@ -243,7 +228,7 @@
 				-1,
 				-1,
 				-1,
-				86
+				88
 			]
 		},
 		{
@@ -351,6 +336,25 @@
 				-1,
 				-1,
 				138
+			]
+		},
+		{
+			"fsPath": "$ROOTPATH$\\SKSE\\Plugins\\JCData\\lua\\sandowpp\\bhvSandow.lua",
+			"bookmarks": [
+				-1,
+				128,
+				213,
+				227,
+				30,
+				-1,
+				-1,
+				-1,
+				-1,
+				-1,
+				155,
+				37,
+				107,
+				124
 			]
 		}
 	]

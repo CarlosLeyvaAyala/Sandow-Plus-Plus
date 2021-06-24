@@ -78,8 +78,8 @@ int _handM = 0x08
 
 ;TODO: Delete
 Function Debug(Actor aAct)
-    ApplyToNPCs()
-    return
+    ; ApplyToNPCs()
+    ; return
     float a = Utility.RandomFloat()
     TraceV("Alpha", a)
     _SetBodyOverride(aAct, "Hum", true, a)
@@ -235,6 +235,7 @@ EndFunction
 float Function _ProcessActor(Actor aAct, string aRace)
     string mode = _GetRippedMode(aAct)
     If mode == "$None"
+        TraceA(aAct, "Ripped mode = None")
         Clear(aAct)
         return IsInvalid
     Else

@@ -43,33 +43,33 @@ sandowpp.getMcmData = bhv_mgr.getMcmData
 sandowpp.changeHAlign = reportWidget.changeHAlign
 sandowpp.changeVAlign = reportWidget.changeVAlign
 
-function sandowpp.getDefaults(data)
+function sandowpp.getDefaults(aData)
     local p = l.pipe(
         reportWidget.default,
         bhv_mgr.default,
         skills.default
     )
-    data = p(data)
-    data.defaultsInit = true
-    return data
+    aData = p(aData)
+    aData.defaultsInit = true
+    return aData
 end
 
 --- Registers a training point gained by the player.
-function sandowpp.train(data, skName)
-    local train, fatigue = skills.trainingAndFatigue(data, skName)
-    if train and train > 0 and bhv_mgr.canGainWGP(data) then
-        sandowpp.trainAndFatigue(data, train, fatigue)
+function sandowpp.train(aData, skName)
+    local train, fatigue = skills.trainingAndFatigue(aData, skName)
+    if train and train > 0 and bhv_mgr.canGainWGP(aData) then
+        sandowpp.trainAndFatigue(aData, train, fatigue)
     end
-    return data
+    return aData
 end
 
 --- Registers training and fatigue gained by the player.
 --- This needs to be accessible to Papyrus because weight sacks directly call this.
-function sandowpp.trainAndFatigue(data, train, fatigue)
-    data.state.skillFatigue = (data.state.skillFatigue or 0) + (train * fatigue)
-    data.state.WGP = data.state.WGP + train
-    data.state.lastActive = -1
-    return data
+function sandowpp.trainAndFatigue(aData, train, fatigue)
+    aData.state.skillFatigue = (aData.state.skillFatigue or 0) + (train * fatigue)
+    aData.state.WGP = aData.state.WGP + train
+    aData.state.lastActive = -1
+    return aData
 end
 
 
@@ -94,38 +94,49 @@ end
 -- ;>===                    TESTING                     ===<;
 -- ;>========================================================
 
-local function genPlayerData(data)
-    local s = data.state
+local function genPlayerData(aData)
+    local s = aData.state
     s.WGP = 0
     s.hoursSlept = 10
-    s.hoursInactive = 14
-    s.hoursAwaken = 20
-    s.weight = 0
+    s.hoursInactive = 5000
+    s.hoursAwaken = 02000
+    s.weight = 050
 
-    return data
+    return aData
 end
 
-local function testTrain(data)
-    sandowpp.train(data, "TwoHanded")
-    sandowpp.train(data, "Enchanting")
-    sandowpp.train(data, "OneHanded")
-    sandowpp.train(data, "Sneak")
-    sandowpp.train(data, "Alteration")
-    return data
+local function testTrain(aData)
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "TwoHanded")
+    sandowpp.train(aData, "Enchanting")
+    sandowpp.train(aData, "OneHanded")
+    sandowpp.train(aData, "Sneak")
+    sandowpp.train(aData, "Sneak")
+    sandowpp.train(aData, "Alteration")
+    sandowpp.train(aData, "Alteration")
+    return aData
 end
 
-local function simulateDays(data)
+local function simulateDays(aData)
     print("Simulating training days")
     print("==================================")
-    for i = 1, 35 do
+    local days = 1
+    for i = 1, days do
         print("Day ".. i)
         print("===============")
-        data = testTrain(data)
-        data = sandowpp.onSleep(data)
+        aData = testTrain(aData)
+        aData = sandowpp.onSleep(aData)
         print("")
     end
 
-    return data
+    return aData
 end
 --- See `_test.lua` at:
 --- https://github.com/CarlosLeyvaAyala/Sandow-Plus-Plus

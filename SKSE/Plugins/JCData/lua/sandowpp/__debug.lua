@@ -9,10 +9,11 @@ local function processFile(ff, processing)
   -- Edit the string
   content = processing(content)
 --  print(content)
+
   -- Write it out
-  -- ft = io.open(ff, "w")
-  -- ft:write(content)
-  -- ft:close()
+  ft = io.open(ff, "w")
+  ft:write(content)
+  ft:close()
 end
 
 -- Reverts back libraries that need to stay as is

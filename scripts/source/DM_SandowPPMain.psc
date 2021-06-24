@@ -319,7 +319,7 @@ Function _SetDecay(float ratio = 1.0)
     JValue.solveFltSetter(data, s + "lastDecay", Now())
 EndFunction
 
-; Returns player weight. Weight ∈ [0, 100]
+; Returns player weight. Weight âˆˆ [0, 100]
 float Function GetPlayerWeight()
     return Player.GetActorBase().GetWeight()
 EndFunction
@@ -423,7 +423,7 @@ EndFunction
 int _cycle = 0
 
 ; Advances cycle by one.
-;       _cycle ∈ [0, 59]
+;       _cycle âˆˆ [0, 59]
 ; 60 is the upper limit so modulo calculations don't get too slow with larger numbers.
 Function _AdvCycle()
     _cycle = (_cycle + 1) % 60
@@ -466,9 +466,19 @@ Event SexLabEnter(string eventName, string argString, float argNum, form sender)
     sslThreadController c = sender as sslThreadController
     If c && c.HasPlayer
         Train(0, 0)
+        _ChangeWeight(Utility.RandomFloat(0.1, 0.3))
     EndIf
 EndEvent
 
+Function _ChangeWeight(float aIncrement)
+    float w = GetPlayerWeight()
+    float newW = ConstrainF(w + aIncrement, 0, 100)
+    Player.GetActorBase().SetWeight(newW)
+    Player.QueueNiNodeUpdate()
+    SendModEvent("ChangeWeight", "", aIncrement)
+    ChangeHeadSize()
+    Debug.Notification("$ReportWeight{" + newW + "}")
+EndFunction
 
 ;>=========================================================
 ;>===                       END                         ===

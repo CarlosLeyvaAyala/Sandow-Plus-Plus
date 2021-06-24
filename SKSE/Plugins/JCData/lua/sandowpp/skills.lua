@@ -69,18 +69,20 @@ function skills.defaultTraining(data)
     skills.skillTraining(data, c.skills.magical.Restoration, 0.15)
 end
 
---- Generates default multipliers.
+--- Generates default fatigue multipliers.
 function skills.defaultMult(data)
-    skills.setMult(data, 1)
+    skills.setMult(data, 0.20)
 end
 
 --- Generates default values and multipliers for all skills.
 --- @param data table
 function skills.default(data)
     if data.defaultsInit then return data end
-    data.preset.bhv.skills.fatigueMul = 1 -- This value is used to configure mulitpliers in the mcm
+    data.preset.bhv.skills.fatigueMul = 1 -- This value is used to configure multipliers in the mcm
     skills.defaultMult(data)
     skills.defaultTraining(data)
+    -- ;TODO: Test if this breaks something
+    data.state.skillFatigue = data.state.skillFatigue or 0
     return data
 end
 

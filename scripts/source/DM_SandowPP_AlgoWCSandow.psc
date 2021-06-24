@@ -55,68 +55,27 @@ string Function Signature()
 EndFunction
 
 DM_SandowPP_State Function OnSleep(DM_SandowPP_AlgorithmData aData)
-    ; {Core calculation}
-    ; Result.Assign(aData.CurrentState)       ; Always assign this property
-    ; float currFatigue = Fatigue(aData.CurrentState.HoursAwaken, aData.CurrentState.SkillFatigue)
-
-    ; Trace("===== Sandow.OnSleep() =====")
-    ; Result.TraceAll()
-    ; Trace("Current fatigue = " + currFatigue)
-
     ; Result.WGP -= LoseWGPBecauseOfFatigue(currFatigue, aData)
     ; Result.WGP -= GrowOrShrink(currFatigue, aData)
     ; ChangeFatigue(Result)
-
-    ; Result.TraceAll()
-    ; Trace("===== Ending Sandow.OnSleep() =====")
     Return Result      ;Always return this Property
 EndFunction
 
-bool Function LossesByInactivity(DM_SandowPP_AlgorithmData aData)
-    ; {Calculate losses by inactivity}
-    ; If !aData.Config.CanLoseWeight
-    ;     Return False
-    ; EndIf
-    ; ; WARNING: Value changed. Watch this if something fails.
-    ; float inactivityTime = HoursInactiveBeforeSleeping(aData)
-    ; ; float inactivityTime = HoursInactive(Result.LastSkillGainTime) - aData.CurrentState.HoursSlept
-    ; If inactivityTime < InactivityHoursToLoses()
-    ;     Return False
-    ; EndIf
-    ; Result.WGP -= Result.WGP * LossesRateByInactivity
-    ; Result.WGPGainType = aData.Report.mtDown
-    ; LoseWeightDueToInactivity(inactivityTime, aData)
-    Return True
-EndFunction
-
-Function LoseWeightDueToInactivity(float inactivityTime, DM_SandowPP_AlgorithmData aData)
-    {Actual change of weight due to inactivity}
-    ; Trace("LoseWeightDueToInactivity(" + inactivityTime + ")")
-    ; RArg.Set("$ReportTrainLostWeightInactivity", aData.Report.mtDown)
-    ; aData.Report.Notification(RArg)
-
-    ; float val = GetPlayerWeight() * ToGameHours(inactivityTime) * LossesRateByInactivity
-    ; ChangeWeight(-val, aData)
-EndFunction
-
 float Function LoseWGPBecauseOfFatigue(float aFatigue, DM_SandowPP_AlgorithmData aData)
-    {Lose WGP if too fatigued}
-    ; if aFatigue >= TrainLossThreshold
-    ;     Result.WGPGainType = aData.Report.mtDown
-    ;     Return aFatigue * TrainingLossRate
-    ; EndIf
     Return 0.0
 EndFunction
 
 float Function GrowOrShrink(float aFatigue, DM_SandowPP_AlgorithmData aData)
     {Returns how much WGP was lost}
     ; bool weightLost = LossesByInactivity(aData)
+    
     ; if aFatigue >= CatabolicThreshold
     ;     If aData.Config.CanLoseWeight
     ;         ChangeWeight(aFatigue * WeightLossRate, aData)
     ;     EndIf
     ;     Return 0.0
     ; EndIf
+    
     ; If GetPlayerWeight() >= 100.0 || weightLost      ; Already at max weight, don't substract WGP
     ;     Return 0.0
     ; EndIf
@@ -204,37 +163,10 @@ Function PartialRest(DM_SandowPP_State aState)
     aState.SkillFatigue -= restHours
 EndFunction
 
-; This function only accepts real hours, not game hours.
-; Ie, using 0.08 (2 game hours) will get you wrong data,
-; but using 2, will give you accurate data.
-float Function Fatigue(float aHoursAwaken, float aSkillFatigue)
-    {Calculate fatigue acording to hours awaken and fatigue accumulated by training}
-    Trace("Sandow.Fatigue()")
-
-    aHoursAwaken = MaxF(aHoursAwaken, 0)
-    float fatigue = (aHoursAwaken * FatigueHourlyRate) + aSkillFatigue
-    fatigue = AdjustIfCatabolic(fatigue, aHoursAwaken)
-
-    Trace("result fatigue = " + fatigue)
-    return fatigue
-EndFunction
-
-float Function AdjustIfCatabolic(float fatigue, float aHoursAwaken)
-    {Adjust fatigue if catabolic threshold has been reached}
-    Trace("Sandow.AdjustIfCatabolic()")
-    Trace("fatigue = " + fatigue)
-
-    if fatigue > CatabolicThreshold
-        float t = EnsurePositiveF(aHoursAwaken - FatigueCatabolicHours)
-        ; BETA: Ensure this never goes over 1000%
-        Return MinF(10, CatabolicThreshold * Pow(FatigueCatabolicRate, t))
-    endif
-    Return fatigue
-EndFunction
 
 float Function FatigueFromState(DM_SandowPP_State aState)
     {Returns the Fatigue calculated from a state; mostly current state, but sometimes a former state}
-    Return Fatigue(aState.HoursAwakenRT(), aState.SkillFatigue)
+    ; Return Fatigue(aState.HoursAwakenRT(), aState.SkillFatigue)
 EndFunction
 
 ; ########################################################################

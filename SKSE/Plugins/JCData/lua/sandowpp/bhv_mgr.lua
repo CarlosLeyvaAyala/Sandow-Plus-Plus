@@ -10,10 +10,11 @@ local bhv_mgr = {}
 -- ;>===                  REGISTERING                   ===<;
 -- ;>========================================================
 local bhvBruce = jrequire 'sandowpp.bhvBruce'
+local bhvSandow = jrequire 'sandowpp.bhvSandow'
 
 local bhvTbl = {
     [const.bhv.name.paused] = "nil",
-    [const.bhv.name.sandow] = "nil",
+    [const.bhv.name.sandow] = bhvSandow,
     [const.bhv.name.pump] = "nil",
     [const.bhv.name.bruce] = bhvBruce,
     [const.bhv.name.bulk] = "nil"
@@ -52,6 +53,7 @@ function bhv_mgr.default(data)
     initState(data)
     --;TODO: change to paused
     if not data.defaultsInit then bhv_mgr.changeBhv(data, const.bhv.name.bruce) end
+    -- if not data.defaultsInit then bhv_mgr.changeBhv(data, const.bhv.name.sandow) end
     return data
 end
 
@@ -97,17 +99,23 @@ function bhv_mgr.changeBhv(data, newBhv)
     if newBhv == data.preset.bhv.current then return end
 
     print("New behavior: "..newBhv)
+    -- Exit old behavior
     local _currBhv = currBhv(data)
     if _currBhv then _currBhv.onExit(data) end
+    -- Enter new behavior
     data.preset.bhv.current = newBhv
     _currBhv = bhvTbl[data.preset.bhv.current]
     _currBhv.onEnter(data)
 end
 
 function bhv_mgr.onSleep(data)
-    local flash
-    data, flash = currBhv(data).onSleep(data)
-    reportWidget.mFlash(data, "meter1", flash)
+    -- ;FIXME: Del
+    -- bhv_mgr.changeBhv(data, const.bhv.name.bruce)
+    -- ;FIXME: Del
+    local flash1, flash2
+    data, flash1, flash2 = currBhv(data).onSleep(data)
+    if flash1 then reportWidget.mFlash(data, "meter1", flash1) end
+    if flash2 then reportWidget.mFlash(data, "meter2", flash2) end
     return bhv_mgr.onReport(data)
 end
 
